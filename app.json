@@ -16,7 +16,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yourname.espressolog",
+      "bundleIdentifier": "com.kateheesunlee.espressolog",
       "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "This app needs access to camera to take photos of your espresso shots.",
