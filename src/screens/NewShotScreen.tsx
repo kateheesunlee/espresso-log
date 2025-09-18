@@ -1,0 +1,574 @@
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from "react-native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useStore } from "../store/useStore";
+import { RootStackParamList } from "../navigation/AppNavigator";
+import CustomPicker from "../components/CustomPicker";
+import BalanceSlider from "../components/BalanceSlider";
+import SvgIcon from "../components/SvgIcon";
+import StarRatingSlider from "../components/StarRatingSlider";
+import { colors } from "../themes/colors";
+
+type NewShotScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "NewShot"
+>;
+type NewShotScreenRouteProp = RouteProp<RootStackParamList, "NewShot">;
+
+interface FormData {
+  beanId: string;
+  machineId: string;
+  dose_g: string;
+  yield_g: string;
+  shotTime_s: string;
+  ratio: string;
+  grindSetting: string;
+  waterTemp_C: string;
+  preinfusion_s: string;
+  rating: number;
+  acidity: number;
+  sweetness: number;
+  bitterness: number;
+  body: number;
+  aftertaste: number;
+  notes: string;
+  isBest: boolean;
+}
+
+const NewShotScreen: React.FC = () => {
+  const navigation = useNavigation<NewShotScreenNavigationProp>();
+  const route = useRoute<NewShotScreenRouteProp>();
+  const { beans, machines, createShot, updateShot, shots } = useStore();
+
+  const [formData, setFormData] = useState<FormData>({
+    beanId: "",
+    machineId: "",
+    dose_g: "",
+    yield_g: "",
+    shotTime_s: "",
+    ratio: "",
+    grindSetting: "",
+    waterTemp_C: "",
+    preinfusion_s: "",
+    rating: 3,
+    acidity: 0,
+    sweetness: 0,
+    bitterness: 0,
+    body: 0,
+    aftertaste: 0,
+    notes: "",
+    isBest: false,
+  });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [editingShotId, setEditingShotId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // If duplicating from another shot, load its data
+    if (route.params?.duplicateFrom && shots.length > 0) {
+      loadShotData(route.params.duplicateFrom);
+    } else {
+      // For new shots, set the latest bean and machine
+      setLatestBeanAndMachine();
+    }
+  }, [route.params?.duplicateFrom, shots, beans, machines]);
+
+  const loadShotData = async (shotId: string) => {
+    try {
+      const shot = shots.find((s) => s.id === shotId);
+      if (shot) {
+        setEditingShotId(shotId); // Track that we're editing this shot
+        setFormData({
+          beanId: shot.beanId || "",
+          machineId: shot.machineId || "",
+          dose_g: shot.dose_g.toString(),
+          yield_g: shot.yield_g.toString(),
+          shotTime_s: shot.shotTime_s.toString(),
+          ratio: shot.ratio?.toString() || "",
+          grindSetting: shot.grindSetting || "",
+          waterTemp_C: shot.waterTemp_C?.toString() || "",
+          preinfusion_s: shot.preinfusion_s?.toString() || "",
+          rating: shot.rating || 3,
+          acidity: shot.acidity || 3,
+          sweetness: shot.sweetness || 3,
+          bitterness: shot.bitterness || 3,
+          body: shot.body || 3,
+          aftertaste: shot.aftertaste || 3,
+          notes: shot.notes || "",
+          isBest: false, // New shot is never marked as best initially
+        });
+      }
+    } catch (error) {
+      console.error("Failed to load shot data:", error);
+    }
+  };
+
+  const setLatestBeanAndMachine = () => {
+    // Set the latest bean (most recently created)
+    if (beans.length > 0) {
+      const latestBean = beans.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )[0];
+      setFormData((prev) => ({ ...prev, beanId: latestBean.id }));
+    }
+
+    // Set the latest machine (most recently created)
+    if (machines.length > 0) {
+      const latestMachine = machines.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )[0];
+      setFormData((prev) => ({ ...prev, machineId: latestMachine.id }));
+    }
+  };
+
+  const handleInputChange = (
+    field: keyof FormData,
+    value: string | boolean | number
+  ) => {
+    setFormData((prev) => {
+      const newData = {
+        ...prev,
+        [field]: value,
+      };
+
+      // Auto-calculate ratio when dose or yield changes
+      if (field === "dose_g" || field === "yield_g") {
+        const dose = parseFloat(
+          field === "dose_g" ? (value as string) : prev.dose_g
+        );
+        const yieldAmount = parseFloat(
+          field === "yield_g" ? (value as string) : prev.yield_g
+        );
+
+        if (dose > 0 && yieldAmount > 0) {
+          const ratio = yieldAmount / dose;
+          newData.ratio = ratio.toFixed(1);
+        } else {
+          newData.ratio = "";
+        }
+      }
+
+      return newData;
+    });
+  };
+
+  const handleSave = async () => {
+    // Validate required fields
+    if (
+      !formData.beanId ||
+      !formData.machineId ||
+      !formData.dose_g ||
+      !formData.yield_g ||
+      !formData.shotTime_s
+    ) {
+      Alert.alert(
+        "Validation Error",
+        "Please fill in all required fields (Bean, Machine, Dose, Yield, Shot Time)"
+      );
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const shotData = {
+        id: editingShotId || `shot-${Date.now()}`,
+        userId: "default-user", // This will be set by the store
+        beanId: formData.beanId,
+        machineId: formData.machineId,
+        dose_g: parseFloat(formData.dose_g),
+        yield_g: parseFloat(formData.yield_g),
+        shotTime_s: parseFloat(formData.shotTime_s),
+        ratio: formData.ratio ? parseFloat(formData.ratio) : undefined,
+        grindSetting: formData.grindSetting || undefined,
+        waterTemp_C: formData.waterTemp_C
+          ? parseFloat(formData.waterTemp_C)
+          : undefined,
+        preinfusion_s: formData.preinfusion_s
+          ? parseFloat(formData.preinfusion_s)
+          : undefined,
+        rating: formData.rating || undefined,
+        acidity: formData.acidity || undefined,
+        sweetness: formData.sweetness || undefined,
+        bitterness: formData.bitterness || undefined,
+        body: formData.body || undefined,
+        aftertaste: formData.aftertaste || undefined,
+        notes: formData.notes || undefined,
+        isBest: formData.isBest,
+      };
+
+      if (editingShotId) {
+        // Update existing shot (duplicated shot)
+        const existingShot = shots.find((s) => s.id === editingShotId);
+        const updateData = {
+          ...shotData,
+          createdAt: existingShot?.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        await updateShot(updateData);
+        Alert.alert("Success", "Shot updated successfully!", [
+          { text: "OK", onPress: () => navigation.navigate("Shots") },
+        ]);
+      } else {
+        // Create new shot
+        await createShot(shotData);
+        Alert.alert("Success", "Shot saved successfully!", [
+          { text: "OK", onPress: () => navigation.navigate("Shots") },
+        ]);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to save shot");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const renderPicker = (
+    label: string,
+    value: string,
+    options: Array<{ id: string; name: string }>,
+    onValueChange: (value: string) => void,
+    required: boolean = false
+  ) => (
+    <CustomPicker
+      label={label}
+      value={value}
+      options={options}
+      onValueChange={onValueChange}
+      required={required}
+    />
+  );
+
+  const renderNumberInput = (
+    label: string,
+    value: string,
+    onChangeText: (text: string) => void,
+    placeholder: string,
+    required: boolean = false,
+    unit?: string
+  ) => (
+    <View style={styles.inputGroup}>
+      <Text style={styles.label}>
+        {label} {required && <Text style={styles.required}>*</Text>}
+      </Text>
+      <View style={styles.inputRow}>
+        <TextInput
+          style={styles.numberInput}
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          keyboardType="numeric"
+          onBlur={undefined}
+        />
+        {unit && <Text style={styles.unit}>{unit}</Text>}
+      </View>
+    </View>
+  );
+
+  const renderTextInput = (
+    label: string,
+    value: string,
+    onChangeText: (text: string) => void,
+    placeholder: string,
+    multiline: boolean = false
+  ) => (
+    <View style={styles.inputGroup}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        style={[styles.textInput, multiline && styles.multilineInput]}
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        multiline={multiline}
+        numberOfLines={multiline ? 4 : 1}
+      />
+    </View>
+  );
+
+  return (
+    <ScrollView style={styles.container}>
+      <View style={styles.form}>
+        {route.params?.duplicateFrom && (
+          <View style={styles.duplicateNotice}>
+            <SvgIcon name="copy" size={20} />
+            <Text style={styles.duplicateNoticeText}>
+              This shot was duplicated from a previous entry. Modify the
+              parameters as needed.
+            </Text>
+          </View>
+        )}
+        <Text style={styles.sectionTitle}>Basic Information</Text>
+
+        {renderPicker(
+          "Bean",
+          formData.beanId,
+          beans.map((b) => ({ id: b.id, name: b.name })),
+          (value) => handleInputChange("beanId", value),
+          true
+        )}
+
+        {renderPicker(
+          "Machine",
+          formData.machineId,
+          machines.map((m) => ({
+            id: m.id,
+            name: m.nickname || `${m.brand} ${m.model}`,
+          })),
+          (value) => handleInputChange("machineId", value),
+          true
+        )}
+
+        <Text style={styles.sectionTitle}>Brew Parameters</Text>
+
+        {renderNumberInput(
+          "Dose",
+          formData.dose_g,
+          (text) => handleInputChange("dose_g", text),
+          "18.0",
+          true,
+          "g"
+        )}
+
+        {renderNumberInput(
+          "Yield",
+          formData.yield_g,
+          (text) => handleInputChange("yield_g", text),
+          "36.0",
+          true,
+          "g"
+        )}
+
+        {renderNumberInput(
+          "Shot Time",
+          formData.shotTime_s,
+          (text) => handleInputChange("shotTime_s", text),
+          "30.0",
+          true,
+          "s"
+        )}
+
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Ratio (auto-calculated)</Text>
+          <TextInput
+            style={[styles.textInput, styles.readOnlyInput]}
+            value={formData.ratio}
+            placeholder="Auto-calculated from dose/yield"
+            editable={false}
+          />
+        </View>
+
+        {renderTextInput(
+          "Grind Setting",
+          formData.grindSetting,
+          (text) => handleInputChange("grindSetting", text),
+          "e.g., 3.5, Fine, etc."
+        )}
+
+        {renderNumberInput(
+          "Water Temperature",
+          formData.waterTemp_C,
+          (text) => handleInputChange("waterTemp_C", text),
+          "93.0",
+          false,
+          "°C"
+        )}
+
+        {renderNumberInput(
+          "Preinfusion Time",
+          formData.preinfusion_s,
+          (text) => handleInputChange("preinfusion_s", text),
+          "5.0",
+          false,
+          "s"
+        )}
+
+        <Text style={styles.sectionTitle}>Tasting Notes</Text>
+
+        <StarRatingSlider
+          label="Overall Rating"
+          value={formData.rating}
+          onValueChange={(value) => handleInputChange("rating", value)}
+        />
+
+        <BalanceSlider
+          label="Acidity"
+          value={formData.acidity}
+          onValueChange={(value) => handleInputChange("acidity", value)}
+        />
+
+        <BalanceSlider
+          label="Sweetness"
+          value={formData.sweetness}
+          onValueChange={(value) => handleInputChange("sweetness", value)}
+        />
+
+        <BalanceSlider
+          label="Bitterness"
+          value={formData.bitterness}
+          onValueChange={(value) => handleInputChange("bitterness", value)}
+        />
+
+        <BalanceSlider
+          label="Body"
+          value={formData.body}
+          onValueChange={(value) => handleInputChange("body", value)}
+        />
+
+        <BalanceSlider
+          label="Aftertaste"
+          value={formData.aftertaste}
+          onValueChange={(value) => handleInputChange("aftertaste", value)}
+        />
+
+        {renderTextInput(
+          "Notes",
+          formData.notes,
+          (text) => handleInputChange("notes", text),
+          "Additional tasting notes...",
+          true
+        )}
+
+        <View style={styles.inputGroup}>
+          <TouchableOpacity
+            style={styles.checkboxContainer}
+            onPress={() => handleInputChange("isBest", !formData.isBest)}
+          >
+            <SvgIcon
+              name={formData.isBest ? "star_filled" : "star"}
+              size={24}
+            />
+            <Text style={styles.checkboxLabel}>Mark as best shot</Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity
+          style={[styles.saveButton, isLoading && styles.disabledButton]}
+          onPress={handleSave}
+          disabled={isLoading}
+        >
+          <Text style={styles.saveButtonText}>
+            {isLoading ? "Saving..." : "Save Shot"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.bgLight,
+  },
+  form: {
+    padding: 16,
+  },
+  duplicateNotice: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.warningBackground,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primary,
+  },
+  duplicateNoticeText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: colors.primary,
+    flex: 1,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colors.textDark,
+    marginTop: 24,
+    marginBottom: 16,
+  },
+  inputGroup: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.textDark,
+    marginBottom: 8,
+  },
+  required: {
+    color: colors.error,
+  },
+  inputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  numberInput: {
+    flex: 1,
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    padding: 12,
+    fontSize: 16,
+  },
+  textInput: {
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    padding: 12,
+    fontSize: 16,
+  },
+  readOnlyInput: {
+    backgroundColor: colors.hover,
+    color: colors.textMedium,
+    borderColor: colors.disabled,
+  },
+  multilineInput: {
+    height: 100,
+    textAlignVertical: "top",
+  },
+  unit: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: colors.textMedium,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+  checkboxLabel: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: colors.textDark,
+  },
+  saveButton: {
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    padding: 16,
+    alignItems: "center",
+    marginTop: 24,
+    marginBottom: 32,
+  },
+  disabledButton: {
+    backgroundColor: colors.disabled,
+  },
+  saveButtonText: {
+    color: colors.white,
+    fontSize: 18,
+    fontWeight: "600",
+  },
+});
+
+export default NewShotScreen;

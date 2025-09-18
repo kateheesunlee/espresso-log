@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "EspressoLog",
-    "slug": "EspressoLog",
+    "name": "Espresso Log",
+    "slug": "espressolog",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

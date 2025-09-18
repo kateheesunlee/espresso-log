@@ -1,0 +1,16 @@
+{
+  "primary": "#8B4513",
+  "secondary": "#CCB19E",
+  "starPrimary": "#FFCC00",
+  "starSecondary": "#FEDE5F",
+  "error": "#E74C3C",
+  "warning": "#F3A412",
+  "positive": "#B2CD2C",
+  "success": "#27AE60",
+  "gray": "#B4B3B3",
+  "textDark": "#333",
+  "textMedium": "#666",
+  "textLight": "#999",
+  "bgLight": "#f5f5f5",
+  "borderLight": "#e0e0e0"
+}
