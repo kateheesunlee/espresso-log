@@ -7,13 +7,21 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "description": "Log your espresso shots with detailed brewing parameters and tasting notes. Track beans, machines, and perfect your coffee brewing skills.",
+    "privacy": "public",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourname.espressolog",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app needs access to camera to take photos of your espresso shots.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to photo library to save and manage espresso shot photos."
+      }
     },
     "android": {
       "adaptiveIcon": {
