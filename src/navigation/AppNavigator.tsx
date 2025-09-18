@@ -29,7 +29,7 @@ function ShotsTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
+        tabBarIcon: ({ focused, size }) => {
           let iconName: string;
 
           if (route.name === "Home") {
@@ -45,7 +45,7 @@ function ShotsTabs() {
           return <SvgIcon name={iconName as any} size={size} />;
         },
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: "gray",
+        tabBarInactiveTintColor: colors.primary,
         headerStyle: {
           backgroundColor: colors.primary,
         },
