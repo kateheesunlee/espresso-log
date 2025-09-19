@@ -127,11 +127,11 @@ const NewShotScreen: React.FC = () => {
           waterTemp_C: shot.waterTemp_C?.toString() || "",
           preinfusion_s: shot.preinfusion_s?.toString() || "",
           rating: shot.rating || 3,
-          acidity: shot.acidity || 3,
-          sweetness: shot.sweetness || 3,
-          bitterness: shot.bitterness || 3,
-          body: shot.body || 3,
-          aftertaste: shot.aftertaste || 3,
+          acidity: shot.acidity || 0,
+          sweetness: shot.sweetness || 0,
+          bitterness: shot.bitterness || 0,
+          body: shot.body || 0,
+          aftertaste: shot.aftertaste || 0,
           notes: shot.notes || "",
           isBest: false, // New shot is never marked as best initially
         });
