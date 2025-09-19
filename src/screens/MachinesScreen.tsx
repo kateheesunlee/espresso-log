@@ -16,6 +16,8 @@ import {
 } from "react-native";
 import { useStore } from "../store/useStore";
 import { Machine } from "../database/UniversalDatabase";
+import { useRoute, RouteProp } from "@react-navigation/native";
+import { MainTabParamList } from "../navigation/AppNavigator";
 import SvgIcon from "../components/SvgIcon";
 import Avatar from "../components/Avatar";
 import EntityCard, {
@@ -221,10 +223,18 @@ const MachinesScreen: React.FC = () => {
   } = useStore();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingMachine, setEditingMachine] = useState<Machine | null>(null);
+  const route = useRoute<RouteProp<MainTabParamList, "Machines">>();
 
   useEffect(() => {
     loadMachines();
   }, [loadMachines]);
+
+  // Auto-open modal if requested from navigation
+  useEffect(() => {
+    if (route.params?.openModal) {
+      handleAddMachine();
+    }
+  }, [route.params?.openModal]);
 
   const handleAddMachine = () => {
     setEditingMachine(null);

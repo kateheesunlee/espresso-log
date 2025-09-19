@@ -16,6 +16,8 @@ import {
 } from "react-native";
 import { useStore } from "../store/useStore";
 import { Bean } from "../database/UniversalDatabase";
+import { useRoute, RouteProp } from "@react-navigation/native";
+import { MainTabParamList } from "../navigation/AppNavigator";
 import SvgIcon from "../components/SvgIcon";
 import Avatar from "../components/Avatar";
 import EntityCard, {
@@ -258,10 +260,18 @@ const BeansScreen: React.FC = () => {
     useStore();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingBean, setEditingBean] = useState<Bean | null>(null);
+  const route = useRoute<RouteProp<MainTabParamList, "Beans">>();
 
   useEffect(() => {
     loadBeans();
   }, [loadBeans]);
+
+  // Auto-open modal if requested from navigation
+  useEffect(() => {
+    if (route.params?.openModal) {
+      handleAddBean();
+    }
+  }, [route.params?.openModal]);
 
   const handleAddBean = () => {
     setEditingBean(null);

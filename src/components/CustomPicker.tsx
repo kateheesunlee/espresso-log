@@ -23,6 +23,8 @@ interface CustomPickerProps {
   onValueChange: (value: string) => void;
   required?: boolean;
   placeholder?: string;
+  onCreateNew?: () => void;
+  createButtonText?: string;
 }
 
 const CustomPicker: React.FC<CustomPickerProps> = ({
@@ -32,6 +34,8 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
   onValueChange,
   required = false,
   placeholder = `Select ${label}`,
+  onCreateNew,
+  createButtonText,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -47,10 +51,10 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
     setSearchText("");
   };
 
-  const handleClear = () => {
-    onValueChange("");
+  const handleCreateNew = () => {
     setIsVisible(false);
     setSearchText("");
+    onCreateNew?.();
   };
 
   return (
@@ -144,14 +148,19 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
               }
             />
 
-            <View style={styles.modalFooter}>
-              <TouchableOpacity
-                style={styles.clearButton}
-                onPress={handleClear}
-              >
-                <Text style={styles.clearButtonText}>Clear Selection</Text>
-              </TouchableOpacity>
-            </View>
+            {onCreateNew && (
+              <View style={styles.modalFooter}>
+                <TouchableOpacity
+                  style={styles.createButton}
+                  onPress={handleCreateNew}
+                >
+                  <Ionicons name="add" size={20} color={colors.white} />
+                  <Text style={styles.createButtonText}>
+                    {createButtonText || `Create ${label}`}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </View>
       </Modal>
@@ -203,7 +212,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     width: "100%",
     maxHeight: "80%",
-    minHeight: 300,
+    minHeight: 400,
   },
   modalHeader: {
     flexDirection: "row",
@@ -275,15 +284,19 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.borderLight,
   },
-  clearButton: {
-    backgroundColor: colors.bgLight,
+  createButton: {
+    backgroundColor: colors.primary,
     borderRadius: 8,
     padding: 12,
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
   },
-  clearButtonText: {
+  createButtonText: {
     fontSize: 16,
-    color: colors.textMedium,
+    color: colors.white,
+    fontWeight: "600",
   },
 });
 

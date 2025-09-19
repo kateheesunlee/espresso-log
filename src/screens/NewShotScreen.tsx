@@ -8,10 +8,18 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  RouteProp,
+  useFocusEffect,
+} from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useStore } from "../store/useStore";
-import { RootStackParamList } from "../navigation/AppNavigator";
+import {
+  RootStackParamList,
+  MainTabParamList,
+} from "../navigation/AppNavigator";
 import CustomPicker from "../components/CustomPicker";
 import BalanceSlider from "../components/BalanceSlider";
 import SvgIcon from "../components/SvgIcon";
@@ -71,6 +79,12 @@ const NewShotScreen: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [editingShotId, setEditingShotId] = useState<string | null>(null);
+  const [pendingBeanSelection, setPendingBeanSelection] = useState<
+    string | null
+  >(null);
+  const [pendingMachineSelection, setPendingMachineSelection] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     // If duplicating from another shot, load its data
@@ -81,6 +95,24 @@ const NewShotScreen: React.FC = () => {
       setLatestBeanAndMachine();
     }
   }, [route.params?.duplicateFrom, shots, beans, machines]);
+
+  // Handle returning from bean/machine creation
+  useFocusEffect(
+    React.useCallback(() => {
+      // If we have pending selections, set them when we return
+      if (pendingBeanSelection) {
+        setFormData((prev) => ({ ...prev, beanId: pendingBeanSelection }));
+        setPendingBeanSelection(null);
+      }
+      if (pendingMachineSelection) {
+        setFormData((prev) => ({
+          ...prev,
+          machineId: pendingMachineSelection,
+        }));
+        setPendingMachineSelection(null);
+      }
+    }, [pendingBeanSelection, pendingMachineSelection])
+  );
 
   const loadShotData = async (shotId: string) => {
     try {
@@ -130,6 +162,42 @@ const NewShotScreen: React.FC = () => {
       )[0];
       setFormData((prev) => ({ ...prev, machineId: latestMachine.id }));
     }
+  };
+
+  const handleCreateBean = () => {
+    // Set pending selection to the latest bean ID (will be updated when we return)
+    const latestBean = beans.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )[0];
+    setPendingBeanSelection(latestBean?.id || "");
+
+    // Navigate to Beans tab with modal open
+    navigation.navigate(
+      "Shots" as any,
+      {
+        screen: "Beans",
+        params: { openModal: true },
+      } as any
+    );
+  };
+
+  const handleCreateMachine = () => {
+    // Set pending selection to the latest machine ID (will be updated when we return)
+    const latestMachine = machines.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )[0];
+    setPendingMachineSelection(latestMachine?.id || "");
+
+    // Navigate to Machines tab with modal open
+    navigation.navigate(
+      "Shots" as any,
+      {
+        screen: "Machines",
+        params: { openModal: true },
+      } as any
+    );
   };
 
   const handleInputChange = (
@@ -238,7 +306,9 @@ const NewShotScreen: React.FC = () => {
     value: string,
     options: Array<{ id: string; name: string }>,
     onValueChange: (value: string) => void,
-    required: boolean = false
+    required: boolean = false,
+    onCreateNew?: () => void,
+    createButtonText?: string
   ) => (
     <CustomPicker
       label={label}
@@ -246,6 +316,8 @@ const NewShotScreen: React.FC = () => {
       options={options}
       onValueChange={onValueChange}
       required={required}
+      onCreateNew={onCreateNew}
+      createButtonText={createButtonText}
     />
   );
 
@@ -314,7 +386,9 @@ const NewShotScreen: React.FC = () => {
           formData.beanId,
           beans.map((b) => ({ id: b.id, name: b.name })),
           (value) => handleInputChange("beanId", value),
-          true
+          true,
+          handleCreateBean,
+          "Create Bean"
         )}
 
         {renderPicker(
@@ -325,7 +399,9 @@ const NewShotScreen: React.FC = () => {
             name: m.nickname || `${m.brand} ${m.model}`,
           })),
           (value) => handleInputChange("machineId", value),
-          true
+          true,
+          handleCreateMachine,
+          "Create Machine"
         )}
 
         <Text style={styles.sectionTitle}>Brew Parameters</Text>

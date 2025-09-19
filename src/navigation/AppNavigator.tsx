@@ -18,8 +18,8 @@ export type RootStackParamList = {
 
 export type MainTabParamList = {
   Home: undefined;
-  Beans: undefined;
-  Machines: undefined;
+  Beans: { openModal?: boolean };
+  Machines: { openModal?: boolean };
 };
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
