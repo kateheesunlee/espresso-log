@@ -10,11 +10,18 @@ import {
   TextInput,
   ScrollView,
   Platform,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { useStore } from "../store/useStore";
 import { Bean } from "../database/UniversalDatabase";
 import SvgIcon from "../components/SvgIcon";
 import Avatar from "../components/Avatar";
+import EntityCard, {
+  EntityCardData,
+  EntityCardAction,
+} from "../components/EntityCard";
 import { showImagePickerOptions } from "../utils/imageUtils";
 import { colors } from "../themes/colors";
 
@@ -41,38 +48,25 @@ const BeanItem: React.FC<{
     });
   };
 
+  const details: string[] = [];
+  if (bean.process) details.push(`Process: ${bean.process}`);
+  if (bean.roastLevel) details.push(`Roast: ${bean.roastLevel}`);
+  if (bean.roastDate) details.push(`Roasted: ${formatDate(bean.roastDate)}`);
+
+  const actions: EntityCardAction[] = [
+    { icon: "edit", onPress: onEdit },
+    { icon: "delete", onPress: onDelete },
+  ];
+
   return (
-    <View style={styles.beanItem}>
-      <View style={styles.beanImage}>
-        <Avatar imageUri={bean.imageUri} fallbackIcon="bean" size={60} />
-      </View>
-      <View style={styles.beanInfo}>
-        <Text style={styles.beanName}>{bean.name}</Text>
-        {bean.origin && <Text style={styles.beanOrigin}>{bean.origin}</Text>}
-        <View style={styles.beanDetails}>
-          {bean.process && (
-            <Text style={styles.beanDetail}>Process: {bean.process}</Text>
-          )}
-          {bean.roastLevel && (
-            <Text style={styles.beanDetail}>Roast: {bean.roastLevel}</Text>
-          )}
-          {bean.roastDate && (
-            <Text style={styles.beanDetail}>
-              Roasted: {formatDate(bean.roastDate)}
-            </Text>
-          )}
-        </View>
-        <Text style={styles.beanDate}>Added: {formatDate(bean.createdAt)}</Text>
-      </View>
-      <View style={styles.beanActions}>
-        <TouchableOpacity style={styles.actionButton} onPress={onEdit}>
-          <SvgIcon name="edit" size={20} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton} onPress={onDelete}>
-          <SvgIcon name="delete" size={20} />
-        </TouchableOpacity>
-      </View>
-    </View>
+    <EntityCard
+      data={bean as EntityCardData}
+      title={bean.name}
+      subtitle={bean.origin}
+      details={details}
+      fallbackIcon="bean"
+      actions={actions}
+    />
   );
 };
 
@@ -165,7 +159,10 @@ const BeanFormModal: React.FC<{
       animationType="slide"
       presentationStyle="pageSheet"
     >
-      <View style={styles.modalContainer}>
+      <KeyboardAvoidingView
+        style={styles.modalContainer}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
         <View style={styles.modalHeader}>
           <TouchableOpacity onPress={onClose}>
             <Text style={styles.cancelButton}>Cancel</Text>
@@ -178,73 +175,80 @@ const BeanFormModal: React.FC<{
           </TouchableOpacity>
         </View>
 
-        <View style={styles.modalContent}>
-          {/* Image Section */}
-          <View style={styles.imageSection}>
-            <Text style={styles.sectionLabel}>Bean Photo</Text>
-            <View style={styles.imageContainer}>
-              <Avatar
-                imageUri={formData.imageUri}
-                fallbackIcon="bean"
-                size={80}
-                onPress={handleImageCapture}
-              />
-              <TouchableOpacity
-                style={styles.imageButton}
-                onPress={handleImageCapture}
-              >
-                <SvgIcon name="camera" size={20} />
-                <Text style={styles.imageButtonText}>
-                  {formData.imageUri ? "Change Photo" : "Add Photo"}
-                </Text>
-              </TouchableOpacity>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            style={styles.modalContent}
+            contentContainerStyle={styles.modalContentContainer}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            {/* Image Section */}
+            <View style={styles.imageSection}>
+              <Text style={styles.sectionLabel}>Bean Photo</Text>
+              <View style={styles.imageContainer}>
+                <Avatar
+                  imageUri={formData.imageUri}
+                  fallbackIcon="bean"
+                  size={80}
+                  onPress={handleImageCapture}
+                />
+                <TouchableOpacity
+                  style={styles.imageButton}
+                  onPress={handleImageCapture}
+                >
+                  <SvgIcon name="camera" size={20} />
+                  <Text style={styles.imageButtonText}>
+                    {formData.imageUri ? "Change Photo" : "Add Photo"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
 
-          {renderInput(
-            "Bean Name *",
-            formData.name,
-            (text) => setFormData((prev) => ({ ...prev, name: text })),
-            "e.g., Ethiopian Yirgacheffe"
-          )}
+            {renderInput(
+              "Bean Name *",
+              formData.name,
+              (text) => setFormData((prev) => ({ ...prev, name: text })),
+              "e.g., Ethiopian Yirgacheffe"
+            )}
 
-          {renderInput(
-            "Origin",
-            formData.origin,
-            (text) => setFormData((prev) => ({ ...prev, origin: text })),
-            "e.g., Ethiopia, Colombia, Brazil"
-          )}
+            {renderInput(
+              "Origin",
+              formData.origin,
+              (text) => setFormData((prev) => ({ ...prev, origin: text })),
+              "e.g., Ethiopia, Colombia, Brazil"
+            )}
 
-          {renderInput(
-            "Process",
-            formData.process,
-            (text) => setFormData((prev) => ({ ...prev, process: text })),
-            "e.g., Washed, Natural, Honey"
-          )}
+            {renderInput(
+              "Process",
+              formData.process,
+              (text) => setFormData((prev) => ({ ...prev, process: text })),
+              "e.g., Washed, Natural, Honey"
+            )}
 
-          {renderInput(
-            "Roast Level",
-            formData.roastLevel,
-            (text) => setFormData((prev) => ({ ...prev, roastLevel: text })),
-            "e.g., Light, Medium, Dark"
-          )}
+            {renderInput(
+              "Roast Level",
+              formData.roastLevel,
+              (text) => setFormData((prev) => ({ ...prev, roastLevel: text })),
+              "e.g., Light, Medium, Dark"
+            )}
 
-          {renderInput(
-            "Roast Date",
-            formData.roastDate,
-            (text) => setFormData((prev) => ({ ...prev, roastDate: text })),
-            "YYYY-MM-DD"
-          )}
+            {renderInput(
+              "Roast Date",
+              formData.roastDate,
+              (text) => setFormData((prev) => ({ ...prev, roastDate: text })),
+              "YYYY-MM-DD"
+            )}
 
-          {renderInput(
-            "Notes",
-            formData.notes,
-            (text) => setFormData((prev) => ({ ...prev, notes: text })),
-            "Additional notes about this bean...",
-            true
-          )}
-        </View>
-      </View>
+            {renderInput(
+              "Notes",
+              formData.notes,
+              (text) => setFormData((prev) => ({ ...prev, notes: text })),
+              "Additional notes about this bean...",
+              true
+            )}
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
@@ -375,9 +379,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.bgLight,
   },
-  beanImage: {
-    marginRight: 16,
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
@@ -445,58 +446,6 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
   },
-  beanItem: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  beanInfo: {
-    flex: 1,
-  },
-  beanName: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 4,
-  },
-  beanOrigin: {
-    fontSize: 14,
-    color: colors.primary,
-    fontWeight: "500",
-    marginBottom: 8,
-  },
-  beanDetails: {
-    marginBottom: 8,
-  },
-  beanDetail: {
-    fontSize: 12,
-    color: colors.textMedium,
-    marginBottom: 2,
-  },
-  beanDate: {
-    fontSize: 12,
-    color: colors.textLight,
-  },
-  beanActions: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  actionButton: {
-    padding: 8,
-    marginLeft: 4,
-  },
   modalContainer: {
     flex: 1,
     backgroundColor: colors.bgLight,
@@ -525,7 +474,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   modalContent: {
+    flex: 1,
+  },
+  modalContentContainer: {
     padding: 16,
+    paddingBottom: 32,
   },
   inputGroup: {
     marginBottom: 16,

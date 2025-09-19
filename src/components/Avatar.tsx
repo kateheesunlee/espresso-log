@@ -1,11 +1,11 @@
 import React from "react";
 import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
-import SvgIcon from "./SvgIcon";
+import SvgIcon, { IconName } from "./SvgIcon";
 import { colors } from "../themes/colors";
 
 interface AvatarProps {
   imageUri?: string;
-  fallbackIcon: "bean" | "coffeemaker";
+  fallbackIcon: IconName;
   size?: number;
   onPress?: () => void;
 }

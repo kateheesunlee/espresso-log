@@ -44,7 +44,7 @@ const ICONS = {
   "thumb-up": ThumbUpIcon,
 } as const;
 
-type IconName = keyof typeof ICONS;
+export type IconName = keyof typeof ICONS;
 
 type Props = {
   name: IconName;

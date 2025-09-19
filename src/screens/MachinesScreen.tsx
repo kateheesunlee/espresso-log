@@ -10,11 +10,18 @@ import {
   TextInput,
   ScrollView,
   Platform,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { useStore } from "../store/useStore";
 import { Machine } from "../database/UniversalDatabase";
 import SvgIcon from "../components/SvgIcon";
 import Avatar from "../components/Avatar";
+import EntityCard, {
+  EntityCardData,
+  EntityCardAction,
+} from "../components/EntityCard";
 import { showImagePickerOptions } from "../utils/imageUtils";
 import { colors } from "../themes/colors";
 
@@ -30,41 +37,22 @@ const MachineItem: React.FC<{
   onEdit: () => void;
   onDelete: () => void;
 }> = ({ machine, onEdit, onDelete }) => {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
+  const title = machine.nickname || `${machine.brand}`;
+  const subtitle = machine.model;
+
+  const actions: EntityCardAction[] = [
+    { icon: "edit", onPress: onEdit },
+    { icon: "delete", onPress: onDelete },
+  ];
 
   return (
-    <View style={styles.machineItem}>
-      <View style={styles.machineImage}>
-        <Avatar
-          imageUri={machine.imageUri}
-          fallbackIcon="coffeemaker"
-          size={60}
-        />
-      </View>
-      <View style={styles.machineInfo}>
-        <Text style={styles.machineName}>
-          {machine.nickname || `${machine.brand}`}
-        </Text>
-        <Text style={styles.machineModel}>{machine.model}</Text>
-        <Text style={styles.machineDate}>
-          Added: {formatDate(machine.createdAt)}
-        </Text>
-      </View>
-      <View style={styles.machineActions}>
-        <TouchableOpacity style={styles.actionButton} onPress={onEdit}>
-          <SvgIcon name="edit" size={20} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton} onPress={onDelete}>
-          <SvgIcon name="delete" size={20} />
-        </TouchableOpacity>
-      </View>
-    </View>
+    <EntityCard
+      data={machine as EntityCardData}
+      title={title}
+      subtitle={subtitle}
+      fallbackIcon="coffeemaker"
+      actions={actions}
+    />
   );
 };
 
@@ -148,7 +136,10 @@ const MachineFormModal: React.FC<{
       animationType="slide"
       presentationStyle="pageSheet"
     >
-      <View style={styles.modalContainer}>
+      <KeyboardAvoidingView
+        style={styles.modalContainer}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
         <View style={styles.modalHeader}>
           <TouchableOpacity onPress={onClose}>
             <Text style={styles.cancelButton}>Cancel</Text>
@@ -161,53 +152,60 @@ const MachineFormModal: React.FC<{
           </TouchableOpacity>
         </View>
 
-        <View style={styles.modalContent}>
-          {/* Image Section */}
-          <View style={styles.imageSection}>
-            <Text style={styles.sectionLabel}>Machine Photo</Text>
-            <View style={styles.imageContainer}>
-              <Avatar
-                imageUri={formData.imageUri}
-                fallbackIcon="coffeemaker"
-                size={80}
-                onPress={handleImageCapture}
-              />
-              <TouchableOpacity
-                style={styles.imageButton}
-                onPress={handleImageCapture}
-              >
-                <SvgIcon name="camera" size={20} />
-                <Text style={styles.imageButtonText}>
-                  {formData.imageUri ? "Change Photo" : "Add Photo"}
-                </Text>
-              </TouchableOpacity>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            style={styles.modalContent}
+            contentContainerStyle={styles.modalContentContainer}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            {/* Image Section */}
+            <View style={styles.imageSection}>
+              <Text style={styles.sectionLabel}>Machine Photo</Text>
+              <View style={styles.imageContainer}>
+                <Avatar
+                  imageUri={formData.imageUri}
+                  fallbackIcon="coffeemaker"
+                  size={80}
+                  onPress={handleImageCapture}
+                />
+                <TouchableOpacity
+                  style={styles.imageButton}
+                  onPress={handleImageCapture}
+                >
+                  <SvgIcon name="camera" size={20} />
+                  <Text style={styles.imageButtonText}>
+                    {formData.imageUri ? "Change Photo" : "Add Photo"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
 
-          {renderInput(
-            "Brand",
-            formData.brand,
-            (text) => setFormData((prev) => ({ ...prev, brand: text })),
-            "e.g., Breville, Gaggia, La Marzocco",
-            true
-          )}
+            {renderInput(
+              "Brand",
+              formData.brand,
+              (text) => setFormData((prev) => ({ ...prev, brand: text })),
+              "e.g., Breville, Gaggia, La Marzocco",
+              true
+            )}
 
-          {renderInput(
-            "Model",
-            formData.model,
-            (text) => setFormData((prev) => ({ ...prev, model: text })),
-            "e.g., Bambino Plus, Classic Pro, Linea Mini",
-            true
-          )}
+            {renderInput(
+              "Model",
+              formData.model,
+              (text) => setFormData((prev) => ({ ...prev, model: text })),
+              "e.g., Bambino Plus, Classic Pro, Linea Mini",
+              true
+            )}
 
-          {renderInput(
-            "Nickname (Optional)",
-            formData.nickname,
-            (text) => setFormData((prev) => ({ ...prev, nickname: text })),
-            "e.g., My Daily Driver, Office Machine"
-          )}
-        </View>
-      </View>
+            {renderInput(
+              "Nickname (Optional)",
+              formData.nickname,
+              (text) => setFormData((prev) => ({ ...prev, nickname: text })),
+              "e.g., My Daily Driver, Office Machine"
+            )}
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
@@ -415,50 +413,6 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
   },
-  machineItem: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  machineInfo: {
-    flex: 1,
-  },
-  machineName: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 4,
-  },
-  machineModel: {
-    fontSize: 14,
-    color: colors.primary,
-    fontWeight: "500",
-    marginBottom: 8,
-  },
-  machineDate: {
-    fontSize: 12,
-    color: colors.textLight,
-  },
-  machineActions: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  actionButton: {
-    padding: 8,
-    marginLeft: 4,
-  },
   modalContainer: {
     flex: 1,
     backgroundColor: colors.bgLight,
@@ -487,7 +441,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   modalContent: {
+    flex: 1,
+  },
+  modalContentContainer: {
     padding: 16,
+    paddingBottom: 32,
   },
   inputGroup: {
     marginBottom: 16,
@@ -522,9 +480,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 16,
-  },
-  machineImage: {
-    marginRight: 16,
   },
   imageButton: {
     flexDirection: "row",
