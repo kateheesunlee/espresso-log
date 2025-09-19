@@ -1,7 +1,7 @@
 {
   "name": "espressolog",
   "version": "1.0.0",
-  "description": "A React Native app for logging espresso shots with detailed brewing parameters and tasting notes",
+  "description": "A React Native app for logging espresso shots with detailed extraction parameters and tasting notes",
   "main": "index.ts",
   "scripts": {
     "start": "expo start",

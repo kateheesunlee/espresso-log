@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "description": "Log your espresso shots with detailed brewing parameters and tasting notes. Track beans, machines, and perfect your coffee brewing skills.",
+    "description": "Track, refine, and master your espresso extractions.",
     "privacy": "public",
     "splash": {
       "image": "./assets/splash-icon.png",

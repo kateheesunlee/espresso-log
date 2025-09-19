@@ -16,10 +16,7 @@ import {
 } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useStore } from "../store/useStore";
-import {
-  RootStackParamList,
-  MainTabParamList,
-} from "../navigation/AppNavigator";
+import { RootStackParamList } from "../navigation/AppNavigator";
 import CustomPicker from "../components/CustomPicker";
 import BalanceSlider from "../components/BalanceSlider";
 import SvgIcon from "../components/SvgIcon";

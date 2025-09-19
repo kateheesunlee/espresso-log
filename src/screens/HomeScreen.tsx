@@ -330,7 +330,7 @@ const HomeScreen: React.FC = () => {
           <SvgIcon name="coffee" size={64} />
           <Text style={styles.emptyTitle}>No shots yet</Text>
           <Text style={styles.emptySubtitle}>
-            Start recording your espresso shots to track your brewing journey
+            Log your first espresso shot and begin your extraction journey.
           </Text>
           <TouchableOpacity style={styles.emptyButton} onPress={handleNewShot}>
             <Text style={styles.emptyButtonText}>Record Your First Shot</Text>

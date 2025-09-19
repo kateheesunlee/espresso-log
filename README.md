@@ -1,16 +1,18 @@
 # Espresso Log
 
-A React Native app for logging espresso shots with detailed brewing parameters and tasting notes.
+### Track, refine, and master your espresso extractions.
+
+A React Native app for logging espresso shots with detailed extraction parameters and tasting notes.
 
 ## Features
 
 - 📱 Log detailed espresso shot parameters
-- 🎯 Track brewing variables (grind size, dose, yield, time, temperature)
+- 🎯 Track extraction variables (grind size, dose, yield, time, temperature)
 - ⭐ Rate and review your shots
 - 📝 Add tasting notes and observations
 - 📊 View shot history and statistics
 - 🏷️ Organize beans and machines
-- 📸 Take photos of your shots
+- 📸 Take photos of your beans and machines
 - 💾 Local data storage with SQLite
 
 ## Screenshots
