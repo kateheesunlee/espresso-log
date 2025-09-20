@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -42,7 +42,6 @@ const ShotItem: React.FC<ShotItemProps> = ({
   const { allBeans, allMachines } = useStore();
   const [translateX] = useState(new Animated.Value(0));
   const [showDeleteButton, setShowDeleteButton] = useState(false);
-  const [initialX, setInitialX] = useState(0);
 
   // Cleanup animation on unmount
   React.useEffect(() => {
@@ -51,7 +50,7 @@ const ShotItem: React.FC<ShotItemProps> = ({
     };
   }, [translateX]);
 
-  const hideDeleteButton = () => {
+  const hideDeleteButtonAnimation = useCallback(() => {
     setShowDeleteButton(false);
     translateX.stopAnimation();
     Animated.spring(translateX, {
@@ -60,9 +59,9 @@ const ShotItem: React.FC<ShotItemProps> = ({
       tension: 100,
       friction: 8,
     }).start();
-  };
+  }, [translateX]);
 
-  const showDeleteButtonAnimation = () => {
+  const showDeleteButtonAnimation = useCallback(() => {
     setShowDeleteButton(true);
     translateX.stopAnimation();
     Animated.spring(translateX, {
@@ -71,41 +70,20 @@ const ShotItem: React.FC<ShotItemProps> = ({
       tension: 100,
       friction: 8,
     }).start();
-  };
+  }, [translateX]);
 
   const panResponder = PanResponder.create({
-    onPanResponderGrant: () => {
-      // Store the initial position when gesture starts
-      setInitialX(showDeleteButton ? -80 : 0);
-    },
     onMoveShouldSetPanResponder: (_, gestureState) => {
-      return Math.abs(gestureState.dx) > 10;
+      const threshold = 5;
+      return Math.abs(gestureState.dx) > threshold;
     },
     onPanResponderMove: (_, gestureState) => {
       if (gestureState.dx < 0) {
         // Swipe left - show delete button
-        translateX.setValue(Math.max(gestureState.dx, -80));
+        showDeleteButtonAnimation();
       } else if (gestureState.dx > 0 && showDeleteButton) {
         // Swipe right - hide delete button
-        // Start from initial position (-80) and move towards 0
-        const newX = Math.min(initialX + gestureState.dx, 0);
-        translateX.setValue(newX);
-      }
-    },
-    onPanResponderRelease: (_, gestureState) => {
-      if (gestureState.dx < -40) {
-        // Show delete button with bouncy animation
-        showDeleteButtonAnimation();
-      } else if (gestureState.dx > 20 && showDeleteButton) {
-        // Hide delete button with bouncy animation
-        hideDeleteButton();
-      } else {
-        // Snap back to current state with bouncy animation
-        if (showDeleteButton) {
-          showDeleteButtonAnimation();
-        } else {
-          hideDeleteButton();
-        }
+        hideDeleteButtonAnimation();
       }
     },
   });
@@ -130,7 +108,7 @@ const ShotItem: React.FC<ShotItemProps> = ({
           style={styles.deleteButton}
           onPress={() => {
             onDelete();
-            hideDeleteButton();
+            hideDeleteButtonAnimation();
           }}
         >
           <SvgIcon name="delete" size={24} />
@@ -152,7 +130,7 @@ const ShotItem: React.FC<ShotItemProps> = ({
           style={styles.shotItemContent}
           onPress={() => {
             if (showDeleteButton) {
-              hideDeleteButton();
+              hideDeleteButtonAnimation();
             } else {
               onPress();
             }
