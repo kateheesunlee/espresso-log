@@ -15,6 +15,8 @@ interface AppState {
   machines: Machine[];
   beans: Bean[];
   shots: Shot[];
+  allMachines: Machine[]; // Includes deleted machines for shot display
+  allBeans: Bean[]; // Includes deleted beans for shot display
 
   // Loading states
   isLoading: boolean;
@@ -25,6 +27,7 @@ interface AppState {
 
   // Machine actions
   loadMachines: () => Promise<void>;
+  loadAllMachines: () => Promise<void>;
   createMachine: (
     machine: Omit<Machine, "createdAt" | "updatedAt">
   ) => Promise<void>;
@@ -33,6 +36,7 @@ interface AppState {
 
   // Bean actions
   loadBeans: () => Promise<void>;
+  loadAllBeans: () => Promise<void>;
   createBean: (bean: Omit<Bean, "createdAt" | "updatedAt">) => Promise<void>;
   updateBean: (bean: Bean) => Promise<void>;
   deleteBean: (id: string) => Promise<void>;
@@ -54,6 +58,8 @@ export const useStore = create<AppState>((set, get) => ({
   machines: [],
   beans: [],
   shots: [],
+  allMachines: [],
+  allBeans: [],
   isLoading: false,
 
   // Initialize app
@@ -78,6 +84,8 @@ export const useStore = create<AppState>((set, get) => ({
         set({ currentUser: user });
         await get().loadMachines();
         await get().loadBeans();
+        await get().loadAllMachines();
+        await get().loadAllBeans();
         await get().loadShots();
       }
     } catch (error) {
@@ -104,6 +112,18 @@ export const useStore = create<AppState>((set, get) => ({
     }
   },
 
+  loadAllMachines: async () => {
+    const { currentUser } = get();
+    if (!currentUser) return;
+
+    try {
+      const allMachines = await database.getAllMachines(currentUser.id);
+      set({ allMachines });
+    } catch (error) {
+      console.error("Failed to load all machines:", error);
+    }
+  },
+
   createMachine: async (machineData) => {
     const { currentUser } = get();
     if (!currentUser) return;
@@ -114,6 +134,7 @@ export const useStore = create<AppState>((set, get) => ({
         userId: currentUser.id,
       });
       await get().loadMachines();
+      await get().loadAllMachines();
     } catch (error) {
       console.error("Failed to create machine:", error);
     }
@@ -123,6 +144,7 @@ export const useStore = create<AppState>((set, get) => ({
     try {
       await database.updateMachine(machine);
       await get().loadMachines();
+      await get().loadAllMachines();
     } catch (error) {
       console.error("Failed to update machine:", error);
     }
@@ -132,6 +154,7 @@ export const useStore = create<AppState>((set, get) => ({
     try {
       await database.deleteMachine(id);
       await get().loadMachines();
+      await get().loadAllMachines();
     } catch (error) {
       console.error("Failed to delete machine:", error);
     }
@@ -150,6 +173,18 @@ export const useStore = create<AppState>((set, get) => ({
     }
   },
 
+  loadAllBeans: async () => {
+    const { currentUser } = get();
+    if (!currentUser) return;
+
+    try {
+      const allBeans = await database.getAllBeans(currentUser.id);
+      set({ allBeans });
+    } catch (error) {
+      console.error("Failed to load all beans:", error);
+    }
+  },
+
   createBean: async (beanData) => {
     const { currentUser } = get();
     if (!currentUser) return;
@@ -160,6 +195,7 @@ export const useStore = create<AppState>((set, get) => ({
         userId: currentUser.id,
       });
       await get().loadBeans();
+      await get().loadAllBeans();
     } catch (error) {
       console.error("Failed to create bean:", error);
     }
@@ -169,6 +205,7 @@ export const useStore = create<AppState>((set, get) => ({
     try {
       await database.updateBean(bean);
       await get().loadBeans();
+      await get().loadAllBeans();
     } catch (error) {
       console.error("Failed to update bean:", error);
     }
@@ -178,6 +215,7 @@ export const useStore = create<AppState>((set, get) => ({
     try {
       await database.deleteBean(id);
       await get().loadBeans();
+      await get().loadAllBeans();
     } catch (error) {
       console.error("Failed to delete bean:", error);
     }

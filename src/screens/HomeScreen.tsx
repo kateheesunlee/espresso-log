@@ -37,7 +37,7 @@ const ShotItem: React.FC<ShotItemProps> = ({
   onOneMore,
   onDelete,
 }) => {
-  const { beans, machines } = useStore();
+  const { allBeans, allMachines } = useStore();
   const [translateX] = useState(new Animated.Value(0));
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [initialX, setInitialX] = useState(0);
@@ -108,8 +108,8 @@ const ShotItem: React.FC<ShotItemProps> = ({
     },
   });
 
-  const bean = beans.find((b) => b.id === shot.beanId);
-  const machine = machines.find((m) => m.id === shot.machineId);
+  const bean = allBeans.find((b) => b.id === shot.beanId);
+  const machine = allMachines.find((m) => m.id === shot.machineId);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -160,11 +160,13 @@ const ShotItem: React.FC<ShotItemProps> = ({
             <View style={styles.shotInfo}>
               <Text style={styles.shotTitle}>
                 {bean?.name || "Unknown Bean"}
+                {bean?.deleted && " (deleted)"}
               </Text>
               <Text style={styles.shotSubtitle}>
                 {machine?.nickname ||
                   `${machine?.brand} ${machine?.model}` ||
                   "Unknown Machine"}
+                {machine?.deleted && " (deleted)"}
               </Text>
               <Text style={styles.shotDate}>{formatDate(shot.createdAt)}</Text>
             </View>

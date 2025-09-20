@@ -14,6 +14,7 @@ export interface Machine {
   model: string;
   nickname?: string;
   imageUri?: string;
+  deleted?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -29,6 +30,7 @@ export interface Bean {
   aromaTags?: string; // JSON string
   notes?: string;
   imageUri?: string;
+  deleted?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -164,7 +166,7 @@ class UniversalDatabase {
   async getMachines(userId: string): Promise<Machine[]> {
     const data = this.getData();
     return data.machines
-      .filter((m: Machine) => m.userId === userId)
+      .filter((m: Machine) => m.userId === userId && !m.deleted)
       .sort(
         (a: Machine, b: Machine) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -185,8 +187,22 @@ class UniversalDatabase {
 
   async deleteMachine(id: string): Promise<void> {
     const data = this.getData();
-    data.machines = data.machines.filter((m: Machine) => m.id !== id);
-    await this.setData(data);
+    const index = data.machines.findIndex((m: Machine) => m.id === id);
+    if (index !== -1) {
+      data.machines[index].deleted = true;
+      data.machines[index].updatedAt = new Date().toISOString();
+      await this.setData(data);
+    }
+  }
+
+  async getAllMachines(userId: string): Promise<Machine[]> {
+    const data = this.getData();
+    return data.machines
+      .filter((m: Machine) => m.userId === userId)
+      .sort(
+        (a: Machine, b: Machine) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
   }
 
   // Bean operations
@@ -205,7 +221,7 @@ class UniversalDatabase {
   async getBeans(userId: string): Promise<Bean[]> {
     const data = this.getData();
     return data.beans
-      .filter((b: Bean) => b.userId === userId)
+      .filter((b: Bean) => b.userId === userId && !b.deleted)
       .sort(
         (a: Bean, b: Bean) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -226,8 +242,22 @@ class UniversalDatabase {
 
   async deleteBean(id: string): Promise<void> {
     const data = this.getData();
-    data.beans = data.beans.filter((b: Bean) => b.id !== id);
-    await this.setData(data);
+    const index = data.beans.findIndex((b: Bean) => b.id === id);
+    if (index !== -1) {
+      data.beans[index].deleted = true;
+      data.beans[index].updatedAt = new Date().toISOString();
+      await this.setData(data);
+    }
+  }
+
+  async getAllBeans(userId: string): Promise<Bean[]> {
+    const data = this.getData();
+    return data.beans
+      .filter((b: Bean) => b.userId === userId)
+      .sort(
+        (a: Bean, b: Bean) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
   }
 
   // Shot operations
