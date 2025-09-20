@@ -2,17 +2,13 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  FlatList,
   TouchableOpacity,
   StyleSheet,
   Alert,
   Modal,
   TextInput,
-  ScrollView,
   Platform,
   KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
 } from "react-native";
 import { useStore } from "../store/useStore";
 import { Bean } from "../database/UniversalDatabase";
@@ -24,6 +20,11 @@ import EntityCard, {
   EntityCardData,
   EntityCardAction,
 } from "../components/EntityCard";
+import KeyboardDismissScrollView from "../components/KeyboardDismissScrollView";
+import ScrollableListView from "../components/ScrollableListView";
+import EmptyEntity from "../components/EmptyEntity";
+import ConfirmationModal from "../components/ConfirmationModal";
+import ErrorModal from "../components/ErrorModal";
 import { showImagePickerOptions } from "../utils/imageUtils";
 import { colors } from "../themes/colors";
 
@@ -77,7 +78,8 @@ const BeanFormModal: React.FC<{
   bean: Bean | null;
   onClose: () => void;
   onSave: (beanData: BeanFormData) => void;
-}> = ({ visible, bean, onClose, onSave }) => {
+  setErrorModal: (errorModal: { visible: boolean; message: string }) => void;
+}> = ({ visible, bean, onClose, onSave, setErrorModal }) => {
   const [formData, setFormData] = useState<BeanFormData>({
     name: "",
     origin: "",
@@ -114,7 +116,7 @@ const BeanFormModal: React.FC<{
 
   const handleSave = () => {
     if (!formData.name.trim()) {
-      Alert.alert("Validation Error", "Bean name is required");
+      setErrorModal({ visible: true, message: "Bean name is required" });
       return;
     }
     onSave(formData);
@@ -131,7 +133,10 @@ const BeanFormModal: React.FC<{
       }
     } catch (error) {
       console.error("Error capturing image:", error);
-      Alert.alert("Error", "Failed to capture image. Please try again.");
+      setErrorModal({
+        visible: true,
+        message: "Failed to capture image. Please try again.",
+      });
     }
   };
 
@@ -177,79 +182,77 @@ const BeanFormModal: React.FC<{
           </TouchableOpacity>
         </View>
 
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView
-            style={styles.modalContent}
-            contentContainerStyle={styles.modalContentContainer}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            {/* Image Section */}
-            <View style={styles.imageSection}>
-              <Text style={styles.sectionLabel}>Bean Photo</Text>
-              <View style={styles.imageContainer}>
-                <Avatar
-                  imageUri={formData.imageUri}
-                  fallbackIcon="bean"
-                  size={80}
-                  onPress={handleImageCapture}
-                />
-                <TouchableOpacity
-                  style={styles.imageButton}
-                  onPress={handleImageCapture}
-                >
-                  <SvgIcon name="camera" size={20} />
-                  <Text style={styles.imageButtonText}>
-                    {formData.imageUri ? "Change Photo" : "Add Photo"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+        <KeyboardDismissScrollView
+          style={styles.modalContent}
+          contentContainerStyle={styles.modalContentContainer}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Image Section */}
+          <View style={styles.imageSection}>
+            <Text style={styles.sectionLabel}>Bean Photo</Text>
+            <View style={styles.imageContainer}>
+              <Avatar
+                imageUri={formData.imageUri}
+                fallbackIcon="bean"
+                size={80}
+                onPress={handleImageCapture}
+              />
+              <TouchableOpacity
+                style={styles.imageButton}
+                onPress={handleImageCapture}
+              >
+                <SvgIcon name="camera" size={20} />
+                <Text style={styles.imageButtonText}>
+                  {formData.imageUri ? "Change Photo" : "Add Photo"}
+                </Text>
+              </TouchableOpacity>
             </View>
+          </View>
 
-            {renderInput(
-              "Bean Name *",
-              formData.name,
-              (text) => setFormData((prev) => ({ ...prev, name: text })),
-              "e.g., Ethiopian Yirgacheffe"
-            )}
+          {renderInput(
+            "Bean Name *",
+            formData.name,
+            (text) => setFormData((prev) => ({ ...prev, name: text })),
+            "e.g., Ethiopian Yirgacheffe"
+          )}
 
-            {renderInput(
-              "Origin",
-              formData.origin,
-              (text) => setFormData((prev) => ({ ...prev, origin: text })),
-              "e.g., Ethiopia, Colombia, Brazil"
-            )}
+          {renderInput(
+            "Origin",
+            formData.origin,
+            (text) => setFormData((prev) => ({ ...prev, origin: text })),
+            "e.g., Ethiopia, Colombia, Brazil"
+          )}
 
-            {renderInput(
-              "Process",
-              formData.process,
-              (text) => setFormData((prev) => ({ ...prev, process: text })),
-              "e.g., Washed, Natural, Honey"
-            )}
+          {renderInput(
+            "Process",
+            formData.process,
+            (text) => setFormData((prev) => ({ ...prev, process: text })),
+            "e.g., Washed, Natural, Honey"
+          )}
 
-            {renderInput(
-              "Roast Level",
-              formData.roastLevel,
-              (text) => setFormData((prev) => ({ ...prev, roastLevel: text })),
-              "e.g., Light, Medium, Dark"
-            )}
+          {renderInput(
+            "Roast Level",
+            formData.roastLevel,
+            (text) => setFormData((prev) => ({ ...prev, roastLevel: text })),
+            "e.g., Light, Medium, Dark"
+          )}
 
-            {renderInput(
-              "Roast Date",
-              formData.roastDate,
-              (text) => setFormData((prev) => ({ ...prev, roastDate: text })),
-              "YYYY-MM-DD"
-            )}
+          {renderInput(
+            "Roast Date",
+            formData.roastDate,
+            (text) => setFormData((prev) => ({ ...prev, roastDate: text })),
+            "YYYY-MM-DD"
+          )}
 
-            {renderInput(
-              "Notes",
-              formData.notes,
-              (text) => setFormData((prev) => ({ ...prev, notes: text })),
-              "Additional notes about this bean...",
-              true
-            )}
-          </ScrollView>
-        </TouchableWithoutFeedback>
+          {renderInput(
+            "Notes",
+            formData.notes,
+            (text) => setFormData((prev) => ({ ...prev, notes: text })),
+            "Additional notes about this bean...",
+            true
+          )}
+        </KeyboardDismissScrollView>
       </KeyboardAvoidingView>
     </Modal>
   );
@@ -260,6 +263,15 @@ const BeansScreen: React.FC = () => {
     useStore();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingBean, setEditingBean] = useState<Bean | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    visible: boolean;
+    bean: Bean | null;
+  }>({ visible: false, bean: null });
+
+  const [errorModal, setErrorModal] = useState<{
+    visible: boolean;
+    message: string;
+  }>({ visible: false, message: "" });
   const route = useRoute<RouteProp<MainTabParamList, "Beans">>();
 
   useEffect(() => {
@@ -284,18 +296,22 @@ const BeansScreen: React.FC = () => {
   };
 
   const handleDeleteBean = (bean: Bean) => {
-    Alert.alert(
-      "Delete Bean",
-      `Are you sure you want to delete "${bean.name}"? This action cannot be undone.`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () => deleteBean(bean.id),
-        },
-      ]
-    );
+    setDeleteConfirmation({ visible: true, bean });
+  };
+
+  const confirmDeleteBean = async () => {
+    if (deleteConfirmation.bean) {
+      try {
+        await deleteBean(deleteConfirmation.bean.id);
+      } catch (error) {
+        setErrorModal({ visible: true, message: "Failed to delete bean" });
+      }
+    }
+    setDeleteConfirmation({ visible: false, bean: null });
+  };
+
+  const cancelDeleteBean = () => {
+    setDeleteConfirmation({ visible: false, bean: null });
   };
 
   const handleSaveBean = async (beanData: BeanFormData) => {
@@ -314,7 +330,7 @@ const BeansScreen: React.FC = () => {
         });
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to save bean");
+      setErrorModal({ visible: true, message: "Failed to save bean" });
     }
   };
 
@@ -343,42 +359,45 @@ const BeansScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {beans.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <SvgIcon name="bean" size={64} />
-          <Text style={styles.emptyTitle}>No beans yet</Text>
-          <Text style={styles.emptySubtitle}>
-            Add your coffee beans to track their characteristics and roast
-            information
-          </Text>
-          <TouchableOpacity style={styles.emptyButton} onPress={handleAddBean}>
-            <Text style={styles.emptyButtonText}>Add Your First Bean</Text>
-          </TouchableOpacity>
-        </View>
-      ) : Platform.OS === "web" ? (
-        <ScrollView
-          style={styles.scrollContainer}
-          contentContainerStyle={styles.listContainer}
-        >
-          {beans.map((bean) => (
-            <View key={bean.id}>{renderBean({ item: bean })}</View>
-          ))}
-        </ScrollView>
-      ) : (
-        <FlatList
-          data={beans}
-          renderItem={renderBean}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+      <ScrollableListView
+        data={beans}
+        renderItem={renderBean}
+        keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        emptyComponent={
+          <EmptyEntity
+            icon="bean"
+            title="No beans yet"
+            subtitle="Add your coffee beans to track their characteristics and roast information"
+            buttonText="Add Your First Bean"
+            onButtonPress={handleAddBean}
+          />
+        }
+      />
 
       <BeanFormModal
         visible={isModalVisible}
         bean={editingBean}
         onClose={() => setIsModalVisible(false)}
         onSave={handleSaveBean}
+        setErrorModal={setErrorModal}
+      />
+
+      <ConfirmationModal
+        visible={deleteConfirmation.visible}
+        title="Delete Bean"
+        message={`Are you sure you want to delete "${deleteConfirmation.bean?.name}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={confirmDeleteBean}
+        onCancel={cancelDeleteBean}
+        destructive={true}
+      />
+
+      <ErrorModal
+        visible={errorModal.visible}
+        message={errorModal.message}
+        onButtonPress={() => setErrorModal({ visible: false, message: "" })}
       />
     </View>
   );

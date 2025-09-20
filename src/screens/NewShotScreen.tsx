@@ -20,6 +20,8 @@ import { RootStackParamList } from "../navigation/AppNavigator";
 import CustomPicker from "../components/CustomPicker";
 import BalanceSlider from "../components/BalanceSlider";
 import SvgIcon from "../components/SvgIcon";
+import SuccessModal from "../components/SuccessModal";
+import ErrorModal from "../components/ErrorModal";
 import StarRatingSlider from "../components/StarRatingSlider";
 import { colors } from "../themes/colors";
 
@@ -82,6 +84,16 @@ const NewShotScreen: React.FC = () => {
   const [pendingMachineSelection, setPendingMachineSelection] = useState<
     string | null
   >(null);
+
+  const [successModal, setSuccessModal] = useState<{
+    visible: boolean;
+    isUpdate: boolean;
+  }>({ visible: false, isUpdate: false });
+
+  const [errorModal, setErrorModal] = useState<{
+    visible: boolean;
+    message: string;
+  }>({ visible: false, message: "" });
 
   useEffect(() => {
     // If duplicating from another shot, load its data
@@ -280,10 +292,12 @@ const NewShotScreen: React.FC = () => {
       !formData.yield_g ||
       !formData.shotTime_s
     ) {
-      Alert.alert(
-        "Validation Error",
-        "Please fill in all required fields (Bean, Machine, Dose, Yield, Shot Time)"
-      );
+      setErrorModal({
+        visible: true,
+        message:
+          "Please fill in all required fields (Bean, Machine, Dose, Yield, Shot Time)",
+      });
+
       return;
     }
 
@@ -324,21 +338,22 @@ const NewShotScreen: React.FC = () => {
           updatedAt: new Date().toISOString(),
         };
         await updateShot(updateData);
-        Alert.alert("Success", "Shot updated successfully!", [
-          { text: "OK", onPress: () => navigation.navigate("Shots") },
-        ]);
+        setSuccessModal({ visible: true, isUpdate: true });
       } else {
         // Create new shot
         await createShot(shotData);
-        Alert.alert("Success", "Shot saved successfully!", [
-          { text: "OK", onPress: () => navigation.navigate("Shots") },
-        ]);
+        setSuccessModal({ visible: true, isUpdate: false });
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to save shot");
+      setErrorModal({ visible: true, message: "Failed to save shot" });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSuccessModalClose = () => {
+    setSuccessModal({ visible: false, isUpdate: false });
+    navigation.navigate("Shots");
   };
 
   const renderPicker = (
@@ -408,184 +423,201 @@ const NewShotScreen: React.FC = () => {
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.form}>
-        {route.params?.duplicateFrom && (
-          <View style={styles.duplicateNotice}>
-            <SvgIcon name="copy" size={20} />
-            <Text style={styles.duplicateNoticeText}>
-              This shot was duplicated from a previous entry. Modify the
-              parameters as needed.
-            </Text>
-          </View>
-        )}
-        <Text style={styles.sectionTitle}>Basic Information</Text>
+    <View style={{ flex: 1 }}>
+      <ScrollView>
+        <View style={styles.form}>
+          {route.params?.duplicateFrom && (
+            <View style={styles.duplicateNotice}>
+              <SvgIcon name="copy" size={20} />
+              <Text style={styles.duplicateNoticeText}>
+                This shot was duplicated from a previous entry. Modify the
+                parameters as needed.
+              </Text>
+            </View>
+          )}
+          <Text style={styles.sectionTitle}>Basic Information</Text>
 
-        {renderPicker(
-          "Bean",
-          formData.beanId,
-          beans.map((b) => ({ id: b.id, name: b.name })),
-          (value) => handleInputChange("beanId", value),
-          true,
-          handleCreateBean,
-          "Create Bean"
-        )}
+          {renderPicker(
+            "Bean",
+            formData.beanId,
+            beans.map((b) => ({ id: b.id, name: b.name })),
+            (value) => handleInputChange("beanId", value),
+            true,
+            handleCreateBean,
+            "Create Bean"
+          )}
 
-        {renderPicker(
-          "Machine",
-          formData.machineId,
-          machines.map((m) => ({
-            id: m.id,
-            name: m.nickname || `${m.brand} ${m.model}`,
-          })),
-          (value) => handleInputChange("machineId", value),
-          true,
-          handleCreateMachine,
-          "Create Machine"
-        )}
+          {renderPicker(
+            "Machine",
+            formData.machineId,
+            machines.map((m) => ({
+              id: m.id,
+              name: m.nickname || `${m.brand} ${m.model}`,
+            })),
+            (value) => handleInputChange("machineId", value),
+            true,
+            handleCreateMachine,
+            "Create Machine"
+          )}
 
-        <Text style={styles.sectionTitle}>Brew Parameters</Text>
+          <Text style={styles.sectionTitle}>Brew Parameters</Text>
 
-        {renderNumberInput(
-          "Dose",
-          formData.dose_g,
-          (text) => handleInputChange("dose_g", text),
-          "18.0",
-          true,
-          "g"
-        )}
+          {renderNumberInput(
+            "Dose",
+            formData.dose_g,
+            (text) => handleInputChange("dose_g", text),
+            "18.0",
+            true,
+            "g"
+          )}
 
-        {renderNumberInput(
-          "Yield",
-          formData.yield_g,
-          (text) => handleInputChange("yield_g", text),
-          "36.0",
-          true,
-          "g"
-        )}
+          {renderNumberInput(
+            "Yield",
+            formData.yield_g,
+            (text) => handleInputChange("yield_g", text),
+            "36.0",
+            true,
+            "g"
+          )}
 
-        {renderNumberInput(
-          "Shot Time",
-          formData.shotTime_s,
-          (text) => handleInputChange("shotTime_s", text),
-          "30.0",
-          true,
-          "s"
-        )}
+          {renderNumberInput(
+            "Shot Time",
+            formData.shotTime_s,
+            (text) => handleInputChange("shotTime_s", text),
+            "30.0",
+            true,
+            "s"
+          )}
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Ratio (auto-calculated)</Text>
-          <TextInput
-            style={[styles.textInput, styles.readOnlyInput]}
-            value={formData.ratio}
-            placeholder="Auto-calculated from dose/yield"
-            editable={false}
-          />
-        </View>
-
-        {renderTextInput(
-          "Grind Setting",
-          formData.grindSetting,
-          (text) => handleInputChange("grindSetting", text),
-          "e.g., 3.5, Fine, etc."
-        )}
-
-        {renderNumberInput(
-          "Water Temperature",
-          formData.waterTemp_C,
-          (text) => handleInputChange("waterTemp_C", text),
-          "93.0",
-          false,
-          "°C"
-        )}
-
-        {renderNumberInput(
-          "Preinfusion Time",
-          formData.preinfusion_s,
-          (text) => handleInputChange("preinfusion_s", text),
-          "5.0",
-          false,
-          "s"
-        )}
-
-        <Text style={styles.sectionTitle}>Tasting Notes</Text>
-
-        <StarRatingSlider
-          label="Overall Rating"
-          value={formData.rating}
-          onValueChange={(value) => handleInputChange("rating", value)}
-        />
-
-        <BalanceSlider
-          label="Acidity"
-          value={formData.acidity}
-          onValueChange={(value) => handleInputChange("acidity", value)}
-        />
-
-        <BalanceSlider
-          label="Sweetness"
-          value={formData.sweetness}
-          onValueChange={(value) => handleInputChange("sweetness", value)}
-        />
-
-        <BalanceSlider
-          label="Bitterness"
-          value={formData.bitterness}
-          onValueChange={(value) => handleInputChange("bitterness", value)}
-        />
-
-        <BalanceSlider
-          label="Body"
-          value={formData.body}
-          onValueChange={(value) => handleInputChange("body", value)}
-        />
-
-        <BalanceSlider
-          label="Aftertaste"
-          value={formData.aftertaste}
-          onValueChange={(value) => handleInputChange("aftertaste", value)}
-        />
-
-        {renderTextInput(
-          "Notes",
-          formData.notes,
-          (text) => handleInputChange("notes", text),
-          "Additional tasting notes...",
-          true
-        )}
-
-        <View style={styles.inputGroup}>
-          <TouchableOpacity
-            style={styles.checkboxContainer}
-            onPress={() => handleInputChange("isBest", !formData.isBest)}
-          >
-            <SvgIcon
-              name={formData.isBest ? "star_filled" : "star"}
-              size={24}
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Ratio (auto-calculated)</Text>
+            <TextInput
+              style={[styles.textInput, styles.readOnlyInput]}
+              value={formData.ratio}
+              placeholder="Auto-calculated from dose/yield"
+              editable={false}
             />
-            <Text style={styles.checkboxLabel}>Mark as best shot</Text>
+          </View>
+
+          {renderTextInput(
+            "Grind Setting",
+            formData.grindSetting,
+            (text) => handleInputChange("grindSetting", text),
+            "e.g., 3.5, Fine, etc."
+          )}
+
+          {renderNumberInput(
+            "Water Temperature",
+            formData.waterTemp_C,
+            (text) => handleInputChange("waterTemp_C", text),
+            "93.0",
+            false,
+            "°C"
+          )}
+
+          {renderNumberInput(
+            "Preinfusion Time",
+            formData.preinfusion_s,
+            (text) => handleInputChange("preinfusion_s", text),
+            "5.0",
+            false,
+            "s"
+          )}
+
+          <Text style={styles.sectionTitle}>Tasting Notes</Text>
+
+          <StarRatingSlider
+            label="Overall Rating"
+            value={formData.rating}
+            onValueChange={(value) => handleInputChange("rating", value)}
+          />
+
+          <BalanceSlider
+            label="Acidity"
+            value={formData.acidity}
+            onValueChange={(value) => handleInputChange("acidity", value)}
+          />
+
+          <BalanceSlider
+            label="Sweetness"
+            value={formData.sweetness}
+            onValueChange={(value) => handleInputChange("sweetness", value)}
+          />
+
+          <BalanceSlider
+            label="Bitterness"
+            value={formData.bitterness}
+            onValueChange={(value) => handleInputChange("bitterness", value)}
+          />
+
+          <BalanceSlider
+            label="Body"
+            value={formData.body}
+            onValueChange={(value) => handleInputChange("body", value)}
+          />
+
+          <BalanceSlider
+            label="Aftertaste"
+            value={formData.aftertaste}
+            onValueChange={(value) => handleInputChange("aftertaste", value)}
+          />
+
+          {renderTextInput(
+            "Notes",
+            formData.notes,
+            (text) => handleInputChange("notes", text),
+            "Additional tasting notes...",
+            true
+          )}
+
+          <View style={styles.inputGroup}>
+            <TouchableOpacity
+              style={styles.checkboxContainer}
+              onPress={() => handleInputChange("isBest", !formData.isBest)}
+            >
+              <SvgIcon
+                name={formData.isBest ? "star_filled" : "star"}
+                size={24}
+              />
+              <Text style={styles.checkboxLabel}>Mark as best shot</Text>
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity
+            style={[styles.saveButton, isLoading && styles.disabledButton]}
+            onPress={handleSave}
+            disabled={isLoading}
+          >
+            <Text style={styles.saveButtonText}>
+              {isLoading ? "Saving..." : "Save Shot"}
+            </Text>
           </TouchableOpacity>
         </View>
+      </ScrollView>
 
-        <TouchableOpacity
-          style={[styles.saveButton, isLoading && styles.disabledButton]}
-          onPress={handleSave}
-          disabled={isLoading}
-        >
-          <Text style={styles.saveButtonText}>
-            {isLoading ? "Saving..." : "Save Shot"}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      <SuccessModal
+        visible={successModal.visible}
+        title={successModal.isUpdate ? "Shot Updated!" : "Shot Saved!"}
+        message={
+          successModal.isUpdate
+            ? "Your shot has been updated successfully!"
+            : "Your shot has been saved successfully!"
+        }
+        primaryButtonText="View Shots"
+        onPrimaryPress={handleSuccessModalClose}
+        icon="coffee"
+      />
+
+      <ErrorModal
+        visible={errorModal.visible}
+        message={errorModal.message}
+        onButtonPress={() => setErrorModal({ visible: false, message: "" })}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgLight,
-  },
   form: {
     padding: 16,
   },

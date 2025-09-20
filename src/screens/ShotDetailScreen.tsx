@@ -14,6 +14,9 @@ import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { Shot } from "../database/UniversalDatabase";
 import SvgIcon from "../components/SvgIcon";
+import ConfirmationModal from "../components/ConfirmationModal";
+import SuccessModal from "../components/SuccessModal";
+import ErrorModal from "../components/ErrorModal";
 import { colors } from "../themes/colors";
 
 type ShotDetailScreenNavigationProp = StackNavigationProp<
@@ -29,6 +32,16 @@ const ShotDetailScreen: React.FC = () => {
     useStore();
 
   const [shot, setShot] = useState<Shot | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
+  const [successModal, setSuccessModal] = useState<{
+    visible: boolean;
+    newShotId: string | null;
+  }>({ visible: false, newShotId: null });
+
+  const [errorModal, setErrorModal] = useState<{
+    visible: boolean;
+    message: string;
+  }>({ visible: false, message: "" });
 
   useEffect(() => {
     const foundShot = shots.find((s) => s.id === route.params.shotId);
@@ -41,7 +54,7 @@ const ShotDetailScreen: React.FC = () => {
     try {
       await toggleBestShot(shot.id);
     } catch (error) {
-      Alert.alert("Error", "Failed to update best shot");
+      setErrorModal({ visible: true, message: "Failed to update best shot" });
     }
   };
 
@@ -51,46 +64,42 @@ const ShotDetailScreen: React.FC = () => {
     try {
       const newShotId = await duplicateShot(shot.id);
       if (newShotId) {
-        Alert.alert(
-          "One More Shot",
-          "Shot duplicated successfully! You can now modify the parameters.",
-          [
-            { text: "Cancel", style: "cancel" },
-            {
-              text: "Edit",
-              onPress: () =>
-                navigation.navigate("NewShot", { duplicateFrom: newShotId }),
-            },
-          ]
-        );
+        setSuccessModal({ visible: true, newShotId });
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to duplicate shot");
+      setErrorModal({ visible: true, message: "Failed to duplicate shot" });
     }
+  };
+
+  const handleEditDuplicatedShot = () => {
+    if (successModal.newShotId) {
+      navigation.navigate("NewShot", { duplicateFrom: successModal.newShotId });
+    }
+    setSuccessModal({ visible: false, newShotId: null });
+  };
+
+  const handleCancelSuccess = () => {
+    setSuccessModal({ visible: false, newShotId: null });
   };
 
   const handleDelete = () => {
     if (!shot) return;
+    setDeleteConfirmation(true);
+  };
 
-    Alert.alert(
-      "Delete Shot",
-      "Are you sure you want to delete this shot? This action cannot be undone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteShot(shot.id);
-              navigation.goBack();
-            } catch (error) {
-              Alert.alert("Error", "Failed to delete shot");
-            }
-          },
-        },
-      ]
-    );
+  const confirmDeleteShot = async () => {
+    if (!shot) return;
+    try {
+      await deleteShot(shot.id);
+      navigation.goBack();
+    } catch (error) {
+      setErrorModal({ visible: true, message: "Failed to delete shot" });
+    }
+    setDeleteConfirmation(false);
+  };
+
+  const cancelDeleteShot = () => {
+    setDeleteConfirmation(false);
   };
 
   const handleShare = async () => {
@@ -117,7 +126,7 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
         title: "Espresso Shot Details",
       });
     } catch (error) {
-      Alert.alert("Error", "Failed to share shot details");
+      setErrorModal({ visible: true, message: "Failed to share shot details" });
     }
   };
 
@@ -178,135 +187,161 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
   const machine = machines.find((m) => m.id === shot.machineId);
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerInfo}>
-          <Text style={styles.shotTitle}>{bean?.name || "Unknown Bean"}</Text>
-          <Text style={styles.shotSubtitle}>
-            {machine?.nickname ||
-              `${machine?.brand} ${machine?.model}` ||
-              "Unknown Machine"}
-          </Text>
-          <Text style={styles.shotDate}>{formatDate(shot.createdAt)}</Text>
-        </View>
-        {shot.isBest && (
-          <View style={styles.bestBadge}>
-            <SvgIcon name="star_filled" size={24} />
-            <Text style={styles.bestText}>BEST</Text>
-          </View>
-        )}
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Brew Parameters</Text>
-        <View style={styles.metricsGrid}>
-          <View style={styles.metricCard}>
-            <Text style={styles.metricValue}>{shot.dose_g}</Text>
-            <Text style={styles.metricLabel}>Dose (g)</Text>
-          </View>
-          <View style={styles.metricCard}>
-            <Text style={styles.metricValue}>{shot.yield_g}</Text>
-            <Text style={styles.metricLabel}>Yield (g)</Text>
-          </View>
-          <View style={styles.metricCard}>
-            <Text style={styles.metricValue}>{shot.shotTime_s}</Text>
-            <Text style={styles.metricLabel}>Time (s)</Text>
-          </View>
-          <View style={styles.metricCard}>
-            <Text style={styles.metricValue}>
-              {shot.ratio ? `1:${shot.ratio.toFixed(1)}` : "N/A"}
+    <View style={{ flex: 1 }}>
+      <ScrollView>
+        <View style={styles.header}>
+          <View style={styles.headerInfo}>
+            <Text style={styles.shotTitle}>{bean?.name || "Unknown Bean"}</Text>
+            <Text style={styles.shotSubtitle}>
+              {machine?.nickname ||
+                `${machine?.brand} ${machine?.model}` ||
+                "Unknown Machine"}
             </Text>
-            <Text style={styles.metricLabel}>Ratio</Text>
+            <Text style={styles.shotDate}>{formatDate(shot.createdAt)}</Text>
           </View>
+          {shot.isBest && (
+            <View style={styles.bestBadge}>
+              <SvgIcon name="star_filled" size={24} />
+              <Text style={styles.bestText}>BEST</Text>
+            </View>
+          )}
         </View>
 
-        {(shot.grindSetting || shot.waterTemp_C || shot.preinfusion_s) && (
-          <View style={styles.additionalParams}>
-            {shot.grindSetting && (
-              <View style={styles.paramRow}>
-                <Text style={styles.paramLabel}>Grind Setting:</Text>
-                <Text style={styles.paramValue}>{shot.grindSetting}</Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Brew Parameters</Text>
+          <View style={styles.metricsGrid}>
+            <View style={styles.metricCard}>
+              <Text style={styles.metricValue}>{shot.dose_g}</Text>
+              <Text style={styles.metricLabel}>Dose (g)</Text>
+            </View>
+            <View style={styles.metricCard}>
+              <Text style={styles.metricValue}>{shot.yield_g}</Text>
+              <Text style={styles.metricLabel}>Yield (g)</Text>
+            </View>
+            <View style={styles.metricCard}>
+              <Text style={styles.metricValue}>{shot.shotTime_s}</Text>
+              <Text style={styles.metricLabel}>Time (s)</Text>
+            </View>
+            <View style={styles.metricCard}>
+              <Text style={styles.metricValue}>
+                {shot.ratio ? `1:${shot.ratio.toFixed(1)}` : "N/A"}
+              </Text>
+              <Text style={styles.metricLabel}>Ratio</Text>
+            </View>
+          </View>
+
+          {(shot.grindSetting || shot.waterTemp_C || shot.preinfusion_s) && (
+            <View style={styles.additionalParams}>
+              {shot.grindSetting && (
+                <View style={styles.paramRow}>
+                  <Text style={styles.paramLabel}>Grind Setting:</Text>
+                  <Text style={styles.paramValue}>{shot.grindSetting}</Text>
+                </View>
+              )}
+              {shot.waterTemp_C && (
+                <View style={styles.paramRow}>
+                  <Text style={styles.paramLabel}>Water Temperature:</Text>
+                  <Text style={styles.paramValue}>{shot.waterTemp_C}°C</Text>
+                </View>
+              )}
+              {shot.preinfusion_s && (
+                <View style={styles.paramRow}>
+                  <Text style={styles.paramLabel}>Preinfusion:</Text>
+                  <Text style={styles.paramValue}>{shot.preinfusion_s}s</Text>
+                </View>
+              )}
+            </View>
+          )}
+        </View>
+
+        {shot.rating && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Tasting Notes</Text>
+            <View style={styles.ratingSection}>
+              <View style={styles.overallRating}>
+                <Text style={styles.ratingTitle}>Overall Rating</Text>
+                {renderStars(shot.rating)}
+                <Text style={styles.ratingText}>{shot.rating}/5</Text>
               </View>
-            )}
-            {shot.waterTemp_C && (
-              <View style={styles.paramRow}>
-                <Text style={styles.paramLabel}>Water Temperature:</Text>
-                <Text style={styles.paramValue}>{shot.waterTemp_C}°C</Text>
+
+              <View style={styles.flavorRatings}>
+                {renderRatingBar("Acidity", shot.acidity)}
+                {renderRatingBar("Sweetness", shot.sweetness)}
+                {renderRatingBar("Bitterness", shot.bitterness)}
+                {renderRatingBar("Body", shot.body)}
+                {renderRatingBar("Aftertaste", shot.aftertaste)}
               </View>
-            )}
-            {shot.preinfusion_s && (
-              <View style={styles.paramRow}>
-                <Text style={styles.paramLabel}>Preinfusion:</Text>
-                <Text style={styles.paramValue}>{shot.preinfusion_s}s</Text>
-              </View>
-            )}
+            </View>
           </View>
         )}
-      </View>
 
-      {shot.rating && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Tasting Notes</Text>
-          <View style={styles.ratingSection}>
-            <View style={styles.overallRating}>
-              <Text style={styles.ratingTitle}>Overall Rating</Text>
-              {renderStars(shot.rating)}
-              <Text style={styles.ratingText}>{shot.rating}/5</Text>
-            </View>
-
-            <View style={styles.flavorRatings}>
-              {renderRatingBar("Acidity", shot.acidity)}
-              {renderRatingBar("Sweetness", shot.sweetness)}
-              {renderRatingBar("Bitterness", shot.bitterness)}
-              {renderRatingBar("Body", shot.body)}
-              {renderRatingBar("Aftertaste", shot.aftertaste)}
-            </View>
+        {shot.notes && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Notes</Text>
+            <Text style={styles.notesText}>{shot.notes}</Text>
           </View>
+        )}
+
+        <View style={styles.actions}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={handleToggleBest}
+          >
+            <SvgIcon name={shot.isBest ? "star_filled" : "star"} size={24} />
+            <Text style={styles.actionButtonText}>
+              {shot.isBest ? "Remove from Best" : "Mark as Best"}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.actionButton} onPress={handleOneMore}>
+            <SvgIcon name="add-notes" size={24} />
+            <Text style={styles.actionButtonText}>One More</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.actionButton} onPress={handleShare}>
+            <SvgIcon name="share" size={24} />
+            <Text style={styles.actionButtonText}>Share</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.actionButton} onPress={handleDelete}>
+            <SvgIcon name="delete" size={24} />
+            <Text style={styles.actionButtonText}>Delete</Text>
+          </TouchableOpacity>
         </View>
-      )}
+      </ScrollView>
 
-      {shot.notes && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Notes</Text>
-          <Text style={styles.notesText}>{shot.notes}</Text>
-        </View>
-      )}
+      <ConfirmationModal
+        visible={deleteConfirmation}
+        title="Delete Shot"
+        message="Are you sure you want to delete this shot? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={confirmDeleteShot}
+        onCancel={cancelDeleteShot}
+        destructive={true}
+      />
 
-      <View style={styles.actions}>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={handleToggleBest}
-        >
-          <SvgIcon name={shot.isBest ? "star_filled" : "star"} size={24} />
-          <Text style={styles.actionButtonText}>
-            {shot.isBest ? "Remove from Best" : "Mark as Best"}
-          </Text>
-        </TouchableOpacity>
+      <SuccessModal
+        visible={successModal.visible}
+        title="One More Shot"
+        message="Shot duplicated successfully! You can now modify the parameters."
+        primaryButtonText="Edit"
+        secondaryButtonText="Cancel"
+        onPrimaryPress={handleEditDuplicatedShot}
+        onSecondaryPress={handleCancelSuccess}
+        icon="add-notes"
+      />
 
-        <TouchableOpacity style={styles.actionButton} onPress={handleOneMore}>
-          <SvgIcon name="add-notes" size={24} />
-          <Text style={styles.actionButtonText}>One More</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton} onPress={handleShare}>
-          <SvgIcon name="share" size={24} />
-          <Text style={styles.actionButtonText}>Share</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton} onPress={handleDelete}>
-          <SvgIcon name="delete" size={24} />
-          <Text style={styles.actionButtonText}>Delete</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      <ErrorModal
+        visible={errorModal.visible}
+        message={errorModal.message}
+        onButtonPress={() => setErrorModal({ visible: false, message: "" })}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgLight,
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",

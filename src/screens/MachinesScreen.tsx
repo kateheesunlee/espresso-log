@@ -2,17 +2,12 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  FlatList,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   Modal,
   TextInput,
-  ScrollView,
   Platform,
   KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
 } from "react-native";
 import { useStore } from "../store/useStore";
 import { Machine } from "../database/UniversalDatabase";
@@ -24,6 +19,11 @@ import EntityCard, {
   EntityCardData,
   EntityCardAction,
 } from "../components/EntityCard";
+import KeyboardDismissScrollView from "../components/KeyboardDismissScrollView";
+import ScrollableListView from "../components/ScrollableListView";
+import EmptyEntity from "../components/EmptyEntity";
+import ConfirmationModal from "../components/ConfirmationModal";
+import ErrorModal from "../components/ErrorModal";
 import { showImagePickerOptions } from "../utils/imageUtils";
 import { colors } from "../themes/colors";
 
@@ -63,7 +63,8 @@ const MachineFormModal: React.FC<{
   machine: Machine | null;
   onClose: () => void;
   onSave: (machineData: MachineFormData) => void;
-}> = ({ visible, machine, onClose, onSave }) => {
+  setErrorModal: (errorModal: { visible: boolean; message: string }) => void;
+}> = ({ visible, machine, onClose, onSave, setErrorModal }) => {
   const [formData, setFormData] = useState<MachineFormData>({
     brand: "",
     model: "",
@@ -91,7 +92,7 @@ const MachineFormModal: React.FC<{
 
   const handleSave = () => {
     if (!formData.brand.trim() || !formData.model.trim()) {
-      Alert.alert("Validation Error", "Brand and model are required");
+      setErrorModal({ visible: true, message: "Brand and model are required" });
       return;
     }
     onSave(formData);
@@ -108,7 +109,10 @@ const MachineFormModal: React.FC<{
       }
     } catch (error) {
       console.error("Error capturing image:", error);
-      Alert.alert("Error", "Failed to capture image. Please try again.");
+      setErrorModal({
+        visible: true,
+        message: "Failed to capture image. Please try again.",
+      });
     }
   };
 
@@ -154,59 +158,57 @@ const MachineFormModal: React.FC<{
           </TouchableOpacity>
         </View>
 
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <ScrollView
-            style={styles.modalContent}
-            contentContainerStyle={styles.modalContentContainer}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            {/* Image Section */}
-            <View style={styles.imageSection}>
-              <Text style={styles.sectionLabel}>Machine Photo</Text>
-              <View style={styles.imageContainer}>
-                <Avatar
-                  imageUri={formData.imageUri}
-                  fallbackIcon="coffeemaker"
-                  size={80}
-                  onPress={handleImageCapture}
-                />
-                <TouchableOpacity
-                  style={styles.imageButton}
-                  onPress={handleImageCapture}
-                >
-                  <SvgIcon name="camera" size={20} />
-                  <Text style={styles.imageButtonText}>
-                    {formData.imageUri ? "Change Photo" : "Add Photo"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+        <KeyboardDismissScrollView
+          style={styles.modalContent}
+          contentContainerStyle={styles.modalContentContainer}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Image Section */}
+          <View style={styles.imageSection}>
+            <Text style={styles.sectionLabel}>Machine Photo</Text>
+            <View style={styles.imageContainer}>
+              <Avatar
+                imageUri={formData.imageUri}
+                fallbackIcon="coffeemaker"
+                size={80}
+                onPress={handleImageCapture}
+              />
+              <TouchableOpacity
+                style={styles.imageButton}
+                onPress={handleImageCapture}
+              >
+                <SvgIcon name="camera" size={20} />
+                <Text style={styles.imageButtonText}>
+                  {formData.imageUri ? "Change Photo" : "Add Photo"}
+                </Text>
+              </TouchableOpacity>
             </View>
+          </View>
 
-            {renderInput(
-              "Brand",
-              formData.brand,
-              (text) => setFormData((prev) => ({ ...prev, brand: text })),
-              "e.g., Breville, Gaggia, La Marzocco",
-              true
-            )}
+          {renderInput(
+            "Brand",
+            formData.brand,
+            (text) => setFormData((prev) => ({ ...prev, brand: text })),
+            "e.g., Breville, Gaggia, La Marzocco",
+            true
+          )}
 
-            {renderInput(
-              "Model",
-              formData.model,
-              (text) => setFormData((prev) => ({ ...prev, model: text })),
-              "e.g., Bambino Plus, Classic Pro, Linea Mini",
-              true
-            )}
+          {renderInput(
+            "Model",
+            formData.model,
+            (text) => setFormData((prev) => ({ ...prev, model: text })),
+            "e.g., Bambino Plus, Classic Pro, Linea Mini",
+            true
+          )}
 
-            {renderInput(
-              "Nickname (Optional)",
-              formData.nickname,
-              (text) => setFormData((prev) => ({ ...prev, nickname: text })),
-              "e.g., My Daily Driver, Office Machine"
-            )}
-          </ScrollView>
-        </TouchableWithoutFeedback>
+          {renderInput(
+            "Nickname (Optional)",
+            formData.nickname,
+            (text) => setFormData((prev) => ({ ...prev, nickname: text })),
+            "e.g., My Daily Driver, Office Machine"
+          )}
+        </KeyboardDismissScrollView>
       </KeyboardAvoidingView>
     </Modal>
   );
@@ -223,6 +225,15 @@ const MachinesScreen: React.FC = () => {
   } = useStore();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingMachine, setEditingMachine] = useState<Machine | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    visible: boolean;
+    machine: Machine | null;
+  }>({ visible: false, machine: null });
+
+  const [errorModal, setErrorModal] = useState<{
+    visible: boolean;
+    message: string;
+  }>({ visible: false, message: "" });
   const route = useRoute<RouteProp<MainTabParamList, "Machines">>();
 
   useEffect(() => {
@@ -247,20 +258,22 @@ const MachinesScreen: React.FC = () => {
   };
 
   const handleDeleteMachine = (machine: Machine) => {
-    Alert.alert(
-      "Delete Machine",
-      `Are you sure you want to delete "${
-        machine.nickname || `${machine.brand} ${machine.model}`
-      }"? This action cannot be undone.`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () => deleteMachine(machine.id),
-        },
-      ]
-    );
+    setDeleteConfirmation({ visible: true, machine });
+  };
+
+  const confirmDeleteMachine = async () => {
+    if (deleteConfirmation.machine) {
+      try {
+        await deleteMachine(deleteConfirmation.machine.id);
+      } catch (error) {
+        setErrorModal({ visible: true, message: "Failed to delete machine" });
+      }
+    }
+    setDeleteConfirmation({ visible: false, machine: null });
+  };
+
+  const cancelDeleteMachine = () => {
+    setDeleteConfirmation({ visible: false, machine: null });
   };
 
   const handleSaveMachine = async (machineData: MachineFormData) => {
@@ -279,7 +292,7 @@ const MachinesScreen: React.FC = () => {
         });
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to save machine");
+      setErrorModal({ visible: true, message: "Failed to save machine" });
     }
   };
 
@@ -308,44 +321,48 @@ const MachinesScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {machines.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <SvgIcon name="coffeemaker" size={64} />
-          <Text style={styles.emptyTitle}>No machines yet</Text>
-          <Text style={styles.emptySubtitle}>
-            Add your espresso machines to track which one you used for each shot
-          </Text>
-          <TouchableOpacity
-            style={styles.emptyButton}
-            onPress={handleAddMachine}
-          >
-            <Text style={styles.emptyButtonText}>Add Your First Machine</Text>
-          </TouchableOpacity>
-        </View>
-      ) : Platform.OS === "web" ? (
-        <ScrollView
-          style={styles.scrollContainer}
-          contentContainerStyle={styles.listContainer}
-        >
-          {machines.map((machine) => (
-            <View key={machine.id}>{renderMachine({ item: machine })}</View>
-          ))}
-        </ScrollView>
-      ) : (
-        <FlatList
-          data={machines}
-          renderItem={renderMachine}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+      <ScrollableListView
+        data={machines}
+        renderItem={renderMachine}
+        keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        emptyComponent={
+          <EmptyEntity
+            icon="coffeemaker"
+            title="No machines yet"
+            subtitle="Add your espresso machines to track which one you used for each shot"
+            buttonText="Add Your First Machine"
+            onButtonPress={handleAddMachine}
+          />
+        }
+      />
 
       <MachineFormModal
         visible={isModalVisible}
         machine={editingMachine}
         onClose={() => setIsModalVisible(false)}
         onSave={handleSaveMachine}
+        setErrorModal={setErrorModal}
+      />
+
+      <ConfirmationModal
+        visible={deleteConfirmation.visible}
+        title="Delete Machine"
+        message={`Are you sure you want to delete "${
+          deleteConfirmation.machine?.nickname ||
+          `${deleteConfirmation.machine?.brand} ${deleteConfirmation.machine?.model}`
+        }"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={confirmDeleteMachine}
+        onCancel={cancelDeleteMachine}
+        destructive={true}
+      />
+
+      <ErrorModal
+        visible={errorModal.visible}
+        message={errorModal.message}
+        onButtonPress={() => setErrorModal({ visible: false, message: "" })}
       />
     </View>
   );

@@ -2,22 +2,24 @@ import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
-  FlatList,
   TouchableOpacity,
   StyleSheet,
   Alert,
   Animated,
   PanResponder,
-  ScrollView,
-  Platform,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { Shot, Bean, Machine } from "../database/UniversalDatabase";
+import { Shot } from "../database/UniversalDatabase";
 import SvgIcon from "../components/SvgIcon";
 import CustomPicker from "../components/CustomPicker";
+import ScrollableListView from "../components/ScrollableListView";
+import EmptyEntity from "../components/EmptyEntity";
+import ConfirmationModal from "../components/ConfirmationModal";
+import SuccessModal from "../components/SuccessModal";
+import ErrorModal from "../components/ErrorModal";
 import { colors } from "../themes/colors";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList>;
@@ -245,6 +247,23 @@ const HomeScreen: React.FC = () => {
   const [selectedMachineId, setSelectedMachineId] = useState<string>("");
   const [hasUserInteracted, setHasUserInteracted] = useState<boolean>(false);
 
+  // Delete confirmation state
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    visible: boolean;
+    shotId: string | null;
+  }>({ visible: false, shotId: null });
+
+  // Success modal state
+  const [successModal, setSuccessModal] = useState<{
+    visible: boolean;
+    newShotId: string | null;
+  }>({ visible: false, newShotId: null });
+
+  const [errorModal, setErrorModal] = useState<{
+    visible: boolean;
+    message: string;
+  }>({ visible: false, message: "" });
+
   useEffect(() => {
     loadShots();
   }, [loadShots]);
@@ -305,7 +324,7 @@ const HomeScreen: React.FC = () => {
     try {
       await toggleBestShot(shotId);
     } catch (error) {
-      Alert.alert("Error", "Failed to update best shot");
+      setErrorModal({ visible: true, message: "Failed to update best shot" });
     }
   };
 
@@ -313,43 +332,41 @@ const HomeScreen: React.FC = () => {
     try {
       const newShotId = await duplicateShot(shotId);
       if (newShotId) {
-        Alert.alert(
-          "One More Shot",
-          "Shot duplicated successfully! You can now modify the parameters.",
-          [
-            { text: "Cancel", style: "cancel" },
-            {
-              text: "Edit",
-              onPress: () =>
-                navigation.navigate("NewShot", { duplicateFrom: newShotId }),
-            },
-          ]
-        );
+        setSuccessModal({ visible: true, newShotId });
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to duplicate shot");
+      setErrorModal({ visible: true, message: "Failed to duplicate shot" });
     }
   };
 
+  const handleEditDuplicatedShot = () => {
+    if (successModal.newShotId) {
+      navigation.navigate("NewShot", { duplicateFrom: successModal.newShotId });
+    }
+    setSuccessModal({ visible: false, newShotId: null });
+  };
+
+  const handleCancelSuccess = () => {
+    setSuccessModal({ visible: false, newShotId: null });
+  };
+
   const handleDelete = (shotId: string) => {
-    Alert.alert(
-      "Delete Shot",
-      "Are you sure you want to delete this shot? This action cannot be undone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteShot(shotId);
-            } catch (error) {
-              Alert.alert("Error", "Failed to delete shot");
-            }
-          },
-        },
-      ]
-    );
+    setDeleteConfirmation({ visible: true, shotId });
+  };
+
+  const confirmDeleteShot = async () => {
+    if (deleteConfirmation.shotId) {
+      try {
+        await deleteShot(deleteConfirmation.shotId);
+      } catch (error) {
+        setErrorModal({ visible: true, message: "Failed to delete shot" });
+      }
+    }
+    setDeleteConfirmation({ visible: false, shotId: null });
+  };
+
+  const cancelDeleteShot = () => {
+    setDeleteConfirmation({ visible: false, shotId: null });
   };
 
   const handleNewShot = () => {
@@ -429,43 +446,57 @@ const HomeScreen: React.FC = () => {
         </View>
       )}
 
-      {shots.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <SvgIcon name="coffee" size={64} />
-          <Text style={styles.emptyTitle}>No shots yet</Text>
-          <Text style={styles.emptySubtitle}>
-            Log your first espresso shot and begin your extraction journey.
-          </Text>
-          <TouchableOpacity style={styles.emptyButton} onPress={handleNewShot}>
-            <Text style={styles.emptyButtonText}>Record Your First Shot</Text>
-          </TouchableOpacity>
-        </View>
-      ) : filteredShots.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <SvgIcon name="coffee" size={64} />
-          <Text style={styles.emptyTitle}>No shots match filters</Text>
-          <Text style={styles.emptySubtitle}>
-            Try adjusting your filter selections to see more shots.
-          </Text>
-        </View>
-      ) : Platform.OS === "web" ? (
-        <ScrollView
-          style={styles.scrollContainer}
-          contentContainerStyle={styles.listContainer}
-        >
-          {filteredShots.map((shot) => (
-            <View key={shot.id}>{renderShot({ item: shot })}</View>
-          ))}
-        </ScrollView>
-      ) : (
-        <FlatList
-          data={filteredShots}
-          renderItem={renderShot}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+      <ScrollableListView
+        data={filteredShots}
+        renderItem={renderShot}
+        keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        emptyComponent={
+          <EmptyEntity
+            icon="coffee"
+            title={
+              shots.length === 0 ? "No shots yet" : "No shots match filters"
+            }
+            subtitle={
+              shots.length === 0
+                ? "Log your first espresso shot and begin your extraction journey."
+                : "Try adjusting your filter selections to see more shots."
+            }
+            buttonText={
+              shots.length === 0 ? "Record Your First Shot" : undefined
+            }
+            onButtonPress={shots.length === 0 ? handleNewShot : undefined}
+          />
+        }
+      />
+
+      <ConfirmationModal
+        visible={deleteConfirmation.visible}
+        title="Delete Shot"
+        message="Are you sure you want to delete this shot? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={confirmDeleteShot}
+        onCancel={cancelDeleteShot}
+        destructive={true}
+      />
+
+      <SuccessModal
+        visible={successModal.visible}
+        title="One More Shot"
+        message="Shot duplicated successfully! You can now modify the parameters."
+        primaryButtonText="Edit"
+        secondaryButtonText="Cancel"
+        onPrimaryPress={handleEditDuplicatedShot}
+        onSecondaryPress={handleCancelSuccess}
+        icon="add-notes"
+      />
+
+      <ErrorModal
+        visible={errorModal.visible}
+        message={errorModal.message}
+        onButtonPress={() => setErrorModal({ visible: false, message: "" })}
+      />
     </View>
   );
 };

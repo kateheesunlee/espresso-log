@@ -21,10 +21,12 @@ export default function App() {
   }
 
   return (
-    <>
+    <View
+      style={{ flex: 1, overflow: "scroll", backgroundColor: colors.bgLight }}
+    >
       <AppNavigator />
       <StatusBar style="light" backgroundColor={colors.primary} />
-    </>
+    </View>
   );
 }
 
