@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   Animated,
   PanResponder,
+  Platform,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -40,42 +40,45 @@ const ShotItem: React.FC<ShotItemProps> = ({
   onDelete,
 }) => {
   const { allBeans, allMachines } = useStore();
-  const [translateX] = useState(new Animated.Value(0));
+  const translateX = useRef(new Animated.Value(0));
   const [showDeleteButton, setShowDeleteButton] = useState(false);
+  const [isPanning, setIsPanning] = useState(false);
 
   // Cleanup animation on unmount
   React.useEffect(() => {
     return () => {
-      translateX.stopAnimation();
+      translateX.current.stopAnimation();
     };
   }, [translateX]);
 
   const hideDeleteButtonAnimation = useCallback(() => {
     setShowDeleteButton(false);
-    translateX.stopAnimation();
-    Animated.spring(translateX, {
+    Animated.spring(translateX.current, {
       toValue: 0,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== "web",
       tension: 100,
       friction: 8,
     }).start();
-  }, [translateX]);
+  }, []);
 
   const showDeleteButtonAnimation = useCallback(() => {
     setShowDeleteButton(true);
-    translateX.stopAnimation();
-    Animated.spring(translateX, {
+    Animated.spring(translateX.current, {
       toValue: -80,
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== "web",
       tension: 100,
       friction: 8,
     }).start();
-  }, [translateX]);
+  }, []);
 
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: (_, gestureState) => {
       const threshold = 5;
-      return Math.abs(gestureState.dx) > threshold;
+      const shouldPan = Math.abs(gestureState.dx) > threshold;
+      if (shouldPan) {
+        setIsPanning(true);
+      }
+      return shouldPan;
     },
     onPanResponderMove: (_, gestureState) => {
       if (gestureState.dx < 0) {
@@ -85,6 +88,12 @@ const ShotItem: React.FC<ShotItemProps> = ({
         // Swipe right - hide delete button
         hideDeleteButtonAnimation();
       }
+    },
+    onPanResponderRelease: () => {
+      // Reset panning state after a short delay to prevent onPress from firing
+      setTimeout(() => {
+        setIsPanning(false);
+      }, 100);
     },
   });
 
@@ -121,7 +130,7 @@ const ShotItem: React.FC<ShotItemProps> = ({
         style={[
           styles.shotItem,
           {
-            transform: [{ translateX }],
+            transform: [{ translateX: translateX.current }],
           },
         ]}
         {...panResponder.panHandlers}
@@ -129,6 +138,11 @@ const ShotItem: React.FC<ShotItemProps> = ({
         <TouchableOpacity
           style={styles.shotItemContent}
           onPress={() => {
+            // Don't trigger onPress if we were panning
+            if (isPanning) {
+              return;
+            }
+
             if (showDeleteButton) {
               hideDeleteButtonAnimation();
             } else {
