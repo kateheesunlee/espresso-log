@@ -25,6 +25,8 @@ interface CustomPickerProps {
   placeholder?: string;
   onCreateNew?: () => void;
   createButtonText?: string;
+  compact?: boolean;
+  showClearButton?: boolean;
 }
 
 const CustomPicker: React.FC<CustomPickerProps> = ({
@@ -36,6 +38,8 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
   placeholder = `Select ${label}`,
   onCreateNew,
   createButtonText,
+  compact = false,
+  showClearButton = false,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -59,21 +63,72 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>
-        {label} {required && <Text style={styles.required}>*</Text>}
-      </Text>
+      {compact ? (
+        <View style={styles.rowContainer}>
+          <Text style={styles.compactLabel}>
+            {label} {required && <Text style={styles.required}>*</Text>}
+          </Text>
 
-      <TouchableOpacity
-        style={styles.pickerButton}
-        onPress={() => setIsVisible(true)}
-      >
-        <Text
-          style={[styles.pickerText, !selectedOption && styles.placeholderText]}
-        >
-          {selectedOption ? selectedOption.name : placeholder}
-        </Text>
-        <Ionicons name="chevron-down" size={20} color={colors.textMedium} />
-      </TouchableOpacity>
+          <View style={styles.compactInputContainer}>
+            <TouchableOpacity
+              style={styles.compactPickerButton}
+              onPress={() => setIsVisible(true)}
+            >
+              <Text
+                style={[
+                  styles.compactPickerText,
+                  !selectedOption && styles.placeholderText,
+                ]}
+              >
+                {selectedOption ? selectedOption.name : placeholder}
+              </Text>
+              <Ionicons
+                name="chevron-down"
+                size={16}
+                color={colors.textMedium}
+              />
+            </TouchableOpacity>
+
+            {showClearButton && (
+              <TouchableOpacity
+                disabled={!value}
+                style={[
+                  styles.clearButton,
+                  !value && styles.clearButtonDisabled,
+                ]}
+                onPress={() => onValueChange("")}
+              >
+                <Ionicons
+                  name="close-circle"
+                  size={18}
+                  color={!value ? colors.textLight : colors.textMedium}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      ) : (
+        <>
+          <Text style={styles.label}>
+            {label} {required && <Text style={styles.required}>*</Text>}
+          </Text>
+
+          <TouchableOpacity
+            style={styles.pickerButton}
+            onPress={() => setIsVisible(true)}
+          >
+            <Text
+              style={[
+                styles.pickerText,
+                !selectedOption && styles.placeholderText,
+              ]}
+            >
+              {selectedOption ? selectedOption.name : placeholder}
+            </Text>
+            <Ionicons name="chevron-down" size={20} color={colors.textMedium} />
+          </TouchableOpacity>
+        </>
+      )}
 
       <Modal
         visible={isVisible}
@@ -172,6 +227,50 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
   },
+  // Compact styles (for filters)
+  rowContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  compactLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.textDark,
+    marginRight: 12,
+    minWidth: 60,
+  },
+  compactInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  compactPickerButton: {
+    backgroundColor: colors.white,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    minHeight: 32,
+    flex: 1,
+  },
+  compactPickerText: {
+    fontSize: 14,
+    color: colors.textDark,
+    flex: 1,
+  },
+  clearButton: {
+    marginLeft: 6,
+    padding: 2,
+  },
+  clearButtonDisabled: {
+    opacity: 0.3,
+  },
+  // Original styles (for forms)
   label: {
     fontSize: 16,
     fontWeight: "600",

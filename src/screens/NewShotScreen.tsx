@@ -88,10 +88,21 @@ const NewShotScreen: React.FC = () => {
     if (route.params?.duplicateFrom && shots.length > 0) {
       loadShotData(route.params.duplicateFrom);
     } else {
-      // For new shots, set the latest bean and machine
-      setLatestBeanAndMachine();
+      // For new shots, use selected filters or set the latest bean and machine
+      if (route.params?.selectedBeanId || route.params?.selectedMachineId) {
+        setSelectedFilters();
+      } else {
+        setLatestBeanAndMachine();
+      }
     }
-  }, [route.params?.duplicateFrom, shots, beans, machines]);
+  }, [
+    route.params?.duplicateFrom,
+    route.params?.selectedBeanId,
+    route.params?.selectedMachineId,
+    shots,
+    beans,
+    machines,
+  ]);
 
   // Handle returning from bean/machine creation
   useFocusEffect(
@@ -153,6 +164,38 @@ const NewShotScreen: React.FC = () => {
 
     // Set the latest machine (most recently created)
     if (machines.length > 0) {
+      const latestMachine = machines.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )[0];
+      setFormData((prev) => ({ ...prev, machineId: latestMachine.id }));
+    }
+  };
+
+  const setSelectedFilters = () => {
+    // Set the selected bean from filters
+    if (route.params?.selectedBeanId) {
+      setFormData((prev) => ({
+        ...prev,
+        beanId: route.params!.selectedBeanId!,
+      }));
+    } else if (beans.length > 0) {
+      // Fallback to latest bean if no filter selected
+      const latestBean = beans.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )[0];
+      setFormData((prev) => ({ ...prev, beanId: latestBean.id }));
+    }
+
+    // Set the selected machine from filters
+    if (route.params?.selectedMachineId) {
+      setFormData((prev) => ({
+        ...prev,
+        machineId: route.params!.selectedMachineId!,
+      }));
+    } else if (machines.length > 0) {
+      // Fallback to latest machine if no filter selected
       const latestMachine = machines.sort(
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()

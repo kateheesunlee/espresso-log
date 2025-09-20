@@ -15,8 +15,9 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { Shot } from "../database/UniversalDatabase";
+import { Shot, Bean, Machine } from "../database/UniversalDatabase";
 import SvgIcon from "../components/SvgIcon";
+import CustomPicker from "../components/CustomPicker";
 import { colors } from "../themes/colors";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList>;
@@ -228,6 +229,8 @@ const HomeScreen: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const {
     shots,
+    beans,
+    machines,
     isLoading,
     loadShots,
     toggleBestShot,
@@ -235,9 +238,62 @@ const HomeScreen: React.FC = () => {
     deleteShot,
   } = useStore();
 
+  // Filter state
+  const [selectedBeanId, setSelectedBeanId] = useState<string>("");
+  const [selectedMachineId, setSelectedMachineId] = useState<string>("");
+  const [hasUserInteracted, setHasUserInteracted] = useState<boolean>(false);
+
   useEffect(() => {
     loadShots();
   }, [loadShots]);
+
+  // Pre-select filters based on last shot (only if user hasn't interacted)
+  useEffect(() => {
+    if (
+      shots.length > 0 &&
+      beans.length > 0 &&
+      machines.length > 0 &&
+      !hasUserInteracted
+    ) {
+      const lastShot = shots[0]; // Shots are sorted by creation date desc
+
+      // Pre-select bean from last shot
+      if (lastShot.beanId && !selectedBeanId) {
+        setSelectedBeanId(lastShot.beanId);
+      }
+
+      // Pre-select machine from last shot
+      if (lastShot.machineId && !selectedMachineId) {
+        setSelectedMachineId(lastShot.machineId);
+      }
+    }
+  }, [
+    shots,
+    beans,
+    machines,
+    selectedBeanId,
+    selectedMachineId,
+    hasUserInteracted,
+  ]);
+
+  // Wrapper functions to track user interaction
+  const handleBeanChange = (beanId: string) => {
+    setSelectedBeanId(beanId);
+    setHasUserInteracted(true);
+  };
+
+  const handleMachineChange = (machineId: string) => {
+    setSelectedMachineId(machineId);
+    setHasUserInteracted(true);
+  };
+
+  // Filter shots based on selected filters
+  const filteredShots = shots.filter((shot) => {
+    const beanMatch = !selectedBeanId || shot.beanId === selectedBeanId;
+    const machineMatch =
+      !selectedMachineId || shot.machineId === selectedMachineId;
+    return beanMatch && machineMatch;
+  });
 
   const handleShotPress = (shotId: string) => {
     navigation.navigate("ShotDetail", { shotId });
@@ -295,7 +351,10 @@ const HomeScreen: React.FC = () => {
   };
 
   const handleNewShot = () => {
-    navigation.navigate("NewShot", {});
+    navigation.navigate("NewShot", {
+      selectedBeanId: selectedBeanId || undefined,
+      selectedMachineId: selectedMachineId || undefined,
+    });
   };
 
   const renderShot = ({ item }: { item: Shot }) => (
@@ -308,6 +367,21 @@ const HomeScreen: React.FC = () => {
     />
   );
 
+  // Prepare picker options
+  const beanOptions = beans.map((bean) => ({
+    id: bean.id,
+    name: bean.name,
+  }));
+
+  const machineOptions = machines.map((machine) => ({
+    id: machine.id,
+    name: machine.nickname || `${machine.brand} ${machine.model}`,
+  }));
+
+  // Check if we should show filters
+  const showBeanFilter = beans.length > 1;
+  const showMachineFilter = machines.length > 1;
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -319,11 +393,39 @@ const HomeScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Your Shots</Text>
+        <Text style={styles.headerTitle}>My Shots</Text>
         <TouchableOpacity style={styles.newShotButton} onPress={handleNewShot}>
           <SvgIcon name="plus" size={24} color={colors.white} />
         </TouchableOpacity>
       </View>
+
+      {/* Filters */}
+      {(showBeanFilter || showMachineFilter) && (
+        <View style={styles.filtersContainer}>
+          {showBeanFilter && (
+            <CustomPicker
+              label="Bean"
+              value={selectedBeanId}
+              options={beanOptions}
+              onValueChange={handleBeanChange}
+              placeholder="All beans"
+              compact={true}
+              showClearButton={true}
+            />
+          )}
+          {showMachineFilter && (
+            <CustomPicker
+              label="Machine"
+              value={selectedMachineId}
+              options={machineOptions}
+              onValueChange={handleMachineChange}
+              placeholder="All machines"
+              compact={true}
+              showClearButton={true}
+            />
+          )}
+        </View>
+      )}
 
       {shots.length === 0 ? (
         <View style={styles.emptyContainer}>
@@ -336,18 +438,26 @@ const HomeScreen: React.FC = () => {
             <Text style={styles.emptyButtonText}>Record Your First Shot</Text>
           </TouchableOpacity>
         </View>
+      ) : filteredShots.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <SvgIcon name="coffee" size={64} />
+          <Text style={styles.emptyTitle}>No shots match filters</Text>
+          <Text style={styles.emptySubtitle}>
+            Try adjusting your filter selections to see more shots.
+          </Text>
+        </View>
       ) : Platform.OS === "web" ? (
         <ScrollView
           style={styles.scrollContainer}
           contentContainerStyle={styles.listContainer}
         >
-          {shots.map((shot) => (
+          {filteredShots.map((shot) => (
             <View key={shot.id}>{renderShot({ item: shot })}</View>
           ))}
         </ScrollView>
       ) : (
         <FlatList
-          data={shots}
+          data={filteredShots}
           renderItem={renderShot}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContainer}
@@ -393,6 +503,13 @@ const styles = StyleSheet.create({
     height: 30,
     justifyContent: "center",
     alignItems: "center",
+  },
+  filtersContainer: {
+    backgroundColor: colors.white,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
   },
   emptyContainer: {
     flex: 1,

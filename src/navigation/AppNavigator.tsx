@@ -13,7 +13,11 @@ import { colors } from "../themes/colors";
 export type RootStackParamList = {
   Shots: undefined;
   ShotDetail: { shotId: string };
-  NewShot: { duplicateFrom?: string };
+  NewShot: {
+    duplicateFrom?: string;
+    selectedBeanId?: string;
+    selectedMachineId?: string;
+  };
 };
 
 export type MainTabParamList = {
