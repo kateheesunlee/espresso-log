@@ -2,9 +2,7 @@ import Svg, { Path } from "react-native-svg";
 import { IconProps } from "./types";
 import { colors } from "../../themes/colors";
 
-const StarFilledIcon = ({ size }: IconProps) => {
-  const color = colors.starPrimary;
-  const secondaryColor = colors.starSecondary;
+const StarFilledIcon = ({ size, color, secondaryColor }: IconProps) => {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
       <Path

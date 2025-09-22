@@ -8,12 +8,14 @@ interface StarRatingSliderProps {
   label: string;
   value: number;
   onValueChange: (value: number) => void;
+  disabled?: boolean;
 }
 
 const StarRatingSlider: React.FC<StarRatingSliderProps> = ({
   label,
   value,
   onValueChange,
+  disabled = false,
 }) => {
   const min = 1;
   const max = 5;
@@ -49,6 +51,7 @@ const StarRatingSlider: React.FC<StarRatingSliderProps> = ({
   };
 
   const panGesture = Gesture.Pan()
+    .enabled(!disabled)
     .onStart((event) => {
       // Calculate the value based on the starting position
       const startValue = getValueFromPosition(event.x, sliderWidth.current);
@@ -66,6 +69,7 @@ const StarRatingSlider: React.FC<StarRatingSliderProps> = ({
     });
 
   const handleStarPress = (starValue: number) => {
+    if (disabled) return;
     // If clicking the same star that's already selected, toggle to half value using step
     if (starValue === value) {
       const newValue = value % 1 === 0 ? value - step : value + step;
@@ -84,16 +88,22 @@ const StarRatingSlider: React.FC<StarRatingSliderProps> = ({
         key={starValue}
         style={styles.starContainer}
         onPress={() => handleStarPress(starValue)}
-        activeOpacity={0.7}
+        disabled={disabled}
       >
         <SvgIcon
           name={isFilled ? "star_filled" : "star"}
           size={starSize}
-          color={!isFilled ? colors.borderLight : undefined}
+          color={isFilled ? colors.star : colors.borderLight}
+          secondaryColor={isFilled ? colors.starLight : colors.border}
         />
         {isHalfFilled && (
           <View style={styles.halfStarOverlay}>
-            <SvgIcon name="star_filled" size={starSize} />
+            <SvgIcon
+              name="star_filled"
+              size={starSize}
+              color={colors.star}
+              secondaryColor={colors.starLight}
+            />
           </View>
         )}
       </TouchableOpacity>

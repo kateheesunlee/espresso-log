@@ -1,8 +1,10 @@
 {
   "primary": "#8B4513",
-  "secondary": "#D2A679",
-  "starPrimary": "#FFCC00",
-  "starSecondary": "#FEDE5F",
+  "primaryLight": "#D2A679",
+  "star": "#FFCC00",
+  "starLight": "#FEDE5F",
+  "heart": "#F16271",
+  "heartLight": "#FF9FA9",
   "error": "#E74C3C",
   "warning": "#F3A412",
   "positive": "#B2CD2C",

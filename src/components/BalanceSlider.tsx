@@ -11,6 +11,7 @@ interface BalanceSliderProps {
   min?: number;
   max?: number;
   step?: number;
+  disabled?: boolean;
 }
 
 const HANDLE_SIZE = 28;
@@ -20,14 +21,27 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
   label,
   value,
   onValueChange,
-  min = -2,
-  max = 2,
-  step = 0.5,
+  min = -1,
+  max = 1,
+  step = 0.1,
+  disabled = false,
 }) => {
   const translateX = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(1)).current;
   const sliderWidth = useRef(0);
   const lastOffset = useRef(0);
+
+  // Determine icon based on value distance from 0 (percentage-based)
+  const getIconName = (val: number) => {
+    const distance = (Math.abs(val) / max) * 100;
+    if (distance <= 10) {
+      return "heart_filled";
+    } else if (distance <= 70) {
+      return "heart_broken_filled";
+    } else {
+      return "heart_broken_2_filled";
+    }
+  };
 
   // Calculate initial position based on value
   const getPositionFromValue = (val: number, width: number) => {
@@ -53,6 +67,7 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
   }, [value, sliderWidth.current]);
 
   const panGesture = Gesture.Pan()
+    .enabled(!disabled)
     .onUpdate((event) => {
       translateX.setValue(lastOffset.current + event.translationX);
     })
@@ -129,7 +144,7 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
                 },
               ]}
             >
-              <SvgIcon name="bean_filled" size={HANDLE_SIZE} />
+              <SvgIcon name={getIconName(value)} size={HANDLE_SIZE} />
             </Animated.View>
           </GestureDetector>
         </View>
@@ -137,7 +152,7 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
         {/* Quality indicators below track
          */}
         <View style={styles.qualityIndicators}>
-          {["Too low", "Balanced", "Too high"].map((level) => (
+          {["Too weak", "Balanced", "Too strong"].map((level) => (
             <Text key={level} style={styles.qualityIndicator}>
               {level}
             </Text>

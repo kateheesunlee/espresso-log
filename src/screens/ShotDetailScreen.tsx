@@ -14,10 +14,17 @@ import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { Shot } from "../database/UniversalDatabase";
 import SvgIcon from "../components/SvgIcon";
+import BalanceSlider from "../components/BalanceSlider";
+import StarRatingSlider from "../components/StarRatingSlider";
 import ConfirmationModal from "../components/ConfirmationModal";
 import SuccessModal from "../components/SuccessModal";
 import ErrorModal from "../components/ErrorModal";
 import { colors } from "../themes/colors";
+import ScaleIcon from "../components/icons/ScaleIcon";
+import WaterIcon from "../components/icons/WaterIcon";
+import TimerIcon from "../components/icons/TimerIcon";
+import RatioIcon from "../components/icons/RatioIcon";
+import DialIcon from "../components/icons/DialIcon";
 
 type ShotDetailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -141,37 +148,17 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
     });
   };
 
-  const renderStars = (rating: number) => {
+  const renderBalanceSlider = (label: string, value: number | undefined) => {
     return (
-      <View style={styles.starsContainer}>
-        {[1, 2, 3, 4, 5].map((star) => (
-          <SvgIcon
-            key={star}
-            name={star <= rating ? "star_filled" : "star"}
-            size={24}
-          />
-        ))}
-      </View>
-    );
-  };
-
-  const renderRatingBar = (label: string, value: number | undefined) => {
-    if (value === undefined) return null;
-
-    return (
-      <View style={styles.ratingBar}>
-        <Text style={styles.ratingLabel}>{label}</Text>
-        <View style={styles.ratingContainer}>
-          {[1, 2, 3, 4, 5].map((level) => (
-            <View key={level} style={styles.ratingBean}>
-              <SvgIcon
-                name={level <= value ? "bean_filled" : "bean"}
-                size={16}
-              />
-            </View>
-          ))}
-        </View>
-      </View>
+      <BalanceSlider
+        label={label}
+        value={value ?? 0}
+        onValueChange={() => {}} // No-op since it's disabled
+        disabled={true}
+        min={-2}
+        max={2}
+        step={0.5}
+      />
     );
   };
 
@@ -211,33 +198,48 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
           <Text style={styles.sectionTitle}>Brew Parameters</Text>
           <View style={styles.metricsGrid}>
             <View style={styles.metricCard}>
-              <Text style={styles.metricValue}>{shot.dose_g}</Text>
-              <Text style={styles.metricLabel}>Dose (g)</Text>
+              <ScaleIcon size={36} color={colors.primary} />
+              <View style={styles.metricTextContainer}>
+                <Text style={styles.metricLabel}>Dose</Text>
+                <Text style={styles.metricValue}>{shot.dose_g}g</Text>
+              </View>
             </View>
             <View style={styles.metricCard}>
-              <Text style={styles.metricValue}>{shot.yield_g}</Text>
-              <Text style={styles.metricLabel}>Yield (g)</Text>
+              <WaterIcon size={36} color={colors.primary} />
+              <View style={styles.metricTextContainer}>
+                <Text style={styles.metricLabel}>Yield</Text>
+                <Text style={styles.metricValue}>{shot.yield_g}g</Text>
+              </View>
             </View>
             <View style={styles.metricCard}>
-              <Text style={styles.metricValue}>{shot.shotTime_s}</Text>
-              <Text style={styles.metricLabel}>Time (s)</Text>
+              <TimerIcon size={36} color={colors.primary} />
+              <View style={styles.metricTextContainer}>
+                <Text style={styles.metricLabel}>Time</Text>
+                <Text style={styles.metricValue}>{shot.shotTime_s}s</Text>
+              </View>
             </View>
             <View style={styles.metricCard}>
-              <Text style={styles.metricValue}>
-                {shot.ratio ? `1:${shot.ratio.toFixed(1)}` : "N/A"}
-              </Text>
-              <Text style={styles.metricLabel}>Ratio</Text>
+              <RatioIcon size={36} color={colors.primary} />
+              <View style={styles.metricTextContainer}>
+                <Text style={styles.metricLabel}>Ratio</Text>
+                <Text style={styles.metricValue}>
+                  {shot.ratio ? `1:${shot.ratio.toFixed(1)}` : "N/A"}
+                </Text>
+              </View>
             </View>
+            {shot.grindSetting && (
+              <View style={styles.metricCard}>
+                <DialIcon size={36} color={colors.primary} />
+                <View style={styles.metricTextContainer}>
+                  <Text style={styles.metricLabel}>Grind</Text>
+                  <Text style={styles.metricValue}>{shot.grindSetting}</Text>
+                </View>
+              </View>
+            )}
           </View>
 
-          {(shot.grindSetting || shot.waterTemp_C || shot.preinfusion_s) && (
+          {(shot.waterTemp_C || shot.preinfusion_s) && (
             <View style={styles.additionalParams}>
-              {shot.grindSetting && (
-                <View style={styles.paramRow}>
-                  <Text style={styles.paramLabel}>Grind Setting:</Text>
-                  <Text style={styles.paramValue}>{shot.grindSetting}</Text>
-                </View>
-              )}
               {shot.waterTemp_C && (
                 <View style={styles.paramRow}>
                   <Text style={styles.paramLabel}>Water Temperature:</Text>
@@ -259,17 +261,20 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
             <Text style={styles.sectionTitle}>Tasting Notes</Text>
             <View style={styles.ratingSection}>
               <View style={styles.overallRating}>
-                <Text style={styles.ratingTitle}>Overall Rating</Text>
-                {renderStars(shot.rating)}
-                <Text style={styles.ratingText}>{shot.rating}/5</Text>
+                <StarRatingSlider
+                  label="Overall Rating"
+                  value={shot.rating}
+                  onValueChange={() => {}} // No-op since it's disabled
+                  disabled={true}
+                />
               </View>
 
               <View style={styles.flavorRatings}>
-                {renderRatingBar("Acidity", shot.acidity)}
-                {renderRatingBar("Sweetness", shot.sweetness)}
-                {renderRatingBar("Bitterness", shot.bitterness)}
-                {renderRatingBar("Body", shot.body)}
-                {renderRatingBar("Aftertaste", shot.aftertaste)}
+                {renderBalanceSlider("Acidity", shot.acidity)}
+                {renderBalanceSlider("Sweetness", shot.sweetness)}
+                {renderBalanceSlider("Bitterness", shot.bitterness)}
+                {renderBalanceSlider("Body", shot.body)}
+                {renderBalanceSlider("Aftertaste", shot.aftertaste)}
               </View>
             </View>
           </View>
@@ -411,19 +416,25 @@ const styles = StyleSheet.create({
     backgroundColor: colors.hover,
     borderRadius: 12,
     padding: 16,
+    flexDirection: "row",
     alignItems: "center",
     width: "48%",
     marginBottom: 12,
   },
+  metricTextContainer: {
+    marginLeft: 12,
+    flex: 1,
+  },
   metricValue: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
     color: colors.primary,
-    marginBottom: 4,
+    marginTop: 2,
   },
   metricLabel: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.textMedium,
+    opacity: 0.8,
   },
   additionalParams: {
     marginTop: 16,
@@ -458,11 +469,6 @@ const styles = StyleSheet.create({
     color: colors.textDark,
     marginBottom: 8,
   },
-  starsContainer: {
-    flexDirection: "row",
-    marginBottom: 8,
-    gap: 8,
-  },
   ratingText: {
     fontSize: 16,
     color: colors.textMedium,
@@ -484,24 +490,6 @@ const styles = StyleSheet.create({
   },
   flavorRatings: {
     marginTop: 16,
-  },
-  ratingBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  ratingLabel: {
-    fontSize: 16,
-    color: colors.textMedium,
-    width: 80,
-    marginRight: 16,
-  },
-  ratingContainer: {
-    flexDirection: "row",
-    flex: 1,
-  },
-  ratingBean: {
-    marginRight: 8,
   },
   notesText: {
     fontSize: 16,

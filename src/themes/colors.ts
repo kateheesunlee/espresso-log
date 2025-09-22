@@ -3,9 +3,11 @@ import colorPalette from "./colorPalette.json";
 // Export colors from the palette with TypeScript types
 export const colors = {
   primary: colorPalette.primary,
-  secondary: colorPalette.secondary,
-  starPrimary: colorPalette.starPrimary,
-  starSecondary: colorPalette.starSecondary,
+  primaryLight: colorPalette.primaryLight,
+  star: colorPalette.star,
+  starLight: colorPalette.starLight,
+  heart: colorPalette.heart,
+  heartLight: colorPalette.heartLight,
   error: colorPalette.error,
   warning: colorPalette.warning,
   positive: colorPalette.positive,

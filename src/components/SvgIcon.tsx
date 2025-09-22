@@ -13,6 +13,12 @@ import CoffeemakerFilledIcon from "./icons/CoffeemakerFilledIcon";
 import CopyIcon from "./icons/CopyIcon";
 import DeleteIcon from "./icons/DeleteIcon";
 import EditIcon from "./icons/EditIcon";
+import HeartBroken2FilledIcon from "./icons/HeartBroken2FilledIcon";
+import HeartBroken2Icon from "./icons/HeartBroken2Icon";
+import HeartBrokenFilledIcon from "./icons/HeartBrokenFilledIcon";
+import HeartBrokenIcon from "./icons/HeartBrokenIcon";
+import HeartFilledIcon from "./icons/HeartFilledIcon";
+import HeartIcon from "./icons/HeartIcon";
 import NoteFilledIcon from "./icons/NoteFilledIcon";
 import PlusIcon from "./icons/PlusIcon";
 import SendIcon from "./icons/SendIcon";
@@ -34,6 +40,12 @@ const ICONS = {
   copy: CopyIcon,
   delete: DeleteIcon,
   edit: EditIcon,
+  heart: HeartIcon,
+  heart_broken: HeartBrokenIcon,
+  heart_broken_2: HeartBroken2Icon,
+  heart_broken_2_filled: HeartBroken2FilledIcon,
+  heart_broken_filled: HeartBrokenFilledIcon,
+  heart_filled: HeartFilledIcon,
   note_filled: NoteFilledIcon,
   plus: PlusIcon,
   send: SendIcon,
@@ -57,7 +69,7 @@ export default function SvgIcon({
   name,
   size = 24,
   color = colors.primary,
-  secondaryColor = colors.secondary,
+  secondaryColor = colors.primaryLight,
 }: Props) {
   const C = ICONS[name];
 

@@ -462,6 +462,13 @@ const NewShotScreen: React.FC = () => {
 
           <Text style={styles.sectionTitle}>Brew Parameters</Text>
 
+          {renderTextInput(
+            "Grind Setting",
+            formData.grindSetting,
+            (text) => handleInputChange("grindSetting", text),
+            "e.g., 3.5, Fine, etc."
+          )}
+
           {renderNumberInput(
             "Dose",
             formData.dose_g,
@@ -498,13 +505,6 @@ const NewShotScreen: React.FC = () => {
               editable={false}
             />
           </View>
-
-          {renderTextInput(
-            "Grind Setting",
-            formData.grindSetting,
-            (text) => handleInputChange("grindSetting", text),
-            "e.g., 3.5, Fine, etc."
-          )}
 
           {renderNumberInput(
             "Water Temperature",

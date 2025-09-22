@@ -21,6 +21,11 @@ import ConfirmationModal from "../components/ConfirmationModal";
 import SuccessModal from "../components/SuccessModal";
 import ErrorModal from "../components/ErrorModal";
 import { colors } from "../themes/colors";
+import ScaleIcon from "../components/icons/ScaleIcon";
+import WaterIcon from "../components/icons/WaterIcon";
+import TimerIcon from "../components/icons/TimerIcon";
+import RatioIcon from "../components/icons/RatioIcon";
+import DialIcon from "../components/icons/DialIcon";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -182,23 +187,29 @@ const ShotItem: React.FC<ShotItemProps> = ({
 
           <View style={styles.shotMetrics}>
             <View style={styles.metric}>
-              <Text style={styles.metricLabel}>Dose</Text>
+              <ScaleIcon size={20} color={colors.textSecondary} />
               <Text style={styles.metricValue}>{shot.dose_g}g</Text>
             </View>
             <View style={styles.metric}>
-              <Text style={styles.metricLabel}>Yield</Text>
+              <WaterIcon size={20} color={colors.textSecondary} />
               <Text style={styles.metricValue}>{shot.yield_g}g</Text>
             </View>
             <View style={styles.metric}>
-              <Text style={styles.metricLabel}>Time</Text>
+              <TimerIcon size={20} color={colors.textSecondary} />
               <Text style={styles.metricValue}>{shot.shotTime_s}s</Text>
             </View>
             <View style={styles.metric}>
-              <Text style={styles.metricLabel}>Ratio</Text>
+              <RatioIcon size={20} color={colors.textSecondary} />
               <Text style={styles.metricValue}>
                 {shot.ratio ? `1:${shot.ratio.toFixed(1)}` : "N/A"}
               </Text>
             </View>
+            {shot.grindSetting && (
+              <View style={styles.metric}>
+                <DialIcon size={20} color={colors.textSecondary} />
+                <Text style={styles.metricValue}>{shot.grindSetting}</Text>
+              </View>
+            )}
           </View>
 
           {shot.rating && (
@@ -663,15 +674,11 @@ const styles = StyleSheet.create({
   metric: {
     alignItems: "center",
   },
-  metricLabel: {
-    fontSize: 12,
-    color: colors.textMedium,
-    marginBottom: 4,
-  },
   metricValue: {
     fontSize: 16,
     fontWeight: "600",
     color: colors.textDark,
+    marginTop: 8,
   },
   ratingContainer: {
     flexDirection: "row",
