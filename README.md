@@ -25,7 +25,7 @@ A React Native app for logging espresso shots with detailed extraction parameter
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/espresso-log.git
+   git clone https://github.com/kateheesunlee/espresso-log.git
    cd espresso-log
    ```
 
