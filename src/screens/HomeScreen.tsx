@@ -300,6 +300,22 @@ const HomeScreen: React.FC = () => {
     hasUserInteracted,
   ]);
 
+  // Clear filters when selected bean or machine is deleted
+  useEffect(() => {
+    if (selectedBeanId && !beans.find((bean) => bean.id === selectedBeanId)) {
+      setSelectedBeanId("");
+    }
+  }, [beans, selectedBeanId]);
+
+  useEffect(() => {
+    if (
+      selectedMachineId &&
+      !machines.find((machine) => machine.id === selectedMachineId)
+    ) {
+      setSelectedMachineId("");
+    }
+  }, [machines, selectedMachineId]);
+
   // Wrapper functions to track user interaction
   const handleBeanChange = (beanId: string) => {
     setSelectedBeanId(beanId);
