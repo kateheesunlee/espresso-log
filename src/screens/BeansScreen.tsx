@@ -11,7 +11,7 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { useStore } from "../store/useStore";
-import { Bean } from "../database/UniversalDatabase";
+import { Bean, RoastLevel } from "../database/UniversalDatabase";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import { MainTabParamList } from "../navigation/AppNavigator";
 import SvgIcon from "../components/SvgIcon";
@@ -25,6 +25,7 @@ import ScrollableListView from "../components/ScrollableListView";
 import EmptyEntity from "../components/EmptyEntity";
 import ConfirmationModal from "../components/ConfirmationModal";
 import ErrorModal from "../components/ErrorModal";
+import RoastingSlider from "../components/RoastingSlider";
 import { showImagePickerOptions } from "../utils/imageUtils";
 import { colors } from "../themes/colors";
 
@@ -32,7 +33,7 @@ interface BeanFormData {
   name: string;
   origin: string;
   process: string;
-  roastLevel: string;
+  roastLevel: RoastLevel;
   roastDate: string;
   notes: string;
   imageUri?: string;
@@ -84,7 +85,7 @@ const BeanFormModal: React.FC<{
     name: "",
     origin: "",
     process: "",
-    roastLevel: "",
+    roastLevel: RoastLevel.MEDIUM,
     roastDate: "",
     notes: "",
     imageUri: "",
@@ -96,7 +97,7 @@ const BeanFormModal: React.FC<{
         name: bean.name,
         origin: bean.origin || "",
         process: bean.process || "",
-        roastLevel: bean.roastLevel || "",
+        roastLevel: bean.roastLevel || RoastLevel.MEDIUM,
         roastDate: bean.roastDate || "",
         notes: bean.notes || "",
         imageUri: bean.imageUri || "",
@@ -106,7 +107,7 @@ const BeanFormModal: React.FC<{
         name: "",
         origin: "",
         process: "",
-        roastLevel: "",
+        roastLevel: RoastLevel.MEDIUM,
         roastDate: "",
         notes: "",
         imageUri: "",
@@ -231,12 +232,13 @@ const BeanFormModal: React.FC<{
             "e.g., Washed, Natural, Honey"
           )}
 
-          {renderInput(
-            "Roast Level",
-            formData.roastLevel,
-            (text) => setFormData((prev) => ({ ...prev, roastLevel: text })),
-            "e.g., Light, Medium, Dark"
-          )}
+          <RoastingSlider
+            label="Roast Level"
+            value={formData.roastLevel || RoastLevel.MEDIUM}
+            onValueChange={(value) =>
+              setFormData((prev) => ({ ...prev, roastLevel: value }))
+            }
+          />
 
           {renderInput(
             "Roast Date",

@@ -14,5 +14,15 @@
   "textMedium": "#666",
   "textLight": "#999",
   "bgLight": "#f5f5f5",
-  "borderLight": "#e0e0e0"
+  "borderLight": "#e0e0e0",
+  "roastingLight": "#C7962E",
+  "roastingLight_Light": "#E9C983",
+  "roastingMediumLight": "#AF7427",
+  "roastingMediumLight_Light": "#EABF7F",
+  "roastingMedium": "#8B4513",
+  "roastingMedium_Light": "#D2A679",
+  "roastingMediumDark": "#713910",
+  "roastingMediumDark_Light": "#B48A5F",
+  "roastingDark": "#4A270F",
+  "roastingDark_Light": "#A18051"
 }

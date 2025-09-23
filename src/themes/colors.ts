@@ -19,6 +19,18 @@ export const colors = {
   bgLight: colorPalette.bgLight,
   borderLight: colorPalette.borderLight,
 
+  // Roasting colors
+  roastingLight: colorPalette.roastingLight,
+  roastingLight_Light: colorPalette.roastingLight_Light,
+  roastingMediumLight: colorPalette.roastingMediumLight,
+  roastingMediumLight_Light: colorPalette.roastingMediumLight_Light,
+  roastingMedium: colorPalette.roastingMedium,
+  roastingMedium_Light: colorPalette.roastingMedium_Light,
+  roastingMediumDark: colorPalette.roastingMediumDark,
+  roastingMediumDark_Light: colorPalette.roastingMediumDark_Light,
+  roastingDark: colorPalette.roastingDark,
+  roastingDark_Light: colorPalette.roastingDark_Light,
+
   // Additional commonly used colors
   white: "#ffffff",
   black: "#000000",

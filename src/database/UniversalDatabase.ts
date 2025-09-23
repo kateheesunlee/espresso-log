@@ -1,6 +1,14 @@
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+export enum RoastLevel {
+  LIGHT = "light",
+  MEDIUM_LIGHT = "medium-light",
+  MEDIUM = "medium",
+  MEDIUM_DARK = "medium-dark",
+  DARK = "dark",
+}
+
 export interface User {
   id: string;
   displayName?: string;
@@ -25,7 +33,7 @@ export interface Bean {
   name: string;
   origin?: string;
   process?: string;
-  roastLevel?: string;
+  roastLevel?: RoastLevel;
   roastDate?: string;
   aromaTags?: string; // JSON string
   notes?: string;
