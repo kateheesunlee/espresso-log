@@ -50,10 +50,17 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
   const sliderWidth = useRef(0);
   const lastOffset = useRef(0);
 
+  // Helper function to get a valid roast level, defaulting to Medium if not found
+  const getValidRoastLevel = (val: RoastLevel): RoastLevel => {
+    return ROASTING_LEVELS.includes(val) ? val : RoastLevel.MEDIUM;
+  };
+
   // Calculate initial position based on value
   const getPositionFromValue = (val: RoastLevel, width: number) => {
     const index = ROASTING_LEVELS.indexOf(val);
-    const normalizedValue = index / (ROASTING_LEVELS.length - 1);
+    // If value is not found, default to Medium (index 2)
+    const validIndex = index === -1 ? 2 : index;
+    const normalizedValue = validIndex / (ROASTING_LEVELS.length - 1);
     return normalizedValue * (width - HANDLE_SIZE);
   };
 
@@ -159,8 +166,10 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
               <SvgIcon
                 name="bean_filled"
                 size={HANDLE_SIZE}
-                color={roastingColorMap[value]}
-                secondaryColor={roastingColorMapLight[value]}
+                color={roastingColorMap[getValidRoastLevel(value)]}
+                secondaryColor={
+                  roastingColorMapLight[getValidRoastLevel(value)]
+                }
               />
             </Animated.View>
           </GestureDetector>
