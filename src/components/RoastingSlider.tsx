@@ -39,14 +39,6 @@ const roastingColorMapLight = {
   [RoastLevel.DARK]: colors.roastingDark_Light,
 };
 
-const roastingLabelMap = {
-  [RoastLevel.LIGHT]: "Light",
-  [RoastLevel.MEDIUM_LIGHT]: "Medium Light",
-  [RoastLevel.MEDIUM]: "Medium",
-  [RoastLevel.MEDIUM_DARK]: "Medium Dark",
-  [RoastLevel.DARK]: "Dark",
-};
-
 const RoastingSlider: React.FC<RoastingSliderProps> = ({
   label,
   value,
@@ -178,7 +170,7 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
         <View style={styles.roastingIndicators}>
           {ROASTING_LEVELS.map((level) => (
             <Text key={level} style={styles.roastingIndicator}>
-              {roastingLabelMap[level]}
+              {level}
             </Text>
           ))}
         </View>

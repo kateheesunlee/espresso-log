@@ -2,11 +2,11 @@ import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export enum RoastLevel {
-  LIGHT = "light",
-  MEDIUM_LIGHT = "medium-light",
-  MEDIUM = "medium",
-  MEDIUM_DARK = "medium-dark",
-  DARK = "dark",
+  LIGHT = "Light",
+  MEDIUM_LIGHT = "Medium Light",
+  MEDIUM = "Medium",
+  MEDIUM_DARK = "Medium Dark",
+  DARK = "Dark",
 }
 
 export interface User {
