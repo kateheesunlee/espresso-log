@@ -64,16 +64,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  editOverlay: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    width: "40%",
-    height: "40%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
 });
 
 export default Avatar;

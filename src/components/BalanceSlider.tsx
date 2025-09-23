@@ -178,19 +178,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: colors.textDark,
   },
-  currentValue: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: colors.primary,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    minWidth: 24,
-    textAlign: "center",
-  },
   sliderContainer: {
     marginBottom: 8,
   },
@@ -221,32 +208,6 @@ const styles = StyleSheet.create({
     height: HANDLE_SIZE,
     justifyContent: "center",
     alignItems: "center",
-  },
-  handleInner: {
-    width: HANDLE_SIZE / 1.5,
-    height: HANDLE_SIZE,
-    borderRadius: HANDLE_SIZE / 2,
-    backgroundColor: colors.white,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  coffeeBeanIcon: {
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
   },
 });
 

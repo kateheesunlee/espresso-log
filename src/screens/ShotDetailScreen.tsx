@@ -196,9 +196,15 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
             <Text style={styles.shotDate}>{formatDate(shot.createdAt)}</Text>
           </View>
           {shot.isFavorite && (
-            <View style={styles.bestBadge}>
-              <SvgIcon name="star_filled" size={24} />
-              <Text style={styles.bestText}>FAVORITE</Text>
+            <View style={styles.favoriteBadge}>
+              <SvgIcon
+                name="heart_filled"
+                size={24}
+                color={shot.isFavorite ? colors.heart : colors.primary}
+                secondaryColor={
+                  shot.isFavorite ? colors.heartLight : colors.primaryLight
+                }
+              />
             </View>
           )}
         </View>
@@ -395,18 +401,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.textLight,
   },
-  bestBadge: {
-    backgroundColor: colors.warningBackground,
-    borderRadius: 16,
+  favoriteBadge: {
+    backgroundColor: colors.background,
+    borderRadius: 8,
     padding: 8,
     alignItems: "center",
     minWidth: 60,
-  },
-  bestText: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: colors.warning,
-    marginTop: 2,
   },
   section: {
     backgroundColor: colors.white,
@@ -474,31 +474,6 @@ const styles = StyleSheet.create({
   overallRating: {
     alignItems: "center",
     marginBottom: 20,
-  },
-  ratingTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 8,
-  },
-  ratingText: {
-    fontSize: 16,
-    color: colors.textMedium,
-  },
-  satisfiedBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.successBackground,
-    borderRadius: 20,
-    padding: 8,
-    marginBottom: 20,
-  },
-  satisfiedText: {
-    marginLeft: 8,
-    fontSize: 16,
-    color: colors.success,
-    fontWeight: "600",
   },
   flavorRatings: {
     marginTop: 16,

@@ -58,12 +58,11 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               onPress={onConfirm}
             >
               <Text
-                style={[
-                  styles.buttonText,
+                style={
                   destructive
                     ? styles.destructiveButtonText
-                    : styles.confirmButtonText,
-                ]}
+                    : styles.confirmButtonText
+                }
               >
                 {confirmText}
               </Text>
@@ -148,10 +147,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: colors.white,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "600",
   },
 });
 

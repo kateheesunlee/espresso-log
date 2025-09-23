@@ -439,42 +439,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 32,
-  },
-  emptyTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: colors.textDark,
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  emptySubtitle: {
-    fontSize: 16,
-    color: colors.textMedium,
-    textAlign: "center",
-    marginBottom: 24,
-  },
-  emptyButton: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  emptyButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  listContainer: {
-    padding: 16,
-  },
-  scrollContainer: {
-    flex: 1,
-  },
   modalContainer: {
     flex: 1,
     backgroundColor: colors.bgLight,

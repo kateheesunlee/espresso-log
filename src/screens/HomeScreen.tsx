@@ -582,42 +582,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.borderLight,
   },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 32,
-  },
-  emptyTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: colors.textDark,
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  emptySubtitle: {
-    fontSize: 16,
-    color: colors.textMedium,
-    textAlign: "center",
-    marginBottom: 24,
-  },
-  emptyButton: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  emptyButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  listContainer: {
-    padding: 16,
-  },
-  scrollContainer: {
-    flex: 1,
-  },
   swipeContainer: {
     position: "relative",
     marginBottom: 12,
@@ -687,12 +651,6 @@ const styles = StyleSheet.create({
   shotActions: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  bestBadge: {
-    backgroundColor: colors.warningBackground,
-    borderRadius: 12,
-    padding: 4,
-    marginRight: 8,
   },
   actionButton: {
     padding: 8,
