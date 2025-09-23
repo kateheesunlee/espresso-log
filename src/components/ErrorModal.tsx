@@ -8,6 +8,7 @@ import {
   Platform,
 } from "react-native";
 import { colors } from "../themes/colors";
+import WarningIcon from "./icons/WarningIcon";
 
 interface ErrorModalProps {
   visible: boolean;
@@ -34,7 +35,7 @@ const ErrorModal: React.FC<ErrorModalProps> = ({
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
           <View style={styles.iconContainer}>
-            <Text style={styles.errorIcon}>⚠️</Text>
+            <WarningIcon size={36} color={colors.error} />
           </View>
 
           <Text style={styles.title}>{title}</Text>
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     backgroundColor: colors.white,
     borderRadius: 12,
-    padding: 24,
+    padding: 20,
     width: "85%",
     maxWidth: 350,
     alignItems: "center",
@@ -76,12 +77,7 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   iconContainer: {
-    marginBottom: 16,
-    padding: 12,
-    borderRadius: 50,
-  },
-  errorIcon: {
-    fontSize: 32,
+    marginBottom: 4,
   },
   title: {
     fontSize: 20,
@@ -93,7 +89,7 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 16,
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: 16,
     color: colors.textMedium,
     lineHeight: 22,
   },

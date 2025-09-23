@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Alert,
 } from "react-native";
 import {
   useNavigation,
@@ -224,14 +223,8 @@ const NewShotScreen: React.FC = () => {
     )[0];
     setPendingBeanSelection(latestBean?.id || "");
 
-    // Navigate to Beans tab with modal open
-    navigation.navigate(
-      "Shots" as any,
-      {
-        screen: "Beans",
-        params: { openModal: true },
-      } as any
-    );
+    // Navigate to NewBean screen
+    (navigation as any).navigate("NewBean");
   };
 
   const handleCreateMachine = () => {
@@ -242,14 +235,8 @@ const NewShotScreen: React.FC = () => {
     )[0];
     setPendingMachineSelection(latestMachine?.id || "");
 
-    // Navigate to Machines tab with modal open
-    navigation.navigate(
-      "Shots" as any,
-      {
-        screen: "Machines",
-        params: { openModal: true },
-      } as any
-    );
+    // Navigate to NewMachine screen
+    (navigation as any).navigate("NewMachine");
   };
 
   const handleInputChange = (

@@ -1,38 +1,24 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  TextInput,
-  Platform,
-  KeyboardAvoidingView,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useStore } from "../store/useStore";
 import { Machine } from "../database/UniversalDatabase";
-import { useRoute, RouteProp } from "@react-navigation/native";
+import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { MainTabParamList } from "../navigation/AppNavigator";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../navigation/AppNavigator";
 import SvgIcon from "../components/SvgIcon";
 import Avatar from "../components/Avatar";
 import EntityCard, {
   EntityCardData,
   EntityCardAction,
 } from "../components/EntityCard";
-import KeyboardDismissScrollView from "../components/KeyboardDismissScrollView";
 import ScrollableListView from "../components/ScrollableListView";
 import EmptyEntity from "../components/EmptyEntity";
 import ConfirmationModal from "../components/ConfirmationModal";
 import ErrorModal from "../components/ErrorModal";
-import { showImagePickerOptions } from "../utils/imageUtils";
 import { colors } from "../themes/colors";
 
-interface MachineFormData {
-  brand: string;
-  model: string;
-  nickname: string;
-  imageUri?: string;
-}
+type MachinesScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
 const MachineItem: React.FC<{
   machine: Machine;
@@ -58,173 +44,9 @@ const MachineItem: React.FC<{
   );
 };
 
-const MachineFormModal: React.FC<{
-  visible: boolean;
-  machine: Machine | null;
-  onClose: () => void;
-  onSave: (machineData: MachineFormData) => void;
-  setErrorModal: (errorModal: { visible: boolean; message: string }) => void;
-}> = ({ visible, machine, onClose, onSave, setErrorModal }) => {
-  const [formData, setFormData] = useState<MachineFormData>({
-    brand: "",
-    model: "",
-    nickname: "",
-    imageUri: "",
-  });
-
-  useEffect(() => {
-    if (machine) {
-      setFormData({
-        brand: machine.brand,
-        model: machine.model,
-        nickname: machine.nickname || "",
-        imageUri: machine.imageUri || "",
-      });
-    } else {
-      setFormData({
-        brand: "",
-        model: "",
-        nickname: "",
-        imageUri: "",
-      });
-    }
-  }, [machine]);
-
-  const handleSave = () => {
-    if (!formData.brand.trim() || !formData.model.trim()) {
-      setErrorModal({ visible: true, message: "Brand and model are required" });
-      return;
-    }
-    onSave(formData);
-    onClose();
-  };
-
-  const handleImageCapture = async () => {
-    try {
-      const result = await showImagePickerOptions();
-
-      if (!result.cancelled && result.uri) {
-        // ImagePicker now provides base64 directly
-        setFormData((prev) => ({ ...prev, imageUri: result.uri }));
-      }
-    } catch (error) {
-      console.error("Error capturing image:", error);
-      setErrorModal({
-        visible: true,
-        message: "Failed to capture image. Please try again.",
-      });
-    }
-  };
-
-  const renderInput = (
-    label: string,
-    value: string,
-    onChangeText: (text: string) => void,
-    placeholder: string,
-    required: boolean = false
-  ) => (
-    <View style={styles.inputGroup}>
-      <Text style={styles.label}>
-        {label} {required && <Text style={styles.required}>*</Text>}
-      </Text>
-      <TextInput
-        style={styles.textInput}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-      />
-    </View>
-  );
-
-  return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      presentationStyle="pageSheet"
-    >
-      <KeyboardAvoidingView
-        style={styles.modalContainer}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <View style={styles.modalHeader}>
-          <TouchableOpacity onPress={onClose}>
-            <Text style={styles.cancelButton}>Cancel</Text>
-          </TouchableOpacity>
-          <Text style={styles.modalTitle}>
-            {machine ? "Edit Machine" : "Add New Machine"}
-          </Text>
-          <TouchableOpacity onPress={handleSave}>
-            <Text style={styles.saveButton}>Save</Text>
-          </TouchableOpacity>
-        </View>
-
-        <KeyboardDismissScrollView
-          style={styles.modalContent}
-          contentContainerStyle={styles.modalContentContainer}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Image Section */}
-          <View style={styles.imageSection}>
-            <Text style={styles.sectionLabel}>Machine Photo</Text>
-            <View style={styles.imageContainer}>
-              <Avatar
-                imageUri={formData.imageUri}
-                fallbackIcon="coffeemaker"
-                size={80}
-                onPress={handleImageCapture}
-              />
-              <TouchableOpacity
-                style={styles.imageButton}
-                onPress={handleImageCapture}
-              >
-                <SvgIcon name="camera" size={20} />
-                <Text style={styles.imageButtonText}>
-                  {formData.imageUri ? "Change Photo" : "Add Photo"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {renderInput(
-            "Brand",
-            formData.brand,
-            (text) => setFormData((prev) => ({ ...prev, brand: text })),
-            "e.g., Breville, Gaggia, La Marzocco",
-            true
-          )}
-
-          {renderInput(
-            "Model",
-            formData.model,
-            (text) => setFormData((prev) => ({ ...prev, model: text })),
-            "e.g., Bambino Plus, Classic Pro, Linea Mini",
-            true
-          )}
-
-          {renderInput(
-            "Nickname (Optional)",
-            formData.nickname,
-            (text) => setFormData((prev) => ({ ...prev, nickname: text })),
-            "e.g., My Daily Driver, Office Machine"
-          )}
-        </KeyboardDismissScrollView>
-      </KeyboardAvoidingView>
-    </Modal>
-  );
-};
-
 const MachinesScreen: React.FC = () => {
-  const {
-    machines,
-    isLoading,
-    loadMachines,
-    createMachine,
-    updateMachine,
-    deleteMachine,
-  } = useStore();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingMachine, setEditingMachine] = useState<Machine | null>(null);
+  const { machines, isLoading, loadMachines, deleteMachine } = useStore();
+  const navigation = useNavigation<MachinesScreenNavigationProp>();
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     visible: boolean;
     machine: Machine | null;
@@ -240,7 +62,7 @@ const MachinesScreen: React.FC = () => {
     loadMachines();
   }, [loadMachines]);
 
-  // Auto-open modal if requested from navigation
+  // Auto-open form if requested from navigation
   useEffect(() => {
     if (route.params?.openModal) {
       handleAddMachine();
@@ -248,13 +70,11 @@ const MachinesScreen: React.FC = () => {
   }, [route.params?.openModal]);
 
   const handleAddMachine = () => {
-    setEditingMachine(null);
-    setIsModalVisible(true);
+    (navigation as any).navigate("NewMachine");
   };
 
   const handleEditMachine = (machine: Machine) => {
-    setEditingMachine(machine);
-    setIsModalVisible(true);
+    (navigation as any).navigate("NewMachine", { machineId: machine.id });
   };
 
   const handleDeleteMachine = (machine: Machine) => {
@@ -274,26 +94,6 @@ const MachinesScreen: React.FC = () => {
 
   const cancelDeleteMachine = () => {
     setDeleteConfirmation({ visible: false, machine: null });
-  };
-
-  const handleSaveMachine = async (machineData: MachineFormData) => {
-    try {
-      if (editingMachine) {
-        await updateMachine({
-          ...editingMachine,
-          ...machineData,
-          updatedAt: new Date().toISOString(),
-        });
-      } else {
-        await createMachine({
-          id: `machine-${Date.now()}`,
-          userId: "default-user",
-          ...machineData,
-        });
-      }
-    } catch (error) {
-      setErrorModal({ visible: true, message: "Failed to save machine" });
-    }
   };
 
   const renderMachine = ({ item }: { item: Machine }) => (
@@ -335,14 +135,6 @@ const MachinesScreen: React.FC = () => {
             onButtonPress={handleAddMachine}
           />
         }
-      />
-
-      <MachineFormModal
-        visible={isModalVisible}
-        machine={editingMachine}
-        onClose={() => setIsModalVisible(false)}
-        onSave={handleSaveMachine}
-        setErrorModal={setErrorModal}
       />
 
       <ConfirmationModal
@@ -403,90 +195,6 @@ const styles = StyleSheet.create({
     height: 30,
     justifyContent: "center",
     alignItems: "center",
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: colors.bgLight,
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-  },
-  cancelButton: {
-    fontSize: 16,
-    color: colors.primary,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: colors.textDark,
-  },
-  saveButton: {
-    fontSize: 16,
-    color: colors.primary,
-    fontWeight: "600",
-  },
-  modalContent: {
-    flex: 1,
-  },
-  modalContentContainer: {
-    padding: 16,
-    paddingBottom: 32,
-  },
-  inputGroup: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 8,
-  },
-  required: {
-    color: colors.error,
-  },
-  textInput: {
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
-    padding: 12,
-    fontSize: 16,
-  },
-  imageSection: {
-    marginBottom: 20,
-  },
-  sectionLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 12,
-  },
-  imageContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 16,
-  },
-  imageButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.hover,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
-    gap: 8,
-  },
-  imageButtonText: {
-    fontSize: 14,
-    color: colors.primary,
-    fontWeight: "500",
   },
 });
 

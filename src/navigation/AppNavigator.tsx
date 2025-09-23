@@ -7,6 +7,8 @@ import NewShotScreen from "../screens/NewShotScreen";
 import ShotDetailScreen from "../screens/ShotDetailScreen";
 import BeansScreen from "../screens/BeansScreen";
 import MachinesScreen from "../screens/MachinesScreen";
+import NewBeanScreen from "../screens/NewBeanScreen";
+import NewMachineScreen from "../screens/NewMachineScreen";
 import SvgIcon from "../components/SvgIcon";
 import { colors } from "../themes/colors";
 
@@ -18,6 +20,8 @@ export type RootStackParamList = {
     selectedBeanId?: string;
     selectedMachineId?: string;
   };
+  NewBean: { beanId?: string };
+  NewMachine: { machineId?: string };
 };
 
 export type MainTabParamList = {
@@ -109,6 +113,20 @@ export default function AppNavigator() {
             title: route.params?.duplicateFrom
               ? "Edit Duplicated Shot"
               : "New Shot",
+          })}
+        />
+        <Stack.Screen
+          name="NewBean"
+          component={NewBeanScreen}
+          options={({ route }) => ({
+            title: route.params?.beanId ? "Edit Bean" : "New Bean",
+          })}
+        />
+        <Stack.Screen
+          name="NewMachine"
+          component={NewMachineScreen}
+          options={({ route }) => ({
+            title: route.params?.machineId ? "Edit Machine" : "New Machine",
           })}
         />
       </Stack.Navigator>
