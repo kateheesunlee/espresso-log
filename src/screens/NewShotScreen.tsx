@@ -48,7 +48,7 @@ interface FormData {
   body: number;
   aftertaste: number;
   notes: string;
-  isBest: boolean;
+  isFavorite: boolean;
 }
 
 const NewShotScreen: React.FC = () => {
@@ -73,7 +73,7 @@ const NewShotScreen: React.FC = () => {
     body: 0,
     aftertaste: 0,
     notes: "",
-    isBest: false,
+    isFavorite: false,
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -156,7 +156,7 @@ const NewShotScreen: React.FC = () => {
           body: shot.body || 0,
           aftertaste: shot.aftertaste || 0,
           notes: shot.notes || "",
-          isBest: false, // New shot is never marked as best initially
+          isFavorite: false, // New shot is never marked as favorite initially
         });
       }
     } catch (error) {
@@ -326,7 +326,7 @@ const NewShotScreen: React.FC = () => {
         body: formData.body || undefined,
         aftertaste: formData.aftertaste || undefined,
         notes: formData.notes || undefined,
-        isBest: formData.isBest,
+        isFavorite: formData.isFavorite,
       };
 
       if (editingShotId) {
@@ -573,13 +573,19 @@ const NewShotScreen: React.FC = () => {
           <View style={styles.inputGroup}>
             <TouchableOpacity
               style={styles.checkboxContainer}
-              onPress={() => handleInputChange("isBest", !formData.isBest)}
+              onPress={() =>
+                handleInputChange("isFavorite", !formData.isFavorite)
+              }
             >
               <SvgIcon
-                name={formData.isBest ? "star_filled" : "star"}
+                name={formData.isFavorite ? "heart_filled" : "heart"}
+                color={formData.isFavorite ? colors.heart : colors.primary}
+                secondaryColor={
+                  formData.isFavorite ? colors.heartLight : colors.primaryLight
+                }
                 size={24}
               />
-              <Text style={styles.checkboxLabel}>Mark as best shot</Text>
+              <Text style={styles.checkboxLabel}>Mark as favorite shot</Text>
             </TouchableOpacity>
           </View>
 

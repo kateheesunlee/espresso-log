@@ -55,7 +55,7 @@ export interface Shot {
   aftertaste?: number;
   aromaTags?: string; // JSON string
   notes?: string;
-  isBest?: boolean;
+  isFavorite?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -306,7 +306,7 @@ class UniversalDatabase {
     await this.setData(data);
   }
 
-  async toggleBestShot(id: string): Promise<void> {
+  async toggleFavoriteShot(id: string): Promise<void> {
     const shot = await this.getShot(id);
     if (shot) {
       const data = this.getData();
@@ -314,20 +314,10 @@ class UniversalDatabase {
 
       if (index !== -1) {
         const currentShot = data.shots[index];
-        const newBestValue = !currentShot.isBest;
+        const newFavoriteValue = !currentShot.isFavorite;
 
-        // If setting as best, first unset all other best shots for this user
-        if (newBestValue) {
-          data.shots.forEach((s: Shot) => {
-            if (s.userId === shot.userId && s.isBest && s.id !== id) {
-              s.isBest = false;
-              s.updatedAt = new Date().toISOString();
-            }
-          });
-        }
-
-        // Then set the current shot's best status
-        data.shots[index].isBest = newBestValue;
+        // Toggle the current shot's favorite status
+        data.shots[index].isFavorite = newFavoriteValue;
         data.shots[index].updatedAt = new Date().toISOString();
       }
 
@@ -335,11 +325,21 @@ class UniversalDatabase {
     }
   }
 
-  async getBestShot(userId: string): Promise<Shot | null> {
+  async getFavoriteShot(userId: string): Promise<Shot | null> {
     const data = this.getData();
     return (
-      data.shots.find((s: Shot) => s.userId === userId && s.isBest) || null
+      data.shots.find((s: Shot) => s.userId === userId && s.isFavorite) || null
     );
+  }
+
+  async getFavoriteShots(userId: string): Promise<Shot[]> {
+    const data = this.getData();
+    return data.shots
+      .filter((s: Shot) => s.userId === userId && s.isFavorite)
+      .sort(
+        (a: Shot, b: Shot) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
   }
 }
 

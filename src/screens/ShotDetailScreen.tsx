@@ -35,8 +35,14 @@ type ShotDetailScreenRouteProp = RouteProp<RootStackParamList, "ShotDetail">;
 const ShotDetailScreen: React.FC = () => {
   const navigation = useNavigation<ShotDetailScreenNavigationProp>();
   const route = useRoute<ShotDetailScreenRouteProp>();
-  const { shots, beans, machines, toggleBestShot, duplicateShot, deleteShot } =
-    useStore();
+  const {
+    shots,
+    beans,
+    machines,
+    toggleFavoriteShot,
+    duplicateShot,
+    deleteShot,
+  } = useStore();
 
   const [shot, setShot] = useState<Shot | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
@@ -55,13 +61,16 @@ const ShotDetailScreen: React.FC = () => {
     setShot(foundShot || null);
   }, [shots, route.params.shotId]);
 
-  const handleToggleBest = async () => {
+  const handleToggleFavorite = async () => {
     if (!shot) return;
 
     try {
-      await toggleBestShot(shot.id);
+      await toggleFavoriteShot(shot.id);
     } catch (error) {
-      setErrorModal({ visible: true, message: "Failed to update best shot" });
+      setErrorModal({
+        visible: true,
+        message: "Failed to update favorite shot",
+      });
     }
   };
 
@@ -186,10 +195,10 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
             </Text>
             <Text style={styles.shotDate}>{formatDate(shot.createdAt)}</Text>
           </View>
-          {shot.isBest && (
+          {shot.isFavorite && (
             <View style={styles.bestBadge}>
               <SvgIcon name="star_filled" size={24} />
-              <Text style={styles.bestText}>BEST</Text>
+              <Text style={styles.bestText}>FAVORITE</Text>
             </View>
           )}
         </View>
@@ -198,28 +207,28 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
           <Text style={styles.sectionTitle}>Brew Parameters</Text>
           <View style={styles.metricsGrid}>
             <View style={styles.metricCard}>
-              <ScaleIcon size={36} color={colors.primary} />
+              <ScaleIcon size={36} color={colors.textMedium} />
               <View style={styles.metricTextContainer}>
                 <Text style={styles.metricLabel}>Dose</Text>
                 <Text style={styles.metricValue}>{shot.dose_g}g</Text>
               </View>
             </View>
             <View style={styles.metricCard}>
-              <WaterIcon size={36} color={colors.primary} />
+              <WaterIcon size={36} color={colors.textMedium} />
               <View style={styles.metricTextContainer}>
                 <Text style={styles.metricLabel}>Yield</Text>
                 <Text style={styles.metricValue}>{shot.yield_g}g</Text>
               </View>
             </View>
             <View style={styles.metricCard}>
-              <TimerIcon size={36} color={colors.primary} />
+              <TimerIcon size={36} color={colors.textMedium} />
               <View style={styles.metricTextContainer}>
                 <Text style={styles.metricLabel}>Time</Text>
                 <Text style={styles.metricValue}>{shot.shotTime_s}s</Text>
               </View>
             </View>
             <View style={styles.metricCard}>
-              <RatioIcon size={36} color={colors.primary} />
+              <RatioIcon size={36} color={colors.textMedium} />
               <View style={styles.metricTextContainer}>
                 <Text style={styles.metricLabel}>Ratio</Text>
                 <Text style={styles.metricValue}>
@@ -229,7 +238,7 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
             </View>
             {shot.grindSetting && (
               <View style={styles.metricCard}>
-                <DialIcon size={36} color={colors.primary} />
+                <DialIcon size={36} color={colors.textMedium} />
                 <View style={styles.metricTextContainer}>
                   <Text style={styles.metricLabel}>Grind</Text>
                   <Text style={styles.metricValue}>{shot.grindSetting}</Text>
@@ -290,11 +299,14 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
         <View style={styles.actions}>
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={handleToggleBest}
+            onPress={handleToggleFavorite}
           >
-            <SvgIcon name={shot.isBest ? "star_filled" : "star"} size={24} />
+            <SvgIcon
+              name={shot.isFavorite ? "heart_filled" : "heart"}
+              size={24}
+            />
             <Text style={styles.actionButtonText}>
-              {shot.isBest ? "Remove from Best" : "Mark as Best"}
+              {shot.isFavorite ? "Remove from Favorites" : "Mark as Favorite"}
             </Text>
           </TouchableOpacity>
 

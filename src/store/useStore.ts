@@ -46,7 +46,7 @@ interface AppState {
   createShot: (shot: Omit<Shot, "createdAt" | "updatedAt">) => Promise<void>;
   updateShot: (shot: Shot) => Promise<void>;
   deleteShot: (id: string) => Promise<void>;
-  toggleBestShot: (id: string) => Promise<void>;
+  toggleFavoriteShot: (id: string) => Promise<void>;
 
   // One More flow
   duplicateShot: (shotId: string) => Promise<string | null>;
@@ -267,12 +267,13 @@ export const useStore = create<AppState>((set, get) => ({
     }
   },
 
-  toggleBestShot: async (id) => {
+  toggleFavoriteShot: async (id) => {
     try {
-      await database.toggleBestShot(id);
+      await database.toggleFavoriteShot(id);
       await get().loadShots();
     } catch (error) {
-      console.error("Failed to toggle best shot:", error);
+      console.error("Failed to toggle favorite shot:", error);
+      throw error;
     }
   },
 
@@ -291,7 +292,7 @@ export const useStore = create<AppState>((set, get) => ({
         id: newShotId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        isBest: false, // New shot is not marked as best
+        isBest: false, // New shot is not marked as favorite
       };
 
       await database.createShot(duplicatedShot);

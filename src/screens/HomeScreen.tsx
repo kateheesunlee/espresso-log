@@ -32,7 +32,7 @@ type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 interface ShotItemProps {
   shot: Shot;
   onPress: () => void;
-  onToggleBest: () => void;
+  onToggleFavorite: () => void;
   onOneMore: () => void;
   onDelete: () => void;
 }
@@ -40,7 +40,7 @@ interface ShotItemProps {
 const ShotItem: React.FC<ShotItemProps> = ({
   shot,
   onPress,
-  onToggleBest,
+  onToggleFavorite,
   onOneMore,
   onDelete,
 }) => {
@@ -172,11 +172,15 @@ const ShotItem: React.FC<ShotItemProps> = ({
             <View style={styles.shotActions}>
               <TouchableOpacity
                 style={styles.actionButton}
-                onPress={onToggleBest}
+                onPress={onToggleFavorite}
               >
                 <SvgIcon
-                  name={shot.isBest ? "star_filled" : "star"}
+                  name={shot.isFavorite ? "heart_filled" : "heart"}
                   size={20}
+                  color={shot.isFavorite ? colors.heart : colors.primary}
+                  secondaryColor={
+                    shot.isFavorite ? colors.heartLight : colors.primaryLight
+                  }
                 />
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionButton} onPress={onOneMore}>
@@ -216,13 +220,25 @@ const ShotItem: React.FC<ShotItemProps> = ({
             <View style={styles.ratingContainer}>
               <Text style={styles.ratingLabel}>Rating: </Text>
               <View style={styles.stars}>
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <SvgIcon
-                    key={star}
-                    name={star <= shot.rating! ? "bean_filled" : "bean"}
-                    size={16}
-                  />
-                ))}
+                {[1, 2, 3, 4, 5].map((star) => {
+                  const isFilled = star <= shot.rating!;
+                  const isHalfFilled =
+                    star - 0.5 <= shot.rating! && shot.rating! < star;
+
+                  return (
+                    <View key={star} style={styles.beanContainer}>
+                      <SvgIcon
+                        name={isFilled ? "bean_filled" : "bean"}
+                        size={20}
+                      />
+                      {isHalfFilled && (
+                        <View style={styles.halfBeanOverlay}>
+                          <SvgIcon name="bean_filled" size={20} />
+                        </View>
+                      )}
+                    </View>
+                  );
+                })}
               </View>
             </View>
           )}
@@ -240,7 +256,7 @@ const HomeScreen: React.FC = () => {
     machines,
     isLoading,
     loadShots,
-    toggleBestShot,
+    toggleFavoriteShot,
     duplicateShot,
     deleteShot,
   } = useStore();
@@ -339,11 +355,14 @@ const HomeScreen: React.FC = () => {
     navigation.navigate("ShotDetail", { shotId });
   };
 
-  const handleToggleBest = async (shotId: string) => {
+  const handleToggleFavorite = async (shotId: string) => {
     try {
-      await toggleBestShot(shotId);
+      await toggleFavoriteShot(shotId);
     } catch (error) {
-      setErrorModal({ visible: true, message: "Failed to update best shot" });
+      setErrorModal({
+        visible: true,
+        message: "Failed to update favorite shot",
+      });
     }
   };
 
@@ -399,7 +418,7 @@ const HomeScreen: React.FC = () => {
     <ShotItem
       shot={item}
       onPress={() => handleShotPress(item.id)}
-      onToggleBest={() => handleToggleBest(item.id)}
+      onToggleFavorite={() => handleToggleFavorite(item.id)}
       onOneMore={() => handleOneMore(item.id)}
       onDelete={() => handleDelete(item.id)}
     />
@@ -710,7 +729,20 @@ const styles = StyleSheet.create({
   },
   stars: {
     flexDirection: "row",
-    gap: 2,
+    gap: 4,
+  },
+  beanContainer: {
+    position: "relative",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  halfBeanOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "50%",
+    height: "100%",
+    overflow: "hidden",
   },
 });
 
