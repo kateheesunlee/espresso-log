@@ -16,15 +16,10 @@ import { Shot } from "../database/UniversalDatabase";
 import SvgIcon from "../components/SvgIcon";
 import BalanceSlider from "../components/BalanceSlider";
 import StarRatingSlider from "../components/StarRatingSlider";
-import ConfirmationModal from "../components/ConfirmationModal";
-import SuccessModal from "../components/SuccessModal";
-import ErrorModal from "../components/ErrorModal";
+import ConfirmationModal from "../components/modals/ConfirmationModal";
+import SuccessModal from "../components/modals/SuccessModal";
+import ErrorModal from "../components/modals/ErrorModal";
 import { colors } from "../themes/colors";
-import ScaleIcon from "../components/icons/ScaleIcon";
-import WaterIcon from "../components/icons/WaterIcon";
-import TimerIcon from "../components/icons/TimerIcon";
-import RatioIcon from "../components/icons/RatioIcon";
-import DialIcon from "../components/icons/DialIcon";
 
 type ShotDetailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -213,28 +208,28 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
           <Text style={styles.sectionTitle}>Brew Parameters</Text>
           <View style={styles.metricsGrid}>
             <View style={styles.metricCard}>
-              <ScaleIcon size={36} color={colors.textMedium} />
+              <SvgIcon name="scale" size={36} color={colors.textMedium} />
               <View style={styles.metricTextContainer}>
                 <Text style={styles.metricLabel}>Dose</Text>
                 <Text style={styles.metricValue}>{shot.dose_g}g</Text>
               </View>
             </View>
             <View style={styles.metricCard}>
-              <WaterIcon size={36} color={colors.textMedium} />
+              <SvgIcon name="water" size={36} color={colors.textMedium} />
               <View style={styles.metricTextContainer}>
                 <Text style={styles.metricLabel}>Yield</Text>
                 <Text style={styles.metricValue}>{shot.yield_g}g</Text>
               </View>
             </View>
             <View style={styles.metricCard}>
-              <TimerIcon size={36} color={colors.textMedium} />
+              <SvgIcon name="timer" size={36} color={colors.textMedium} />
               <View style={styles.metricTextContainer}>
                 <Text style={styles.metricLabel}>Time</Text>
                 <Text style={styles.metricValue}>{shot.shotTime_s}s</Text>
               </View>
             </View>
             <View style={styles.metricCard}>
-              <RatioIcon size={36} color={colors.textMedium} />
+              <SvgIcon name="ratio" size={36} color={colors.textMedium} />
               <View style={styles.metricTextContainer}>
                 <Text style={styles.metricLabel}>Ratio</Text>
                 <Text style={styles.metricValue}>
@@ -244,7 +239,7 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
             </View>
             {shot.grindSetting && (
               <View style={styles.metricCard}>
-                <DialIcon size={36} color={colors.textMedium} />
+                <SvgIcon name="dial" size={36} color={colors.textMedium} />
                 <View style={styles.metricTextContainer}>
                   <Text style={styles.metricLabel}>Grind</Text>
                   <Text style={styles.metricValue}>{shot.grindSetting}</Text>

@@ -19,6 +19,7 @@ import HeartBrokenFilledIcon from "./icons/HeartBrokenFilledIcon";
 import HeartBrokenIcon from "./icons/HeartBrokenIcon";
 import HeartFilledIcon from "./icons/HeartFilledIcon";
 import HeartIcon from "./icons/HeartIcon";
+import MagicHatIcon from "./icons/MagicHatIcon";
 import NoteFilledIcon from "./icons/NoteFilledIcon";
 import PlusIcon from "./icons/PlusIcon";
 import SendIcon from "./icons/SendIcon";
@@ -27,6 +28,14 @@ import StarIcon from "./icons/StarIcon";
 import StarFilledIcon from "./icons/StarFilledIcon";
 import ThumbDownIcon from "./icons/ThumbDownIcon";
 import ThumbUpIcon from "./icons/ThumbUpIcon";
+import ScaleIcon from "./icons/ScaleIcon";
+import WaterIcon from "./icons/WaterIcon";
+import TimerIcon from "./icons/TimerIcon";
+import RatioIcon from "./icons/RatioIcon";
+import DialIcon from "./icons/DialIcon";
+import WarningIcon from "./icons/WarningIcon";
+import TempIcon from "./icons/TemperatureIcon";
+import CloseIcon from "./icons/CloseIcon";
 
 const ICONS = {
   "add-notes": AddNotesIcon,
@@ -42,6 +51,7 @@ const ICONS = {
   edit: EditIcon,
   heart: HeartIcon,
   heart_broken: HeartBrokenIcon,
+  magic_hat: MagicHatIcon,
   heart_broken_2: HeartBroken2Icon,
   heart_broken_2_filled: HeartBroken2FilledIcon,
   heart_broken_filled: HeartBrokenFilledIcon,
@@ -54,6 +64,14 @@ const ICONS = {
   star_filled: StarFilledIcon,
   "thumb-down": ThumbDownIcon,
   "thumb-up": ThumbUpIcon,
+  scale: ScaleIcon,
+  water: WaterIcon,
+  timer: TimerIcon,
+  ratio: RatioIcon,
+  dial: DialIcon,
+  warning: WarningIcon,
+  temp: TempIcon,
+  close: CloseIcon,
 } as const;
 
 export type IconName = keyof typeof ICONS;

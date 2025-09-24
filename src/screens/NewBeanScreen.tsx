@@ -17,8 +17,8 @@ import { RoastLevel } from "../database/UniversalDatabase";
 import SvgIcon from "../components/SvgIcon";
 import Avatar from "../components/Avatar";
 import RoastingSlider from "../components/RoastingSlider";
-import SuccessModal from "../components/SuccessModal";
-import ErrorModal from "../components/ErrorModal";
+import SuccessModal from "../components/modals/SuccessModal";
+import ErrorModal from "../components/modals/ErrorModal";
 import { showImagePickerOptions } from "../utils/imageUtils";
 import { colors } from "../themes/colors";
 
@@ -47,7 +47,7 @@ const NewBeanScreen: React.FC = () => {
     name: "",
     origin: "",
     process: "",
-    roastLevel: RoastLevel.MEDIUM,
+    roastLevel: "Medium",
     roastDate: "",
     notes: "",
     imageUri: "",
@@ -76,7 +76,7 @@ const NewBeanScreen: React.FC = () => {
           name: bean.name,
           origin: bean.origin || "",
           process: bean.process || "",
-          roastLevel: bean.roastLevel || RoastLevel.MEDIUM,
+          roastLevel: bean.roastLevel || "Medium",
           roastDate: bean.roastDate || "",
           notes: bean.notes || "",
           imageUri: bean.imageUri || "",
@@ -223,7 +223,7 @@ const NewBeanScreen: React.FC = () => {
 
           <RoastingSlider
             label="Roast Level"
-            value={formData.roastLevel || RoastLevel.MEDIUM}
+            value={formData.roastLevel || "Medium"}
             onValueChange={(value) =>
               setFormData((prev) => ({ ...prev, roastLevel: value }))
             }

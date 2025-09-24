@@ -19,8 +19,8 @@ import { RootStackParamList } from "../navigation/AppNavigator";
 import CustomPicker from "../components/CustomPicker";
 import BalanceSlider from "../components/BalanceSlider";
 import SvgIcon from "../components/SvgIcon";
-import SuccessModal from "../components/SuccessModal";
-import ErrorModal from "../components/ErrorModal";
+import SuccessModal from "../components/modals/SuccessModal";
+import ErrorModal from "../components/modals/ErrorModal";
 import StarRatingSlider from "../components/StarRatingSlider";
 import { colors } from "../themes/colors";
 

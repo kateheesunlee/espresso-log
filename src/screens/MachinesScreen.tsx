@@ -7,15 +7,14 @@ import { MainTabParamList } from "../navigation/AppNavigator";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import SvgIcon from "../components/SvgIcon";
-import Avatar from "../components/Avatar";
 import EntityCard, {
   EntityCardData,
   EntityCardAction,
 } from "../components/EntityCard";
 import ScrollableListView from "../components/ScrollableListView";
 import EmptyEntity from "../components/EmptyEntity";
-import ConfirmationModal from "../components/ConfirmationModal";
-import ErrorModal from "../components/ErrorModal";
+import ConfirmationModal from "../components/modals/ConfirmationModal";
+import ErrorModal from "../components/modals/ErrorModal";
 import { colors } from "../themes/colors";
 
 type MachinesScreenNavigationProp = StackNavigationProp<RootStackParamList>;

@@ -13,8 +13,8 @@ import EntityCard, {
 } from "../components/EntityCard";
 import ScrollableListView from "../components/ScrollableListView";
 import EmptyEntity from "../components/EmptyEntity";
-import ConfirmationModal from "../components/ConfirmationModal";
-import ErrorModal from "../components/ErrorModal";
+import ConfirmationModal from "../components/modals/ConfirmationModal";
+import ErrorModal from "../components/modals/ErrorModal";
 import { colors } from "../themes/colors";
 
 type BeansScreenNavigationProp = StackNavigationProp<RootStackParamList>;

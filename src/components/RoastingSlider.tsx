@@ -15,28 +15,28 @@ interface RoastingSliderProps {
 const HANDLE_SIZE = 28;
 const TRACK_HEIGHT = 8;
 
-const ROASTING_LEVELS = [
-  RoastLevel.LIGHT,
-  RoastLevel.MEDIUM_LIGHT,
-  RoastLevel.MEDIUM,
-  RoastLevel.MEDIUM_DARK,
-  RoastLevel.DARK,
+const ROASTING_LEVELS: RoastLevel[] = [
+  "Light",
+  "Medium Light",
+  "Medium",
+  "Medium Dark",
+  "Dark",
 ];
 
 const roastingColorMap = {
-  [RoastLevel.LIGHT]: colors.roastingLight,
-  [RoastLevel.MEDIUM_LIGHT]: colors.roastingMediumLight,
-  [RoastLevel.MEDIUM]: colors.roastingMedium,
-  [RoastLevel.MEDIUM_DARK]: colors.roastingMediumDark,
-  [RoastLevel.DARK]: colors.roastingDark,
+  ["Light"]: colors.roastingLight,
+  ["Medium Light"]: colors.roastingMediumLight,
+  ["Medium"]: colors.roastingMedium,
+  ["Medium Dark"]: colors.roastingMediumDark,
+  ["Dark"]: colors.roastingDark,
 };
 
 const roastingColorMapLight = {
-  [RoastLevel.LIGHT]: colors.roastingLight_Light,
-  [RoastLevel.MEDIUM_LIGHT]: colors.roastingMediumLight_Light,
-  [RoastLevel.MEDIUM]: colors.roastingMedium_Light,
-  [RoastLevel.MEDIUM_DARK]: colors.roastingMediumDark_Light,
-  [RoastLevel.DARK]: colors.roastingDark_Light,
+  ["Light"]: colors.roastingLight_Light,
+  ["Medium Light"]: colors.roastingMediumLight_Light,
+  ["Medium"]: colors.roastingMedium_Light,
+  ["Medium Dark"]: colors.roastingMediumDark_Light,
+  ["Dark"]: colors.roastingDark_Light,
 };
 
 const RoastingSlider: React.FC<RoastingSliderProps> = ({
@@ -52,7 +52,7 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
 
   // Helper function to get a valid roast level, defaulting to Medium if not found
   const getValidRoastLevel = (val: RoastLevel): RoastLevel => {
-    return ROASTING_LEVELS.includes(val) ? val : RoastLevel.MEDIUM;
+    return ROASTING_LEVELS.includes(val) ? val : "Medium";
   };
 
   // Calculate initial position based on value
