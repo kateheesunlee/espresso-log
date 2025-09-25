@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -42,7 +42,6 @@ interface FormData {
   preinfusion_s: string;
   rating: number;
   acidity: number;
-  sweetness: number;
   bitterness: number;
   body: number;
   aftertaste: number;
@@ -67,7 +66,6 @@ const NewShotScreen: React.FC = () => {
     preinfusion_s: "",
     rating: 3,
     acidity: 0,
-    sweetness: 0,
     bitterness: 0,
     body: 0,
     aftertaste: 0,
@@ -150,7 +148,6 @@ const NewShotScreen: React.FC = () => {
           preinfusion_s: shot.preinfusion_s?.toString() || "",
           rating: shot.rating || 3,
           acidity: shot.acidity || 0,
-          sweetness: shot.sweetness || 0,
           bitterness: shot.bitterness || 0,
           body: shot.body || 0,
           aftertaste: shot.aftertaste || 0,
@@ -308,7 +305,6 @@ const NewShotScreen: React.FC = () => {
           : undefined,
         rating: formData.rating || undefined,
         acidity: formData.acidity || undefined,
-        sweetness: formData.sweetness || undefined,
         bitterness: formData.bitterness || undefined,
         body: formData.body || undefined,
         aftertaste: formData.aftertaste || undefined,
@@ -523,30 +519,28 @@ const NewShotScreen: React.FC = () => {
             label="Acidity"
             value={formData.acidity}
             onValueChange={(value) => handleInputChange("acidity", value)}
-          />
-
-          <BalanceSlider
-            label="Sweetness"
-            value={formData.sweetness}
-            onValueChange={(value) => handleInputChange("sweetness", value)}
+            qualityIndicators={["Flat", "Balanced", "Sharp"]}
           />
 
           <BalanceSlider
             label="Bitterness"
             value={formData.bitterness}
             onValueChange={(value) => handleInputChange("bitterness", value)}
+            qualityIndicators={["None", "Balanced", "Bitter/Burnt"]}
           />
 
           <BalanceSlider
             label="Body"
             value={formData.body}
             onValueChange={(value) => handleInputChange("body", value)}
+            qualityIndicators={["Thin/Watery", "Balanced", "Thick/Heavy"]}
           />
 
           <BalanceSlider
             label="Aftertaste"
             value={formData.aftertaste}
             onValueChange={(value) => handleInputChange("aftertaste", value)}
+            qualityIndicators={["Short/Faint", "Balanced", "Lingering/Harsh"]}
           />
 
           {renderTextInput(
@@ -621,8 +615,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.primary,
   },
   duplicateNoticeText: {
     marginLeft: 8,

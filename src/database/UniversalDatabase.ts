@@ -16,6 +16,77 @@ export type RoastLevel =
   | "Medium Dark"
   | "Dark";
 
+export type AromaTag =
+  | "dark chocolate"
+  | "milk chocolate"
+  | "cocoa"
+  | "caramel"
+  | "toffee"
+  | "molasses"
+  | "brown sugar"
+  | "almond"
+  | "hazelnut"
+  | "peanut"
+  | "walnut"
+  | "lemon"
+  | "orange"
+  | "grapefruit"
+  | "strawberry"
+  | "raspberry"
+  | "blueberry"
+  | "blackberry"
+  | "peach"
+  | "apricot"
+  | "plum"
+  | "mango"
+  | "pineapple"
+  | "papaya"
+  | "apple"
+  | "pear"
+  | "grape"
+  | "jasmine"
+  | "rose"
+  | "bergamot"
+  | "cinnamon"
+  | "clove"
+  | "cardamom"
+  | "honey"
+  | "vanilla"
+  | "smoky"
+  | "tobacco";
+
+export type TastingTag =
+  | "balanced"
+  | "clean"
+  | "juicy"
+  | "sweet"
+  | "silky"
+  | "syrupy"
+  | "chocolatey"
+  | "caramelly"
+  | "under"
+  | "over"
+  | "sour"
+  | "sharp"
+  | "bitter"
+  | "burnt"
+  | "astringent"
+  | "harsh"
+  | "hollow"
+  | "thin"
+  | "watery"
+  | "thick"
+  | "heavy"
+  | "short finish"
+  | "long finish"
+  | "clean finish"
+  | "fast"
+  | "slow"
+  | "fine"
+  | "coarse"
+  | "high temp"
+  | "low temp";
+
 export interface User {
   id: string;
   displayName?: string;
@@ -64,11 +135,12 @@ export interface Shot {
   preinfusion_s?: number;
   rating?: number;
   acidity?: number;
-  sweetness?: number;
   bitterness?: number;
   body?: number;
   aftertaste?: number;
-  aromaTags?: string; // JSON string
+  tags?: string[];
+  aromaTags?: AromaTag[];
+  tastingTags?: TastingTag[];
   notes?: string;
   isFavorite?: boolean;
   createdAt: string;

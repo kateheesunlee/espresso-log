@@ -12,6 +12,7 @@ interface BalanceSliderProps {
   max?: number;
   step?: number;
   disabled?: boolean;
+  qualityIndicators?: string[];
 }
 
 const HANDLE_SIZE = 28;
@@ -25,6 +26,7 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
   max = 1,
   step = 0.1,
   disabled = false,
+  qualityIndicators = ["Too weak", "Balanced", "Too strong"],
 }) => {
   const translateX = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(1)).current;
@@ -152,7 +154,7 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
         {/* Quality indicators below track
          */}
         <View style={styles.qualityIndicators}>
-          {["Too weak", "Balanced", "Too strong"].map((level) => (
+          {qualityIndicators.map((level) => (
             <Text key={level} style={styles.qualityIndicator}>
               {level}
             </Text>

@@ -281,7 +281,6 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
 
               <View style={styles.flavorRatings}>
                 {renderBalanceSlider("Acidity", shot.acidity)}
-                {renderBalanceSlider("Sweetness", shot.sweetness)}
                 {renderBalanceSlider("Bitterness", shot.bitterness)}
                 {renderBalanceSlider("Body", shot.body)}
                 {renderBalanceSlider("Aftertaste", shot.aftertaste)}
