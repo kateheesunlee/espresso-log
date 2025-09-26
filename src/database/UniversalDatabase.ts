@@ -1,91 +1,92 @@
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export enum RoastLevelEnum {
-  LIGHT = "Light",
-  MEDIUM_LIGHT = "Medium Light",
-  MEDIUM = "Medium",
-  MEDIUM_DARK = "Medium Dark",
-  DARK = "Dark",
-}
+export const ROAST_LEVELS = [
+  "Light",
+  "Medium Light",
+  "Medium",
+  "Medium Dark",
+  "Dark",
+] as const;
 
-export type RoastLevel =
-  | "Light"
-  | "Medium Light"
-  | "Medium"
-  | "Medium Dark"
-  | "Dark";
+export type RoastLevel = (typeof ROAST_LEVELS)[number];
 
-export type AromaTag =
-  | "dark chocolate"
-  | "milk chocolate"
-  | "cocoa"
-  | "caramel"
-  | "toffee"
-  | "molasses"
-  | "brown sugar"
-  | "almond"
-  | "hazelnut"
-  | "peanut"
-  | "walnut"
-  | "lemon"
-  | "orange"
-  | "grapefruit"
-  | "strawberry"
-  | "raspberry"
-  | "blueberry"
-  | "blackberry"
-  | "peach"
-  | "apricot"
-  | "plum"
-  | "mango"
-  | "pineapple"
-  | "papaya"
-  | "apple"
-  | "pear"
-  | "grape"
-  | "jasmine"
-  | "rose"
-  | "bergamot"
-  | "cinnamon"
-  | "clove"
-  | "cardamom"
-  | "honey"
-  | "vanilla"
-  | "smoky"
-  | "tobacco";
+export const AROMA_TAGS = [
+  "dark chocolate",
+  "milk chocolate",
+  "cocoa",
+  "caramel",
+  "toffee",
+  "molasses",
+  "brown sugar",
+  "almond",
+  "hazelnut",
+  "peanut",
+  "walnut",
+  "lemon",
+  "orange",
+  "grapefruit",
+  "strawberry",
+  "raspberry",
+  "blueberry",
+  "blackberry",
+  "peach",
+  "apricot",
+  "plum",
+  "mango",
+  "pineapple",
+  "papaya",
+  "apple",
+  "pear",
+  "grape",
+  "jasmine",
+  "rose",
+  "bergamot",
+  "cinnamon",
+  "clove",
+  "cardamom",
+  "honey",
+  "vanilla",
+  "smoky",
+  "tobacco",
+] as const;
 
-export type TastingTag =
-  | "balanced"
-  | "clean"
-  | "juicy"
-  | "sweet"
-  | "silky"
-  | "syrupy"
-  | "chocolatey"
-  | "caramelly"
-  | "under"
-  | "over"
-  | "sour"
-  | "sharp"
-  | "bitter"
-  | "burnt"
-  | "astringent"
-  | "harsh"
-  | "hollow"
-  | "thin"
-  | "watery"
-  | "thick"
-  | "heavy"
-  | "short finish"
-  | "long finish"
-  | "clean finish"
-  | "fast"
-  | "slow"
-  | "fine"
-  | "coarse"
-  | "high temp"
-  | "low temp";
+export type AromaTag = (typeof AROMA_TAGS)[number];
+
+export const TASTING_TAGS = [
+  "balanced",
+  "clean",
+  "juicy",
+  "sweet",
+  "silky",
+  "syrupy",
+  "chocolatey",
+  "caramelly",
+  "under",
+  "over",
+  "sour",
+  "sharp",
+  "bitter",
+  "burnt",
+  "astringent",
+  "harsh",
+  "hollow",
+  "thin",
+  "watery",
+  "thick",
+  "heavy",
+  "short finish",
+  "long finish",
+  "clean finish",
+  "fast",
+  "slow",
+  "fine",
+  "coarse",
+  "high temp",
+  "low temp",
+] as const;
+
+export type TastingTag = (typeof TASTING_TAGS)[number];
 
 export interface User {
   id: string;
@@ -99,6 +100,7 @@ export interface Machine {
   brand: string;
   model: string;
   nickname?: string;
+  grinder?: string;
   imageUri?: string;
   deleted?: boolean;
   createdAt: string;
@@ -113,7 +115,7 @@ export interface Bean {
   process?: string;
   roastLevel?: RoastLevel;
   roastDate?: string;
-  aromaTags?: string; // JSON string
+  aromaTags?: string[]; // Don't use AromaTag type here to allow custom tags
   notes?: string;
   imageUri?: string;
   deleted?: boolean;
@@ -126,11 +128,11 @@ export interface Shot {
   userId: string;
   beanId?: string;
   machineId?: string;
+  grindSetting: number;
   dose_g: number;
   yield_g: number;
   shotTime_s: number;
   ratio?: number;
-  grindSetting?: string;
   waterTemp_C?: number;
   preinfusion_s?: number;
   rating?: number;
@@ -139,7 +141,7 @@ export interface Shot {
   body?: number;
   aftertaste?: number;
   tags?: string[];
-  aromaTags?: AromaTag[];
+  aromaTags?: string[]; // Don't use AromaTag type here to allow custom tags
   tastingTags?: TastingTag[];
   notes?: string;
   isFavorite?: boolean;

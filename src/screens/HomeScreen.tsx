@@ -108,7 +108,11 @@ const HomeScreen: React.FC = () => {
 
   const machineOptions = machines.map((machine) => ({
     id: machine.id,
-    name: machine.nickname || `${machine.brand} ${machine.model}`,
+    name:
+      machine.nickname ||
+      `${machine.brand} ${machine.model}${
+        machine.grinder ? ` + ${machine.grinder}` : ""
+      }`,
   }));
 
   // Check if we should show filters

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
@@ -13,12 +12,18 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { RoastLevel } from "../database/UniversalDatabase";
+import {
+  RoastLevel,
+  AromaTag,
+  AROMA_TAGS,
+} from "../database/UniversalDatabase";
 import SvgIcon from "../components/SvgIcon";
 import Avatar from "../components/Avatar";
 import RoastingSlider from "../components/RoastingSlider";
+import TagChips from "../components/TagChips";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
+import { TextInput, TagChipsInput } from "../components/inputs";
 import { showImagePickerOptions } from "../utils/imageUtils";
 import { colors } from "../themes/colors";
 
@@ -33,6 +38,7 @@ interface BeanFormData {
   origin: string;
   process: string;
   roastLevel: RoastLevel;
+  aromaTags: string[];
   roastDate: string;
   notes: string;
   imageUri?: string;
@@ -48,6 +54,7 @@ const NewBeanScreen: React.FC = () => {
     origin: "",
     process: "",
     roastLevel: "Medium",
+    aromaTags: [],
     roastDate: "",
     notes: "",
     imageUri: "",
@@ -77,6 +84,7 @@ const NewBeanScreen: React.FC = () => {
           origin: bean.origin || "",
           process: bean.process || "",
           roastLevel: bean.roastLevel || "Medium",
+          aromaTags: bean.aromaTags || [],
           roastDate: bean.roastDate || "",
           notes: bean.notes || "",
           imageUri: bean.imageUri || "",
@@ -84,6 +92,11 @@ const NewBeanScreen: React.FC = () => {
       }
     }
   }, [route.params?.beanId, beans]);
+
+  const handleAromaTagsChange = (tags: string[]) => {
+    // Accept any strings for custom aroma tags
+    setFormData((prev) => ({ ...prev, aromaTags: tags }));
+  };
 
   const handleImageCapture = async () => {
     try {
@@ -141,29 +154,6 @@ const NewBeanScreen: React.FC = () => {
     } as any);
   };
 
-  const renderInput = (
-    label: string,
-    value: string,
-    onChangeText: (text: string) => void,
-    placeholder: string,
-    multiline: boolean = false,
-    required: boolean = false
-  ) => (
-    <View style={styles.inputGroup}>
-      <Text style={styles.label}>
-        {label} {required && <Text style={styles.required}>*</Text>}
-      </Text>
-      <TextInput
-        style={[styles.textInput, multiline && styles.multilineInput]}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        multiline={multiline}
-        numberOfLines={multiline ? 3 : 1}
-      />
-    </View>
-  );
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -198,28 +188,33 @@ const NewBeanScreen: React.FC = () => {
             </View>
           </View>
 
-          {renderInput(
-            "Bean Name",
-            formData.name,
-            (text) => setFormData((prev) => ({ ...prev, name: text })),
-            "e.g., Ethiopian Yirgacheffe",
-            false,
-            true
-          )}
+          <TextInput
+            label="Bean Name"
+            value={formData.name}
+            onChangeText={(text) =>
+              setFormData((prev) => ({ ...prev, name: text }))
+            }
+            placeholder="e.g., Ethiopian Yirgacheffe"
+            required={true}
+          />
 
-          {renderInput(
-            "Origin",
-            formData.origin,
-            (text) => setFormData((prev) => ({ ...prev, origin: text })),
-            "e.g., Ethiopia, Colombia, Brazil"
-          )}
+          <TextInput
+            label="Origin"
+            value={formData.origin}
+            onChangeText={(text) =>
+              setFormData((prev) => ({ ...prev, origin: text }))
+            }
+            placeholder="e.g., Ethiopia, Colombia, Brazil"
+          />
 
-          {renderInput(
-            "Process",
-            formData.process,
-            (text) => setFormData((prev) => ({ ...prev, process: text })),
-            "e.g., Washed, Natural, Honey"
-          )}
+          <TextInput
+            label="Process"
+            value={formData.process}
+            onChangeText={(text) =>
+              setFormData((prev) => ({ ...prev, process: text }))
+            }
+            placeholder="e.g., Washed, Natural, Honey"
+          />
 
           <RoastingSlider
             label="Roast Level"
@@ -229,20 +224,33 @@ const NewBeanScreen: React.FC = () => {
             }
           />
 
-          {renderInput(
-            "Roast Date",
-            formData.roastDate,
-            (text) => setFormData((prev) => ({ ...prev, roastDate: text })),
-            "YYYY-MM-DD"
-          )}
+          <TagChipsInput
+            label="Aroma Tags"
+            value={formData.aromaTags}
+            onChange={handleAromaTagsChange}
+            suggestions={[...AROMA_TAGS]}
+            allowCustom={true}
+          />
 
-          {renderInput(
-            "Notes",
-            formData.notes,
-            (text) => setFormData((prev) => ({ ...prev, notes: text })),
-            "Additional notes about this bean...",
-            true
-          )}
+          <TextInput
+            label="Roast Date"
+            value={formData.roastDate}
+            onChangeText={(text) =>
+              setFormData((prev) => ({ ...prev, roastDate: text }))
+            }
+            placeholder="YYYY-MM-DD"
+          />
+
+          <TextInput
+            label="Notes"
+            value={formData.notes}
+            onChangeText={(text) =>
+              setFormData((prev) => ({ ...prev, notes: text }))
+            }
+            placeholder="Additional notes about this bean..."
+            multiline={true}
+            numberOfLines={3}
+          />
 
           <TouchableOpacity
             style={[styles.saveButton, isLoading && styles.disabledButton]}
@@ -298,30 +306,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: colors.textDark,
     marginBottom: 16,
-  },
-  inputGroup: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 8,
-  },
-  required: {
-    color: colors.error,
-  },
-  textInput: {
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
-    padding: 12,
-    fontSize: 16,
-  },
-  multilineInput: {
-    height: 80,
-    textAlignVertical: "top",
   },
   imageSection: {
     marginBottom: 20,

@@ -25,7 +25,8 @@ const MachineItem: React.FC<{
   onDelete: () => void;
 }> = ({ machine, onEdit, onDelete }) => {
   const title = machine.nickname || `${machine.brand}`;
-  const subtitle = machine.model;
+  const grinderText = machine.grinder;
+  const subtitle = `${machine.model}${grinderText ? ` + ${grinderText}` : ""}`;
 
   const actions: EntityCardAction[] = [
     { icon: "edit", onPress: onEdit },

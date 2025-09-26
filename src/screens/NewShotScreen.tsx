@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
@@ -16,12 +15,15 @@ import {
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
+import { TastingTag, TASTING_TAGS } from "../database/UniversalDatabase";
 import CustomPicker from "../components/CustomPicker";
 import BalanceSlider from "../components/BalanceSlider";
 import SvgIcon from "../components/SvgIcon";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
 import StarRatingSlider from "../components/StarRatingSlider";
+import { TextInput, NumberInput, TagChipsInput } from "../components/inputs";
+import { inputStyles } from "../components/inputs/styles";
 import { colors } from "../themes/colors";
 
 type NewShotScreenNavigationProp = StackNavigationProp<
@@ -45,6 +47,7 @@ interface FormData {
   bitterness: number;
   body: number;
   aftertaste: number;
+  tastingTags: TastingTag[];
   notes: string;
   isFavorite: boolean;
 }
@@ -69,6 +72,7 @@ const NewShotScreen: React.FC = () => {
     bitterness: 0,
     body: 0,
     aftertaste: 0,
+    tastingTags: [],
     notes: "",
     isFavorite: false,
   });
@@ -143,7 +147,7 @@ const NewShotScreen: React.FC = () => {
           yield_g: shot.yield_g.toString(),
           shotTime_s: shot.shotTime_s.toString(),
           ratio: shot.ratio?.toString() || "",
-          grindSetting: shot.grindSetting || "",
+          grindSetting: shot.grindSetting.toString(),
           waterTemp_C: shot.waterTemp_C?.toString() || "",
           preinfusion_s: shot.preinfusion_s?.toString() || "",
           rating: shot.rating || 3,
@@ -151,6 +155,7 @@ const NewShotScreen: React.FC = () => {
           bitterness: shot.bitterness || 0,
           body: shot.body || 0,
           aftertaste: shot.aftertaste || 0,
+          tastingTags: shot.tastingTags || [],
           notes: shot.notes || "",
           isFavorite: false, // New shot is never marked as favorite initially
         });
@@ -236,9 +241,17 @@ const NewShotScreen: React.FC = () => {
     (navigation as any).navigate("NewMachine");
   };
 
+  const handleTastingTagsChange = (tags: string[]) => {
+    // Convert strings to TastingTag[], filtering out invalid tags
+    const validTastingTags = tags.filter((tag): tag is TastingTag => {
+      return TASTING_TAGS.includes(tag as TastingTag);
+    });
+    handleInputChange("tastingTags", validTastingTags);
+  };
+
   const handleInputChange = (
     field: keyof FormData,
-    value: string | boolean | number
+    value: string | boolean | number | TastingTag[]
   ) => {
     setFormData((prev) => {
       const newData = {
@@ -274,12 +287,13 @@ const NewShotScreen: React.FC = () => {
       !formData.machineId ||
       !formData.dose_g ||
       !formData.yield_g ||
-      !formData.shotTime_s
+      !formData.shotTime_s ||
+      !formData.grindSetting
     ) {
       setErrorModal({
         visible: true,
         message:
-          "Please fill in all required fields (Bean, Machine, Dose, Yield, Shot Time)",
+          "Please fill in all required fields (Bean, Machine, Dose, Yield, Shot Time, Grind Setting)",
       });
 
       return;
@@ -296,7 +310,7 @@ const NewShotScreen: React.FC = () => {
         yield_g: parseFloat(formData.yield_g),
         shotTime_s: parseFloat(formData.shotTime_s),
         ratio: formData.ratio ? parseFloat(formData.ratio) : undefined,
-        grindSetting: formData.grindSetting || undefined,
+        grindSetting: parseFloat(formData.grindSetting),
         waterTemp_C: formData.waterTemp_C
           ? parseFloat(formData.waterTemp_C)
           : undefined,
@@ -308,6 +322,7 @@ const NewShotScreen: React.FC = () => {
         bitterness: formData.bitterness || undefined,
         body: formData.body || undefined,
         aftertaste: formData.aftertaste || undefined,
+        tastingTags: formData.tastingTags || [],
         notes: formData.notes || undefined,
         isFavorite: formData.isFavorite,
       };
@@ -359,52 +374,6 @@ const NewShotScreen: React.FC = () => {
     />
   );
 
-  const renderNumberInput = (
-    label: string,
-    value: string,
-    onChangeText: (text: string) => void,
-    placeholder: string,
-    required: boolean = false,
-    unit?: string
-  ) => (
-    <View style={styles.inputGroup}>
-      <Text style={styles.label}>
-        {label} {required && <Text style={styles.required}>*</Text>}
-      </Text>
-      <View style={styles.inputRow}>
-        <TextInput
-          style={styles.numberInput}
-          value={value}
-          onChangeText={onChangeText}
-          placeholder={placeholder}
-          keyboardType="numeric"
-          onBlur={undefined}
-        />
-        {unit && <Text style={styles.unit}>{unit}</Text>}
-      </View>
-    </View>
-  );
-
-  const renderTextInput = (
-    label: string,
-    value: string,
-    onChangeText: (text: string) => void,
-    placeholder: string,
-    multiline: boolean = false
-  ) => (
-    <View style={styles.inputGroup}>
-      <Text style={styles.label}>{label}</Text>
-      <TextInput
-        style={[styles.textInput, multiline && styles.multilineInput]}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        multiline={multiline}
-        numberOfLines={multiline ? 4 : 1}
-      />
-    </View>
-  );
-
   return (
     <View style={{ flex: 1 }}>
       <ScrollView>
@@ -435,7 +404,9 @@ const NewShotScreen: React.FC = () => {
             formData.machineId,
             machines.map((m) => ({
               id: m.id,
-              name: m.nickname || `${m.brand} ${m.model}`,
+              name:
+                m.nickname ||
+                `${m.brand} ${m.model}${m.grinder ? ` + ${m.grinder}` : ""}`,
             })),
             (value) => handleInputChange("machineId", value),
             true,
@@ -445,67 +416,64 @@ const NewShotScreen: React.FC = () => {
 
           <Text style={styles.sectionTitle}>Brew Parameters</Text>
 
-          {renderTextInput(
-            "Grind Setting",
-            formData.grindSetting,
-            (text) => handleInputChange("grindSetting", text),
-            "e.g., 3.5, Fine, etc."
-          )}
+          <NumberInput
+            label="Grind Setting"
+            value={formData.grindSetting}
+            onChangeText={(text) => handleInputChange("grindSetting", text)}
+            placeholder="10"
+            required={true}
+          />
 
-          {renderNumberInput(
-            "Dose",
-            formData.dose_g,
-            (text) => handleInputChange("dose_g", text),
-            "18.0",
-            true,
-            "g"
-          )}
+          <NumberInput
+            label="Dose"
+            value={formData.dose_g}
+            onChangeText={(text) => handleInputChange("dose_g", text)}
+            placeholder="18.0"
+            required={true}
+            unit="g"
+          />
 
-          {renderNumberInput(
-            "Yield",
-            formData.yield_g,
-            (text) => handleInputChange("yield_g", text),
-            "36.0",
-            true,
-            "g"
-          )}
+          <NumberInput
+            label="Yield"
+            value={formData.yield_g}
+            onChangeText={(text) => handleInputChange("yield_g", text)}
+            placeholder="36.0"
+            required={true}
+            unit="g"
+          />
 
-          {renderNumberInput(
-            "Shot Time",
-            formData.shotTime_s,
-            (text) => handleInputChange("shotTime_s", text),
-            "30.0",
-            true,
-            "s"
-          )}
+          <TextInput
+            label="Ratio (auto-calculated)"
+            value={formData.ratio}
+            placeholder="Auto-calculated from dose/yield"
+            readOnly={true}
+            onChangeText={() => {}}
+          />
 
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Ratio (auto-calculated)</Text>
-            <TextInput
-              style={[styles.textInput, styles.readOnlyInput]}
-              value={formData.ratio}
-              placeholder="Auto-calculated from dose/yield"
-              editable={false}
-            />
-          </View>
+          <NumberInput
+            label="Shot Time"
+            value={formData.shotTime_s}
+            onChangeText={(text) => handleInputChange("shotTime_s", text)}
+            placeholder="30.0"
+            required={true}
+            unit="s"
+          />
 
-          {renderNumberInput(
-            "Water Temperature",
-            formData.waterTemp_C,
-            (text) => handleInputChange("waterTemp_C", text),
-            "93.0",
-            false,
-            "°C"
-          )}
+          <NumberInput
+            label="Water Temperature"
+            value={formData.waterTemp_C}
+            onChangeText={(text) => handleInputChange("waterTemp_C", text)}
+            placeholder="93.0"
+            unit="°C"
+          />
 
-          {renderNumberInput(
-            "Preinfusion Time",
-            formData.preinfusion_s,
-            (text) => handleInputChange("preinfusion_s", text),
-            "5.0",
-            false,
-            "s"
-          )}
+          <NumberInput
+            label="Preinfusion Time"
+            value={formData.preinfusion_s}
+            onChangeText={(text) => handleInputChange("preinfusion_s", text)}
+            placeholder="5.0"
+            unit="s"
+          />
 
           <Text style={styles.sectionTitle}>Tasting Notes</Text>
 
@@ -543,15 +511,25 @@ const NewShotScreen: React.FC = () => {
             qualityIndicators={["Short/Faint", "Balanced", "Lingering/Harsh"]}
           />
 
-          {renderTextInput(
-            "Notes",
-            formData.notes,
-            (text) => handleInputChange("notes", text),
-            "Additional tasting notes...",
-            true
-          )}
+          <TagChipsInput
+            label="Additional Tasting Tags"
+            value={formData.tastingTags}
+            onChange={handleTastingTagsChange}
+            suggestions={[...TASTING_TAGS]}
+            allowCustom={false}
+            subtitle="Add descriptive tags to complement your tasting notes above"
+          />
 
-          <View style={styles.inputGroup}>
+          <TextInput
+            label="Notes"
+            value={formData.notes}
+            onChangeText={(text) => handleInputChange("notes", text)}
+            placeholder="Additional tasting notes..."
+            multiline={true}
+            numberOfLines={4}
+          />
+
+          <View style={inputStyles.inputGroup}>
             <TouchableOpacity
               style={styles.checkboxContainer}
               onPress={() =>
@@ -628,53 +606,6 @@ const styles = StyleSheet.create({
     color: colors.textDark,
     marginTop: 24,
     marginBottom: 16,
-  },
-  inputGroup: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 8,
-  },
-  required: {
-    color: colors.error,
-  },
-  inputRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  numberInput: {
-    flex: 1,
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
-    padding: 12,
-    fontSize: 16,
-  },
-  textInput: {
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
-    padding: 12,
-    fontSize: 16,
-  },
-  readOnlyInput: {
-    backgroundColor: colors.hover,
-    color: colors.textMedium,
-    borderColor: colors.disabled,
-  },
-  multilineInput: {
-    height: 100,
-    textAlignVertical: "top",
-  },
-  unit: {
-    marginLeft: 8,
-    fontSize: 16,
-    color: colors.textMedium,
   },
   checkboxContainer: {
     flexDirection: "row",

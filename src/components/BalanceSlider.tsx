@@ -12,7 +12,7 @@ interface BalanceSliderProps {
   max?: number;
   step?: number;
   disabled?: boolean;
-  qualityIndicators?: string[];
+  qualityIndicators?: string[]; // it must be an array of 3 strings
 }
 
 const HANDLE_SIZE = 28;
@@ -134,7 +134,7 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
           }}
         >
           {/* Track */}
-          <View style={styles.track} />
+          <View style={[styles.track, disabled && styles.trackDisabled]} />
 
           {/* Handle */}
           <GestureDetector gesture={panGesture}>
@@ -154,8 +154,22 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
         {/* Quality indicators below track
          */}
         <View style={styles.qualityIndicators}>
-          {qualityIndicators.map((level) => (
-            <Text key={level} style={styles.qualityIndicator}>
+          {qualityIndicators.map((level, index) => (
+            <Text
+              key={level}
+              style={[
+                styles.qualityIndicator,
+                qualityIndicators.length === 3 && {
+                  flex: index === 1 ? 0 : 1,
+                  textAlign:
+                    index === 0 ? "left" : index === 1 ? "center" : "right",
+                },
+                qualityIndicators.length === 2 && {
+                  flex: 1,
+                  textAlign: index === 0 ? "left" : "right",
+                },
+              ]}
+            >
               {level}
             </Text>
           ))}
@@ -194,11 +208,15 @@ const styles = StyleSheet.create({
     borderRadius: TRACK_HEIGHT / 2,
     width: "100%",
   },
+  trackDisabled: {
+    backgroundColor: colors.hover, // Lighter color for disabled track
+  },
   qualityIndicators: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 2,
     paddingHorizontal: 6,
+    alignItems: "center",
   },
   qualityIndicator: {
     fontSize: 12,

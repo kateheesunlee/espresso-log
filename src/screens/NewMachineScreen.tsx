@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
@@ -17,6 +16,7 @@ import SvgIcon from "../components/SvgIcon";
 import Avatar from "../components/Avatar";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
+import { TextInput } from "../components/inputs";
 import { showImagePickerOptions } from "../utils/imageUtils";
 import { colors } from "../themes/colors";
 
@@ -30,6 +30,7 @@ interface MachineFormData {
   brand: string;
   model: string;
   nickname: string;
+  grinder: string;
   imageUri?: string;
 }
 
@@ -42,6 +43,7 @@ const NewMachineScreen: React.FC = () => {
     brand: "",
     model: "",
     nickname: "",
+    grinder: "",
     imageUri: "",
   });
 
@@ -68,6 +70,7 @@ const NewMachineScreen: React.FC = () => {
           brand: machine.brand,
           model: machine.model,
           nickname: machine.nickname || "",
+          grinder: machine.grinder || "Integrated grinder",
           imageUri: machine.imageUri || "",
         });
       }
@@ -130,26 +133,6 @@ const NewMachineScreen: React.FC = () => {
     } as any);
   };
 
-  const renderInput = (
-    label: string,
-    value: string,
-    onChangeText: (text: string) => void,
-    placeholder: string,
-    required: boolean = false
-  ) => (
-    <View style={styles.inputGroup}>
-      <Text style={styles.label}>
-        {label} {required && <Text style={styles.required}>*</Text>}
-      </Text>
-      <TextInput
-        style={styles.textInput}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-      />
-    </View>
-  );
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -184,28 +167,44 @@ const NewMachineScreen: React.FC = () => {
             </View>
           </View>
 
-          {renderInput(
-            "Brand",
-            formData.brand,
-            (text) => setFormData((prev) => ({ ...prev, brand: text })),
-            "e.g., Breville, Gaggia, La Marzocco",
-            true
-          )}
+          <TextInput
+            label="Brand"
+            value={formData.brand}
+            onChangeText={(text) =>
+              setFormData((prev) => ({ ...prev, brand: text }))
+            }
+            placeholder="e.g., Breville, Gaggia, La Marzocco"
+            required={true}
+          />
 
-          {renderInput(
-            "Model",
-            formData.model,
-            (text) => setFormData((prev) => ({ ...prev, model: text })),
-            "e.g., Bambino Plus, Classic Pro, Linea Mini",
-            true
-          )}
+          <TextInput
+            label="Model"
+            value={formData.model}
+            onChangeText={(text) =>
+              setFormData((prev) => ({ ...prev, model: text }))
+            }
+            placeholder="e.g., Bambino Plus, Classic Pro, Linea Mini"
+            required={true}
+          />
 
-          {renderInput(
-            "Nickname (Optional)",
-            formData.nickname,
-            (text) => setFormData((prev) => ({ ...prev, nickname: text })),
-            "e.g., My Daily Driver, Office Machine"
-          )}
+          <TextInput
+            label="Grinder"
+            value={formData.grinder}
+            onChangeText={(text) =>
+              setFormData((prev) => ({ ...prev, grinder: text }))
+            }
+            placeholder="e.g., Fellow Ode Gen 2, Eureka Mignon Specialita, Comandante C40"
+            subtitle="Specify the grinder model name if using a separate grinder"
+          />
+
+          <TextInput
+            label="Nickname (Optional)"
+            value={formData.nickname}
+            onChangeText={(text) =>
+              setFormData((prev) => ({ ...prev, nickname: text }))
+            }
+            placeholder="e.g., My Daily Driver, Office Machine"
+          />
 
           <TouchableOpacity
             style={[styles.saveButton, isLoading && styles.disabledButton]}
@@ -261,26 +260,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: colors.textDark,
     marginBottom: 16,
-  },
-  inputGroup: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 8,
-  },
-  required: {
-    color: colors.error,
-  },
-  textInput: {
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
-    padding: 12,
-    fontSize: 16,
   },
   imageSection: {
     marginBottom: 20,

@@ -212,17 +212,20 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
         >
           <View style={styles.shotHeader}>
             <View style={styles.shotInfo}>
-              <Text style={styles.shotTitle}>
+              <Text style={styles.shotTitle}>{formatDate(shot.createdAt)}</Text>
+
+              <Text style={styles.shotSubtitle}>
                 {bean?.name || "Unknown Bean"}
                 {bean?.deleted && " (deleted)"}
               </Text>
-              <Text style={styles.shotSubtitle}>
+              <Text style={styles.shotDate}>
                 {machine?.nickname ||
-                  `${machine?.brand} ${machine?.model}` ||
+                  `${machine?.brand} ${machine?.model}${
+                    machine?.grinder ? ` + ${machine?.grinder}` : ""
+                  }` ||
                   "Unknown Machine"}
                 {machine?.deleted && " (deleted)"}
               </Text>
-              <Text style={styles.shotDate}>{formatDate(shot.createdAt)}</Text>
             </View>
             <View style={styles.shotActions}>
               <TouchableOpacity
@@ -249,6 +252,12 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
 
           <View style={styles.shotMetrics}>
             <View style={styles.metric}>
+              <SvgIcon name="dial" size={20} color={colors.textSecondary} />
+              <Text style={styles.metricValue}>
+                {shot.grindSetting || "N/A"}
+              </Text>
+            </View>
+            <View style={styles.metric}>
               <SvgIcon name="scale" size={20} color={colors.textSecondary} />
               <Text style={styles.metricValue}>{shot.dose_g}g</Text>
             </View>
@@ -257,21 +266,15 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
               <Text style={styles.metricValue}>{shot.yield_g}g</Text>
             </View>
             <View style={styles.metric}>
-              <SvgIcon name="timer" size={20} color={colors.textSecondary} />
-              <Text style={styles.metricValue}>{shot.shotTime_s}s</Text>
-            </View>
-            <View style={styles.metric}>
               <SvgIcon name="ratio" size={20} color={colors.textSecondary} />
               <Text style={styles.metricValue}>
                 {shot.ratio ? `1:${shot.ratio.toFixed(1)}` : "N/A"}
               </Text>
             </View>
-            {shot.grindSetting && (
-              <View style={styles.metric}>
-                <SvgIcon name="dial" size={20} color={colors.textSecondary} />
-                <Text style={styles.metricValue}>{shot.grindSetting}</Text>
-              </View>
-            )}
+            <View style={styles.metric}>
+              <SvgIcon name="timer" size={20} color={colors.textSecondary} />
+              <Text style={styles.metricValue}>{shot.shotTime_s}s</Text>
+            </View>
           </View>
 
           {shot.rating && (
@@ -320,7 +323,7 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
         title="One More Shot"
         message="Shot duplicated successfully! You can now modify the parameters."
         primaryButtonText="Edit"
-        secondaryButtonText="Cancel"
+        secondaryButtonText="Done"
         onPrimaryPress={handleEditDuplicatedShot}
         onSecondaryPress={handleCancelSuccess}
         icon="add-notes"

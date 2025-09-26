@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Animated } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import SvgIcon from "./SvgIcon";
 import { colors } from "../themes/colors";
-import { RoastLevel } from "../database/UniversalDatabase";
+import { RoastLevel, ROAST_LEVELS } from "../database/UniversalDatabase";
 
 interface RoastingSliderProps {
   label: string;
@@ -15,13 +15,7 @@ interface RoastingSliderProps {
 const HANDLE_SIZE = 28;
 const TRACK_HEIGHT = 8;
 
-const ROASTING_LEVELS: RoastLevel[] = [
-  "Light",
-  "Medium Light",
-  "Medium",
-  "Medium Dark",
-  "Dark",
-];
+const ROASTING_LEVELS: RoastLevel[] = [...ROAST_LEVELS];
 
 const roastingColorMap = {
   ["Light"]: colors.roastingLight,

@@ -153,15 +153,32 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
   };
 
   const renderBalanceSlider = (label: string, value: number | undefined) => {
+    let qualityIndicators: string[];
+
+    switch (label) {
+      case "Acidity":
+        qualityIndicators = ["Flat", "Balanced", "Sharp"];
+        break;
+      case "Bitterness":
+        qualityIndicators = ["None", "Balanced", "Bitter/Burnt"];
+        break;
+      case "Body":
+        qualityIndicators = ["Thin/Watery", "Balanced", "Thick/Heavy"];
+        break;
+      case "Aftertaste":
+        qualityIndicators = ["Short/Faint", "Balanced", "Lingering/Harsh"];
+        break;
+      default:
+        qualityIndicators = ["Low", "Balanced", "High"];
+    }
+
     return (
       <BalanceSlider
         label={label}
         value={value ?? 0}
         onValueChange={() => {}} // No-op since it's disabled
         disabled={true}
-        min={-2}
-        max={2}
-        step={0.5}
+        qualityIndicators={qualityIndicators}
       />
     );
   };
@@ -208,6 +225,15 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
           <Text style={styles.sectionTitle}>Brew Parameters</Text>
           <View style={styles.metricsGrid}>
             <View style={styles.metricCard}>
+              <SvgIcon name="dial" size={36} color={colors.textMedium} />
+              <View style={styles.metricTextContainer}>
+                <Text style={styles.metricLabel}>Grind</Text>
+                <Text style={styles.metricValue}>
+                  {shot.grindSetting || "N/A"}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.metricCard}>
               <SvgIcon name="scale" size={36} color={colors.textMedium} />
               <View style={styles.metricTextContainer}>
                 <Text style={styles.metricLabel}>Dose</Text>
@@ -222,13 +248,6 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
               </View>
             </View>
             <View style={styles.metricCard}>
-              <SvgIcon name="timer" size={36} color={colors.textMedium} />
-              <View style={styles.metricTextContainer}>
-                <Text style={styles.metricLabel}>Time</Text>
-                <Text style={styles.metricValue}>{shot.shotTime_s}s</Text>
-              </View>
-            </View>
-            <View style={styles.metricCard}>
               <SvgIcon name="ratio" size={36} color={colors.textMedium} />
               <View style={styles.metricTextContainer}>
                 <Text style={styles.metricLabel}>Ratio</Text>
@@ -237,15 +256,13 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
                 </Text>
               </View>
             </View>
-            {shot.grindSetting && (
-              <View style={styles.metricCard}>
-                <SvgIcon name="dial" size={36} color={colors.textMedium} />
-                <View style={styles.metricTextContainer}>
-                  <Text style={styles.metricLabel}>Grind</Text>
-                  <Text style={styles.metricValue}>{shot.grindSetting}</Text>
-                </View>
+            <View style={styles.metricCard}>
+              <SvgIcon name="timer" size={36} color={colors.textMedium} />
+              <View style={styles.metricTextContainer}>
+                <Text style={styles.metricLabel}>Time</Text>
+                <Text style={styles.metricValue}>{shot.shotTime_s}s</Text>
               </View>
-            )}
+            </View>
           </View>
 
           {(shot.waterTemp_C || shot.preinfusion_s) && (
@@ -343,7 +360,7 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
         title="One More Shot"
         message="Shot duplicated successfully! You can now modify the parameters."
         primaryButtonText="Edit"
-        secondaryButtonText="Cancel"
+        secondaryButtonText="Done"
         onPrimaryPress={handleEditDuplicatedShot}
         onSecondaryPress={handleCancelSuccess}
         icon="add-notes"
