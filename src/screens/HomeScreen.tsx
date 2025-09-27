@@ -9,7 +9,7 @@ import SvgIcon from "../components/SvgIcon";
 import CustomPicker from "../components/CustomPicker";
 import ScrollableListView from "../components/ScrollableListView";
 import EmptyEntity from "../components/EmptyEntity";
-import ShotCard from "../components/ShotCard";
+import ShotCard from "../components/cards/ShotCard";
 import { colors } from "../themes/colors";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList>;

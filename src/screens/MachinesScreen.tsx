@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useStore } from "../store/useStore";
 import { Machine } from "../database/UniversalDatabase";
@@ -7,55 +7,16 @@ import { MainTabParamList } from "../navigation/AppNavigator";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import SvgIcon from "../components/SvgIcon";
-import EntityCard, {
-  EntityCardData,
-  EntityCardAction,
-} from "../components/EntityCard";
+import MachineCard from "../components/cards/MachineCard";
 import ScrollableListView from "../components/ScrollableListView";
 import EmptyEntity from "../components/EmptyEntity";
-import ConfirmationModal from "../components/modals/ConfirmationModal";
-import ErrorModal from "../components/modals/ErrorModal";
 import { colors } from "../themes/colors";
 
 type MachinesScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
-const MachineItem: React.FC<{
-  machine: Machine;
-  onEdit: () => void;
-  onDelete: () => void;
-}> = ({ machine, onEdit, onDelete }) => {
-  const title = machine.nickname || `${machine.brand}`;
-  const grinderText = machine.grinder;
-  const subtitle = `${machine.model}${grinderText ? ` + ${grinderText}` : ""}`;
-
-  const actions: EntityCardAction[] = [
-    { icon: "edit", onPress: onEdit },
-    { icon: "delete", onPress: onDelete },
-  ];
-
-  return (
-    <EntityCard
-      data={machine as EntityCardData}
-      title={title}
-      subtitle={subtitle}
-      fallbackIcon="coffeemaker"
-      actions={actions}
-    />
-  );
-};
-
 const MachinesScreen: React.FC = () => {
-  const { machines, isLoading, loadMachines, deleteMachine } = useStore();
+  const { machines, isLoading, loadMachines } = useStore();
   const navigation = useNavigation<MachinesScreenNavigationProp>();
-  const [deleteConfirmation, setDeleteConfirmation] = useState<{
-    visible: boolean;
-    machine: Machine | null;
-  }>({ visible: false, machine: null });
-
-  const [errorModal, setErrorModal] = useState<{
-    visible: boolean;
-    message: string;
-  }>({ visible: false, message: "" });
   const route = useRoute<RouteProp<MainTabParamList, "Machines">>();
 
   useEffect(() => {
@@ -73,35 +34,8 @@ const MachinesScreen: React.FC = () => {
     (navigation as any).navigate("NewMachine");
   };
 
-  const handleEditMachine = (machine: Machine) => {
-    (navigation as any).navigate("NewMachine", { machineId: machine.id });
-  };
-
-  const handleDeleteMachine = (machine: Machine) => {
-    setDeleteConfirmation({ visible: true, machine });
-  };
-
-  const confirmDeleteMachine = async () => {
-    if (deleteConfirmation.machine) {
-      try {
-        await deleteMachine(deleteConfirmation.machine.id);
-      } catch (error) {
-        setErrorModal({ visible: true, message: "Failed to delete machine" });
-      }
-    }
-    setDeleteConfirmation({ visible: false, machine: null });
-  };
-
-  const cancelDeleteMachine = () => {
-    setDeleteConfirmation({ visible: false, machine: null });
-  };
-
   const renderMachine = ({ item }: { item: Machine }) => (
-    <MachineItem
-      machine={item}
-      onEdit={() => handleEditMachine(item)}
-      onDelete={() => handleDeleteMachine(item)}
-    />
+    <MachineCard machine={item} />
   );
 
   if (isLoading) {
@@ -135,26 +69,6 @@ const MachinesScreen: React.FC = () => {
             onButtonPress={handleAddMachine}
           />
         }
-      />
-
-      <ConfirmationModal
-        visible={deleteConfirmation.visible}
-        title="Delete Machine"
-        message={`Are you sure you want to delete "${
-          deleteConfirmation.machine?.nickname ||
-          `${deleteConfirmation.machine?.brand} ${deleteConfirmation.machine?.model}`
-        }"? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
-        onConfirm={confirmDeleteMachine}
-        onCancel={cancelDeleteMachine}
-        destructive={true}
-      />
-
-      <ErrorModal
-        visible={errorModal.visible}
-        message={errorModal.message}
-        onButtonPress={() => setErrorModal({ visible: false, message: "" })}
       />
     </View>
   );
