@@ -1,5 +1,6 @@
 {
   "expo": {
+    "owner": "kateheesunlee",
     "name": "Espresso Log",
     "slug": "espressolog",
     "version": "1.0.0",
@@ -20,7 +21,8 @@
       "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "This app needs access to camera to take photos of your espresso shots.",
-        "NSPhotoLibraryUsageDescription": "This app needs access to photo library to save and manage espresso shot photos."
+        "NSPhotoLibraryUsageDescription": "This app needs access to photo library to save and manage espresso shot photos.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -36,7 +38,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "2d70e68d-2cb7-4ee6-b07b-6ea497c2688c"
+        "projectId": "a6235afb-f4ec-418e-9896-329d9c3e8caa"
       }
     }
   }

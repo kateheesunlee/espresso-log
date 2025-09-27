@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
-  PanResponder,
   Platform,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -17,6 +16,7 @@ import SuccessModal from "../modals/SuccessModal";
 import ErrorModal from "../modals/ErrorModal";
 import { colors } from "../../themes/colors";
 import { RootStackParamList } from "../../navigation/AppNavigator";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 export interface CardData {
   id: string;
@@ -47,6 +47,9 @@ export interface BaseCardProps {
 
 type BaseCardNavigationProp = StackNavigationProp<RootStackParamList>;
 
+const OPEN = -80;
+const CLOSED = 0;
+
 const BaseCard: React.FC<BaseCardProps> = ({
   showAvatar,
   data,
@@ -67,9 +70,8 @@ const BaseCard: React.FC<BaseCardProps> = ({
   editScreenName,
 }) => {
   const navigation = useNavigation<BaseCardNavigationProp>();
-  const translateX = useRef(new Animated.Value(0));
+  const translateX = useRef(new Animated.Value(CLOSED));
   const [showDeleteButton, setShowDeleteButton] = useState(false);
-  const [isPanning, setIsPanning] = useState(false);
 
   // Modal states
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
@@ -100,7 +102,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
   const hideDeleteButtonAnimation = useCallback(() => {
     setShowDeleteButton(false);
     Animated.spring(translateX.current, {
-      toValue: 0,
+      toValue: CLOSED,
       useNativeDriver: Platform.OS !== "web",
       tension: 100,
       friction: 8,
@@ -110,41 +112,24 @@ const BaseCard: React.FC<BaseCardProps> = ({
   const showDeleteButtonAnimation = useCallback(() => {
     setShowDeleteButton(true);
     Animated.spring(translateX.current, {
-      toValue: -80,
+      toValue: OPEN,
       useNativeDriver: Platform.OS !== "web",
       tension: 100,
       friction: 8,
     }).start();
   }, []);
 
-  const panResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: (_, gestureState) => {
-      if (!showDeleteGesture) return false;
-      const threshold = 5; // how far the user needs to swipe to trigger the pan
-      const shouldPan = Math.abs(gestureState.dx) > threshold;
-      if (shouldPan) {
-        setIsPanning(true);
-      }
-      return shouldPan;
-    },
-    onPanResponderMove: (_, gestureState) => {
-      if (!showDeleteGesture) return;
-
-      if (gestureState.dx < 0) {
-        // Swipe left - show delete button
+  const pan = Gesture.Pan()
+    .minDistance(5)
+    .activeOffsetX([-10, 10])
+    .failOffsetY([-10, 10]) // If the user swipes up or down, the gesture will fail
+    .onUpdate((e) => {
+      if (e.translationX < 0) {
         showDeleteButtonAnimation();
-      } else if (gestureState.dx > 0 && showDeleteButton) {
-        // Swipe right - hide delete button
+      } else if (e.translationX > 0 && showDeleteButton) {
         hideDeleteButtonAnimation();
       }
-    },
-    onPanResponderRelease: () => {
-      // Reset panning state after a short delay to prevent onPress from firing
-      setTimeout(() => {
-        setIsPanning(false);
-      }, 100);
-    },
-  });
+    });
 
   const handleDelete = () => {
     setDeleteConfirmation(true);
@@ -303,18 +288,19 @@ const BaseCard: React.FC<BaseCardProps> = ({
       )}
 
       {/* Main Card */}
-      <Animated.View
-        style={[
-          styles.card,
-          showDeleteGesture &&
-            onDelete && {
-              transform: [{ translateX: translateX.current }],
-            },
-        ]}
-        {...(showDeleteGesture && onDelete ? panResponder.panHandlers : {})}
-      >
-        {wrappedContent}
-      </Animated.View>
+      <GestureDetector gesture={pan}>
+        <Animated.View
+          style={[
+            styles.card,
+            showDeleteGesture &&
+              onDelete && {
+                transform: [{ translateX: translateX.current }],
+              },
+          ]}
+        >
+          {wrappedContent}
+        </Animated.View>
+      </GestureDetector>
 
       {/* Modals */}
       <ConfirmationModal

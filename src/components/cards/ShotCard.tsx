@@ -136,7 +136,6 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
       onFavorite={handleToggleFavorite}
       onPress={handleShotPress}
       showDeleteGesture={true}
-      cloneOfNewItem={true}
       isFavorite={shot.isFavorite}
       editScreenName="NewShot"
     />
