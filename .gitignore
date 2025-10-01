@@ -104,3 +104,7 @@ expo-env.d.ts
 
 # docs
 docs/
+
+# ios/android
+ios/
+android/
