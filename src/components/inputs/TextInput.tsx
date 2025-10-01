@@ -33,7 +33,7 @@ const TextInput: React.FC<TextInputProps> = ({
 }) => {
   return (
     <View style={inputStyles.inputGroup}>
-      <Text style={inputStyles.label}>
+      <Text style={[inputStyles.label, inputStyles.labelRow]}>
         {label} {required && <Text style={inputStyles.required}>*</Text>}
       </Text>
       {subtitle && <Text style={inputStyles.subtitle}>{subtitle}</Text>}

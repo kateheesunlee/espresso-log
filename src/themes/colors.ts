@@ -4,6 +4,7 @@ import colorPalette from "./colorPalette.json";
 export const colors = {
   primary: colorPalette.primary,
   primaryLight: colorPalette.primaryLight,
+  primaryLighter: colorPalette.primaryLighter,
   star: colorPalette.star,
   starLight: colorPalette.starLight,
   heart: colorPalette.heart,

@@ -22,7 +22,12 @@ import SvgIcon from "../components/SvgIcon";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
 import StarRatingSlider from "../components/StarRatingSlider";
-import { TextInput, NumberInput, TagChipsInput } from "../components/inputs";
+import {
+  TextInput,
+  NumberInput,
+  WaterTempNumberInput,
+  TagChipsInput,
+} from "../components/inputs";
 import { inputStyles } from "../components/inputs/styles";
 import { colors } from "../themes/colors";
 
@@ -422,6 +427,8 @@ const NewShotScreen: React.FC = () => {
             onChangeText={(text) => handleInputChange("grindSetting", text)}
             placeholder="10"
             required={true}
+            step={1}
+            minValue={0}
           />
 
           <NumberInput
@@ -431,6 +438,8 @@ const NewShotScreen: React.FC = () => {
             placeholder="18.0"
             required={true}
             unit="g"
+            step={0.1}
+            minValue={0}
           />
 
           <NumberInput
@@ -440,6 +449,8 @@ const NewShotScreen: React.FC = () => {
             placeholder="36.0"
             required={true}
             unit="g"
+            step={0.1}
+            minValue={0}
           />
 
           <TextInput
@@ -457,14 +468,17 @@ const NewShotScreen: React.FC = () => {
             placeholder="30.0"
             required={true}
             unit="s"
+            step={1}
+            minValue={0}
           />
 
-          <NumberInput
+          <WaterTempNumberInput
             label="Water Temperature"
             value={formData.waterTemp_C}
             onChangeText={(text) => handleInputChange("waterTemp_C", text)}
             placeholder="93.0"
-            unit="°C"
+            step={0.1}
+            minValue={0}
           />
 
           <NumberInput
@@ -473,6 +487,8 @@ const NewShotScreen: React.FC = () => {
             onChangeText={(text) => handleInputChange("preinfusion_s", text)}
             placeholder="5.0"
             unit="s"
+            step={1}
+            minValue={0}
           />
 
           <Text style={styles.sectionTitle}>Tasting Notes</Text>
