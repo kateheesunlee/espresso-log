@@ -287,6 +287,12 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tasting Notes</Text>
             <View style={styles.ratingSection}>
+              <View style={styles.flavorRatings}>
+                {renderBalanceSlider("Acidity", shot.acidity)}
+                {renderBalanceSlider("Bitterness", shot.bitterness)}
+                {renderBalanceSlider("Body", shot.body)}
+                {renderBalanceSlider("Aftertaste", shot.aftertaste)}
+              </View>
               <View style={styles.overallRating}>
                 <StarRatingSlider
                   label="Overall Rating"
@@ -294,13 +300,6 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
                   onValueChange={() => {}} // No-op since it's disabled
                   disabled={true}
                 />
-              </View>
-
-              <View style={styles.flavorRatings}>
-                {renderBalanceSlider("Acidity", shot.acidity)}
-                {renderBalanceSlider("Bitterness", shot.bitterness)}
-                {renderBalanceSlider("Body", shot.body)}
-                {renderBalanceSlider("Aftertaste", shot.aftertaste)}
               </View>
             </View>
           </View>

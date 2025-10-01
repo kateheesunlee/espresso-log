@@ -477,12 +477,6 @@ const NewShotScreen: React.FC = () => {
 
           <Text style={styles.sectionTitle}>Tasting Notes</Text>
 
-          <StarRatingSlider
-            label="Overall Rating"
-            value={formData.rating}
-            onValueChange={(value) => handleInputChange("rating", value)}
-          />
-
           <BalanceSlider
             label="Acidity"
             value={formData.acidity}
@@ -509,6 +503,12 @@ const NewShotScreen: React.FC = () => {
             value={formData.aftertaste}
             onValueChange={(value) => handleInputChange("aftertaste", value)}
             qualityIndicators={["Short/Faint", "Balanced", "Lingering/Harsh"]}
+          />
+
+          <StarRatingSlider
+            label="Overall Rating"
+            value={formData.rating}
+            onValueChange={(value) => handleInputChange("rating", value)}
           />
 
           <TagChipsInput

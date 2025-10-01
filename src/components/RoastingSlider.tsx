@@ -77,7 +77,7 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
       translateX.setValue(initialPosition);
       lastOffset.current = initialPosition;
     }
-  }, [value, sliderWidth.current]);
+  }, [value]);
 
   const panGesture = Gesture.Pan()
     .enabled(!disabled)

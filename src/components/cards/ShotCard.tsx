@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useStore } from "../../store/useStore";
 import { Shot } from "../../database/UniversalDatabase";
 import { RootStackParamList } from "../../navigation/AppNavigator";
 import BaseCard from "./BaseCard";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import SvgIcon from "../SvgIcon";
 import { colors } from "../../themes/colors";
+import CoachingModal from "../modals/CoachingModal";
+import { CoachingService } from "../../coaching/service/CoachingService";
+import { Suggestion } from "../../coaching/types";
 
 type ShotCardNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -27,6 +30,10 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
 
   const bean = allBeans.find((b) => b.id === shot.beanId);
   const machine = allMachines.find((m) => m.id === shot.machineId);
+
+  // Coaching modal state
+  const [coachingModalVisible, setCoachingModalVisible] = useState(false);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -52,6 +59,45 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
 
   const handleDelete = async () => {
     await deleteShot(shot.id);
+  };
+
+  const handleCoaching = async () => {
+    // Only show coaching if we have bean info with roast level and taste data
+    if (!bean || !bean.roastLevel) {
+      return;
+    }
+
+    if (
+      shot.acidity === undefined &&
+      shot.bitterness === undefined &&
+      shot.body === undefined &&
+      shot.aftertaste === undefined
+    ) {
+      return;
+    }
+
+    // Build coaching input from shot data
+    const coachingService = new CoachingService("rule");
+    const input = {
+      roast: bean.roastLevel,
+      dose_g: shot.dose_g,
+      yield_g: shot.yield_g,
+      shotTime_s: shot.shotTime_s,
+      ratio: shot.ratio,
+      waterTemp_C: shot.waterTemp_C,
+      preinfusion_s: shot.preinfusion_s,
+      grindStep: shot.grindSetting,
+      balance: {
+        acidity: shot.acidity,
+        bitterness: shot.bitterness,
+        body: shot.body,
+        aftertaste: shot.aftertaste,
+      },
+    };
+
+    const results = await coachingService.getSuggestions(input);
+    setSuggestions(results);
+    setCoachingModalVisible(true);
   };
 
   const additionalContent = () => {
@@ -108,6 +154,22 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
             </View>
           </View>
         )}
+
+        {/* Coaching Button - Only show if we have taste data */}
+        {bean &&
+          (shot.acidity !== undefined ||
+            shot.bitterness !== undefined ||
+            shot.body !== undefined ||
+            shot.aftertaste !== undefined) && (
+            <TouchableOpacity
+              style={styles.coachingButton}
+              onPress={handleCoaching}
+              activeOpacity={0.7}
+            >
+              <SvgIcon name="magic_hat" size={20} color={colors.primary} />
+              <Text style={styles.coachingButtonText}>Get Coaching</Text>
+            </TouchableOpacity>
+          )}
       </View>
     );
   };
@@ -122,23 +184,31 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
     "Unknown Machine" + (machine?.deleted ? " (deleted)" : "");
 
   return (
-    <BaseCard
-      showAvatar={false}
-      data={shot as any}
-      title={formatDate(shot.createdAt)}
-      subtitle={subtitle}
-      subtitle2={subtitle2}
-      details={[]}
-      additionalContent={additionalContent()}
-      fallbackIcon="coffee"
-      onDelete={handleDelete}
-      onDuplicate={handleDuplicate}
-      onFavorite={handleToggleFavorite}
-      onPress={handleShotPress}
-      showDeleteGesture={true}
-      isFavorite={shot.isFavorite}
-      editScreenName="NewShot"
-    />
+    <>
+      <BaseCard
+        showAvatar={false}
+        data={shot as any}
+        title={formatDate(shot.createdAt)}
+        subtitle={subtitle}
+        subtitle2={subtitle2}
+        details={[]}
+        additionalContent={additionalContent()}
+        fallbackIcon="coffee"
+        onDelete={handleDelete}
+        onDuplicate={handleDuplicate}
+        onFavorite={handleToggleFavorite}
+        onPress={handleShotPress}
+        showDeleteGesture={true}
+        isFavorite={shot.isFavorite}
+        editScreenName="NewShot"
+      />
+
+      <CoachingModal
+        visible={coachingModalVisible}
+        suggestions={suggestions}
+        onClose={() => setCoachingModalVisible(false)}
+      />
+    </>
   );
 };
 
@@ -223,6 +293,23 @@ const styles = StyleSheet.create({
     width: "50%",
     height: "100%",
     overflow: "hidden",
+  },
+  coachingButton: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.primaryLight,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginTop: 12,
+    gap: 8,
+  },
+  coachingButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.primary,
   },
 });
 

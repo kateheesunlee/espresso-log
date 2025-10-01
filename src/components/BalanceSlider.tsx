@@ -66,7 +66,7 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
       translateX.setValue(initialPosition);
       lastOffset.current = initialPosition;
     }
-  }, [value, sliderWidth.current]);
+  }, [value]);
 
   const panGesture = Gesture.Pan()
     .enabled(!disabled)
