@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import * as Haptics from "expo-haptics";
 import SvgIcon from "./SvgIcon";
 import { colors } from "../themes/colors";
 import { RoastLevel, ROAST_LEVELS } from "../database/UniversalDatabase";
@@ -85,6 +86,9 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
       translateX.setValue(lastOffset.current + event.translationX);
     })
     .onStart(() => {
+      // Light haptic feedback when starting to drag
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
       Animated.spring(scale, {
         toValue: 1.2,
         useNativeDriver: true,
@@ -106,6 +110,9 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
         newValue,
         sliderWidth.current
       );
+
+      // Medium haptic feedback when releasing the slider
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
       Animated.parallel([
         Animated.spring(translateX, {

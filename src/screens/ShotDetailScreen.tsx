@@ -15,7 +15,7 @@ import { RootStackParamList } from "../navigation/AppNavigator";
 import { Shot } from "../database/UniversalDatabase";
 import SvgIcon from "../components/SvgIcon";
 import BalanceSlider from "../components/BalanceSlider";
-import StarRatingSlider from "../components/StarRatingSlider";
+import RatingSlider from "../components/RatingSlider";
 import ConfirmationModal from "../components/modals/ConfirmationModal";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
@@ -294,11 +294,12 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
                 {renderBalanceSlider("Aftertaste", shot.aftertaste)}
               </View>
               <View style={styles.overallRating}>
-                <StarRatingSlider
+                <RatingSlider
                   label="Overall Rating"
                   value={shot.rating}
                   onValueChange={() => {}} // No-op since it's disabled
                   disabled={true}
+                  iconType="coffee-bean"
                 />
               </View>
             </View>

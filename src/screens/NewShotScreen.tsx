@@ -21,7 +21,7 @@ import BalanceSlider from "../components/BalanceSlider";
 import SvgIcon from "../components/SvgIcon";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
-import StarRatingSlider from "../components/StarRatingSlider";
+import RatingSlider from "../components/RatingSlider";
 import {
   TextInput,
   NumberInput,
@@ -521,10 +521,11 @@ const NewShotScreen: React.FC = () => {
             qualityIndicators={["Short/Faint", "Balanced", "Lingering/Harsh"]}
           />
 
-          <StarRatingSlider
+          <RatingSlider
             label="Overall Rating"
             value={formData.rating}
             onValueChange={(value) => handleInputChange("rating", value)}
+            iconType="coffee-bean"
           />
 
           <TagChipsInput

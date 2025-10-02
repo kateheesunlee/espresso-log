@@ -1,47 +1,71 @@
 import React, { useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import * as Haptics from "expo-haptics";
 import SvgIcon from "./SvgIcon";
 import { colors } from "../themes/colors";
 
-interface StarRatingSliderProps {
+type IconType = 'star' | 'coffee-bean';
+
+interface RatingSliderProps {
   label: string;
   value: number;
   onValueChange: (value: number) => void;
   disabled?: boolean;
+  iconType?: IconType;
 }
 
-const StarRatingSlider: React.FC<StarRatingSliderProps> = ({
+// Icon and color mapping configuration
+const iconConfig = {
+  star: {
+    filledIcon: 'star_filled',
+    emptyIcon: 'star',
+    color: colors.star,
+    secondaryColor: colors.starLight,
+  },
+  'coffee-bean': {
+    filledIcon: 'bean_filled',
+    emptyIcon: 'bean',
+    color: colors.primary,
+    secondaryColor: colors.primaryLight,
+  },
+} as const;
+
+const RatingSlider: React.FC<RatingSliderProps> = ({
   label,
   value,
   onValueChange,
   disabled = false,
+  iconType = 'star',
 }) => {
   const min = 1;
   const max = 5;
   const step = 0.5;
-  const starSize = 32;
-  const totalStars = 5;
+  const iconSize = 32;
+  const totalIcons = 5;
+  
+  // Get current icon configuration
+  const currentIconConfig = iconConfig[iconType];
 
   const sliderWidth = useRef(0);
-  const starsWidth = useRef(0);
+  const iconsWidth = useRef(0);
 
   // Calculate position based on value using step
   const getPositionFromValue = (val: number, width: number) => {
-    const availableWidth = width - starSize;
+    const availableWidth = width - iconSize;
 
     // For half values, we need to account for step increments
     const stepIndex = Math.round((val - min) / step);
     const position =
-      ((stepIndex * step) / (max - min)) * availableWidth + starSize / 2;
+      ((stepIndex * step) / (max - min)) * availableWidth + iconSize / 2;
 
-    return Math.max(starSize / 2, Math.min(width - starSize / 2, position));
+    return Math.max(iconSize / 2, Math.min(width - iconSize / 2, position));
   };
 
   // Calculate value from position using step
   const getValueFromPosition = (position: number, width: number) => {
-    const availableWidth = width - starSize;
-    const normalizedPosition = (position - starSize / 2) / availableWidth;
+    const availableWidth = width - iconSize;
+    const normalizedPosition = (position - iconSize / 2) / availableWidth;
 
     // Calculate the step index based on position
     const stepIndex = Math.round((normalizedPosition * (max - min)) / step);
@@ -53,6 +77,9 @@ const StarRatingSlider: React.FC<StarRatingSliderProps> = ({
   const panGesture = Gesture.Pan()
     .enabled(!disabled)
     .onStart((event) => {
+      // Light haptic feedback when starting to drag
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
       // Calculate the value based on the starting position
       const startValue = getValueFromPosition(event.x, sliderWidth.current);
       onValueChange(startValue);
@@ -63,46 +90,53 @@ const StarRatingSlider: React.FC<StarRatingSliderProps> = ({
       onValueChange(currentValue);
     })
     .onEnd((event) => {
+      // Medium haptic feedback when releasing the slider
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
       // Final value calculation based on end position
       const finalValue = getValueFromPosition(event.x, sliderWidth.current);
       onValueChange(finalValue);
     });
 
-  const handleStarPress = (starValue: number) => {
+  const handleIconPress = (iconValue: number) => {
     if (disabled) return;
-    // If clicking the same star that's already selected, toggle to half value using step
-    if (starValue === value) {
+    
+    // Light haptic feedback when tapping an icon
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    
+    // If clicking the same icon that's already selected, toggle to half value using step
+    if (iconValue === value) {
       const newValue = value % 1 === 0 ? value - step : value + step;
       onValueChange(Math.max(min, Math.min(max, newValue)));
     } else {
-      onValueChange(starValue);
+      onValueChange(iconValue);
     }
   };
 
-  const renderStar = (starValue: number) => {
-    const isFilled = starValue <= value;
-    const isHalfFilled = starValue - step <= value && value < starValue;
+  const renderIcon = (iconValue: number) => {
+    const isFilled = iconValue <= value;
+    const isHalfFilled = iconValue - step <= value && value < iconValue;
 
     return (
       <TouchableOpacity
-        key={starValue}
-        style={styles.starContainer}
-        onPress={() => handleStarPress(starValue)}
+        key={iconValue}
+        style={styles.iconContainer}
+        onPress={() => handleIconPress(iconValue)}
         disabled={disabled}
       >
         <SvgIcon
-          name={isFilled ? "star_filled" : "star"}
-          size={starSize}
-          color={isFilled ? colors.star : colors.borderLight}
-          secondaryColor={isFilled ? colors.starLight : colors.border}
+          name={isFilled ? currentIconConfig.filledIcon : currentIconConfig.emptyIcon}
+          size={iconSize}
+          color={isFilled ? currentIconConfig.color : colors.borderLight}
+          secondaryColor={isFilled ? currentIconConfig.secondaryColor : colors.border}
         />
         {isHalfFilled && (
-          <View style={styles.halfStarOverlay}>
+          <View style={styles.halfIconOverlay}>
             <SvgIcon
-              name="star_filled"
-              size={starSize}
-              color={colors.star}
-              secondaryColor={colors.starLight}
+              name={currentIconConfig.filledIcon}
+              size={iconSize}
+              color={currentIconConfig.color}
+              secondaryColor={currentIconConfig.secondaryColor}
             />
           </View>
         )}
@@ -118,21 +152,21 @@ const StarRatingSlider: React.FC<StarRatingSliderProps> = ({
       </View>
       <View style={styles.sliderAndLabelsContainer}>
         <View style={styles.sliderContainer}>
-          {/* Track with stars inside for drag gestures */}
+          {/* Track with icons inside for drag gestures */}
           <GestureDetector gesture={panGesture}>
             <View style={styles.trackContainer}>
-              {/* Visible stars */}
+              {/* Visible icons */}
               <View
-                style={styles.starsContainer}
+                style={styles.iconsContainer}
                 onLayout={(event) => {
                   const { width } = event.nativeEvent.layout;
-                  starsWidth.current = width;
-                  // Update slider width to match stars width
+                  iconsWidth.current = width;
+                  // Update slider width to match icons width
                   sliderWidth.current = width;
                 }}
               >
-                {Array.from({ length: totalStars }, (_, i) => min + i).map(
-                  renderStar
+                {Array.from({ length: totalIcons }, (_, i) => min + i).map(
+                  renderIcon
                 )}
               </View>
             </View>
@@ -176,19 +210,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  starsContainer: {
+  iconsContainer: {
     flexDirection: "row",
     width: "100%",
     alignItems: "center",
     justifyContent: "space-between",
     height: 40,
   },
-  starContainer: {
+  iconContainer: {
     position: "relative",
     justifyContent: "center",
     alignItems: "center",
   },
-  halfStarOverlay: {
+  halfIconOverlay: {
     position: "absolute",
     top: 0,
     left: 0,
@@ -208,4 +242,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StarRatingSlider;
+export default RatingSlider;

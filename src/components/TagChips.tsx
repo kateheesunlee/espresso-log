@@ -8,6 +8,7 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
+import * as Haptics from "expo-haptics";
 import { colors } from "../themes/colors";
 
 type Props = {
@@ -44,6 +45,10 @@ export default function TagChips({
     (t: string) => {
       const tag = t.trim().toLowerCase();
       if (!tag) return;
+
+      // Light haptic feedback when toggling chips
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
       if (selected.has(tag)) onChange(value.filter((v) => v !== tag));
       else onChange([...value, tag]);
     },
@@ -84,6 +89,10 @@ export default function TagChips({
   const addCustom = () => {
     const tag = query.trim().toLowerCase();
     if (!tag) return;
+
+    // Light haptic feedback when adding custom tag
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     setQuery("");
     if (!value.includes(tag)) onChange([...value, tag]);
   };
