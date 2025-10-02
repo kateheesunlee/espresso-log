@@ -135,12 +135,15 @@ const NewMachineScreen: React.FC = () => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "position" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
       <ScrollView
-        style={styles.scrollView}
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
+        bounces={false}
       >
         <View style={styles.form}>
           <Text style={styles.sectionTitle}>Machine Information</Text>
@@ -245,13 +248,6 @@ const NewMachineScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgLight,
-  },
-  scrollView: {
-    flex: 1,
-  },
   form: {
     padding: 16,
   },

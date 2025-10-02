@@ -156,12 +156,15 @@ const NewBeanScreen: React.FC = () => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "position" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
       <ScrollView
-        style={styles.scrollView}
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
+        bounces={false}
       >
         <View style={styles.form}>
           <Text style={styles.sectionTitle}>Bean Information</Text>
@@ -291,13 +294,6 @@ const NewBeanScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bgLight,
-  },
-  scrollView: {
-    flex: 1,
-  },
   form: {
     padding: 16,
   },

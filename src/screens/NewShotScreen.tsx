@@ -4,6 +4,8 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
 } from "react-native";
 import {
@@ -380,8 +382,17 @@ const NewShotScreen: React.FC = () => {
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "position" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+    >
+      <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+      >
         <View style={styles.form}>
           {route.params?.duplicateFrom && (
             <View style={styles.duplicateNotice}>
@@ -595,7 +606,7 @@ const NewShotScreen: React.FC = () => {
         message={errorModal.message}
         onButtonPress={() => setErrorModal({ visible: false, message: "" })}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
