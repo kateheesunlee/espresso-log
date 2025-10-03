@@ -22,6 +22,34 @@ interface TastingNotesProps {
 
 const MAX_VALUE = 1;
 
+function intensityAdverb(vAbs: number) {
+  const pct = (vAbs / MAX_VALUE) * 100;
+  if (pct <= 10) return "Slightly";
+  if (pct <= 70) return "Moderately";
+  if (pct <= 90) return "Very";
+  return "Too";
+}
+
+/**
+ * value: -1..1
+ * labels: [left, center, right]
+ * center is "Sweet Spot" without an adverb
+ * left and right are an adverb + lowercase adjective
+ */
+function formatReadonlyBalance(
+  value: number,
+  labels: [string, string, string]
+) {
+  const [left, center, right] = labels;
+
+  if (value === 0) return center; // Sweet Spot (no adverb)
+
+  const adverb = intensityAdverb(Math.abs(value));
+  const side = value > 0 ? right : left;
+
+  return `${adverb} ${side.toLowerCase()}`;
+}
+
 const TastingNotes = ({
   formData,
   setFormData,
@@ -35,26 +63,14 @@ const TastingNotes = ({
     setFormData?.({ ...formData, [keyByLabel(label)]: value });
   };
 
-  const readonlyValue = (value: number, qualityIndicators: string[]) => {
-    const distanceFromZero = (Math.abs(value) / MAX_VALUE) * 100;
-    const adverb =
-      distanceFromZero <= 10
-        ? "Slightly"
-        : distanceFromZero <= 70
-        ? "Moderately"
-        : "Too";
-
-    if (value === 0) return qualityIndicators[1];
-    else if (value > 0) {
-      return `${adverb} ${qualityIndicators[2].toLowerCase()}`;
-    }
-    return `${adverb} ${qualityIndicators[0].toLowerCase()}`;
-  };
-
   const readonlySubLabel = (label: TasteBalanceLabel) => {
-    return `${readonlyValue(
+    return `${formatReadonlyBalance(
       formData[keyByLabel(label)],
-      TASTE_BALANCE_QUALITY_INDICATORS_BY_LABEL[label]
+      TASTE_BALANCE_QUALITY_INDICATORS_BY_LABEL[label] as [
+        string,
+        string,
+        string
+      ]
     )}`;
   };
 
