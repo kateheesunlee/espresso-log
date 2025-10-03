@@ -97,7 +97,7 @@ export const inputStyles = StyleSheet.create({
     position: "absolute",
     right: 12,
     top: "50%",
-    transform: [{ translateY: "-50%" }], // Half of font size to center vertically
+    transform: [{ translateY: -12 }], // Can't use percentage here. Roughly half of unit overlay height
     fontSize: 16,
     color: colors.textMedium,
     pointerEvents: "none", // Don't interfere with input
@@ -106,7 +106,7 @@ export const inputStyles = StyleSheet.create({
     position: "absolute",
     left: 8,
     top: "50%",
-    transform: [{ translateY: "-50%" }], // Half of font size to center vertically
+    transform: [{ translateY: -12 }], // Can't use percentage here. Roughly half of clear button height
     padding: 2,
     borderRadius: "50%",
     borderWidth: 1,
