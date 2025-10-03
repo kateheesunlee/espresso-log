@@ -21,6 +21,7 @@ import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
 import { colors } from "../themes/colors";
 import { FormField } from "../components/inputs";
+import RoastingIndicator from "../components/RoastingIndicator";
 
 type ShotDetailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -201,7 +202,13 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
       <ScrollView>
         <View style={styles.header}>
           <View style={styles.headerInfo}>
-            <Text style={styles.shotTitle}>{bean?.name || "Unknown Bean"}</Text>
+            <View style={styles.shotTitleContainer}>
+              <Text style={styles.shotTitle}>
+                {bean?.name || "Unknown Bean"}
+              </Text>
+              <RoastingIndicator roastLevel={bean?.roastLevel!} size="md" />
+            </View>
+
             <Text style={styles.shotSubtitle}>
               {machine?.nickname ||
                 `${machine?.brand} ${machine?.model}` ||
@@ -210,16 +217,14 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
             <Text style={styles.shotDate}>{formatDate(shot.createdAt)}</Text>
           </View>
           {shot.isFavorite && (
-            <View style={styles.favoriteBadge}>
-              <SvgIcon
-                name="heart_filled"
-                size={24}
-                color={shot.isFavorite ? colors.heart : colors.primary}
-                secondaryColor={
-                  shot.isFavorite ? colors.heartLight : colors.primaryLight
-                }
-              />
-            </View>
+            <SvgIcon
+              name="heart_filled"
+              size={24}
+              color={shot.isFavorite ? colors.heart : colors.primary}
+              secondaryColor={
+                shot.isFavorite ? colors.heartLight : colors.primaryLight
+              }
+            />
           )}
         </View>
 
@@ -396,6 +401,11 @@ const styles = StyleSheet.create({
   headerInfo: {
     flex: 1,
   },
+  shotTitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
   shotTitle: {
     fontSize: 24,
     fontWeight: "bold",
@@ -410,13 +420,6 @@ const styles = StyleSheet.create({
   shotDate: {
     fontSize: 14,
     color: colors.textLight,
-  },
-  favoriteBadge: {
-    backgroundColor: colors.background,
-    borderRadius: 8,
-    padding: 8,
-    alignItems: "center",
-    minWidth: 60,
   },
   section: {
     backgroundColor: colors.white,
