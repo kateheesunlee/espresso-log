@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect, useState } from "react";
+import React, { useRef, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,24 +7,21 @@ import {
   Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { inputStyles } from "./styles";
+import { inputStyles } from "../styles";
+import FormField, { FormFieldProps } from "../FormField";
 
-interface NumberInputProps {
-  label: string;
+interface NumberInputFieldProps extends Omit<FormFieldProps, "children"> {
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
-  required?: boolean;
-  subtitle?: string;
   unit?: string;
   style?: any;
   step?: number;
   minValue?: number;
   maxValue?: number;
-  toggleComponent?: React.ReactNode;
 }
 
-const NumberInput: React.FC<NumberInputProps> = ({
+const NumberInputField: React.FC<NumberInputFieldProps> = ({
   label,
   value,
   onChangeText,
@@ -165,14 +162,12 @@ const NumberInput: React.FC<NumberInputProps> = ({
   }, [stopContinuousUpdate]);
 
   return (
-    <View style={inputStyles.inputGroup}>
-      <View style={inputStyles.labelRow}>
-        <Text style={inputStyles.label}>
-          {label} {required && <Text style={inputStyles.required}>*</Text>}
-        </Text>
-        {toggleComponent && toggleComponent}
-      </View>
-      {subtitle && <Text style={inputStyles.subtitle}>{subtitle}</Text>}
+    <FormField
+      label={label}
+      required={required}
+      subtitle={subtitle}
+      toggleComponent={toggleComponent}
+    >
       <View style={inputStyles.inputRow}>
         <View style={inputStyles.numberInputContainer}>
           <TextInput
@@ -226,8 +221,8 @@ const NumberInput: React.FC<NumberInputProps> = ({
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </FormField>
   );
 };
 
-export default NumberInput;
+export default NumberInputField;

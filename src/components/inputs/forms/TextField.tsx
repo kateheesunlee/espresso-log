@@ -1,42 +1,36 @@
 import React from "react";
-import { View, Text, TextInput as RNTextInput } from "react-native";
-import { inputStyles } from "./styles";
+import { TextInput as RNTextInput } from "react-native";
+import { inputStyles } from "../styles";
+import FormField, { FormFieldProps } from "../FormField";
 
-interface TextInputProps {
-  label: string;
+interface TextFieldProps extends Omit<FormFieldProps, "children"> {
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
   multiline?: boolean;
   numberOfLines?: number;
-  required?: boolean;
-  subtitle?: string;
   keyboardType?: "default" | "numeric" | "email-address" | "phone-pad";
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
   readOnly?: boolean;
   style?: any;
 }
 
-const TextInput: React.FC<TextInputProps> = ({
+const TextField: React.FC<TextFieldProps> = ({
   label,
+  required = false,
+  subtitle,
   value,
   onChangeText,
   placeholder = "",
   multiline = false,
   numberOfLines = 1,
-  required = false,
-  subtitle,
   keyboardType = "default",
   autoCapitalize = "sentences",
   readOnly = false,
   style,
 }) => {
   return (
-    <View style={inputStyles.inputGroup}>
-      <Text style={[inputStyles.label, inputStyles.labelRow]}>
-        {label} {required && <Text style={inputStyles.required}>*</Text>}
-      </Text>
-      {subtitle && <Text style={inputStyles.subtitle}>{subtitle}</Text>}
+    <FormField label={label} required={required} subtitle={subtitle}>
       <RNTextInput
         style={[
           inputStyles.textInput,
@@ -52,8 +46,8 @@ const TextInput: React.FC<TextInputProps> = ({
         autoCapitalize={autoCapitalize}
         readOnly={readOnly}
       />
-    </View>
+    </FormField>
   );
 };
 
-export default TextInput;
+export default TextField;

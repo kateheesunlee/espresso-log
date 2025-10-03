@@ -14,12 +14,13 @@ import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { Shot } from "../database/UniversalDatabase";
 import SvgIcon from "../components/SvgIcon";
-import BalanceSlider from "../components/BalanceSlider";
-import RatingSlider from "../components/RatingSlider";
+import BalanceSlider from "../components/inputs/sliders/BalanceSlider";
+import RatingSlider from "../components/inputs/sliders/RatingSlider";
 import ConfirmationModal from "../components/modals/ConfirmationModal";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
 import { colors } from "../themes/colors";
+import { FormField } from "../components/inputs";
 
 type ShotDetailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -173,13 +174,14 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
     }
 
     return (
-      <BalanceSlider
-        label={label}
-        value={value ?? 0}
-        onValueChange={() => {}} // No-op since it's disabled
-        disabled={true}
-        qualityIndicators={qualityIndicators}
-      />
+      <FormField label={label}>
+        <BalanceSlider
+          value={value ?? 0}
+          onValueChange={() => {}} // No-op since it's disabled
+          disabled={true}
+          qualityIndicators={qualityIndicators}
+        />
+      </FormField>
     );
   };
 
@@ -287,21 +289,18 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tasting Notes</Text>
             <View style={styles.ratingSection}>
-              <View style={styles.flavorRatings}>
-                {renderBalanceSlider("Acidity", shot.acidity)}
-                {renderBalanceSlider("Bitterness", shot.bitterness)}
-                {renderBalanceSlider("Body", shot.body)}
-                {renderBalanceSlider("Aftertaste", shot.aftertaste)}
-              </View>
-              <View style={styles.overallRating}>
+              {renderBalanceSlider("Acidity", shot.acidity)}
+              {renderBalanceSlider("Bitterness", shot.bitterness)}
+              {renderBalanceSlider("Body", shot.body)}
+              {renderBalanceSlider("Aftertaste", shot.aftertaste)}
+              <FormField label="Overall Rating">
                 <RatingSlider
-                  label="Overall Rating"
                   value={shot.rating}
                   onValueChange={() => {}} // No-op since it's disabled
-                  disabled={true}
-                  iconType="coffee-bean"
+                  readonly={true}
+                  iconType="star"
                 />
-              </View>
+              </FormField>
             </View>
           </View>
         )}
@@ -485,9 +484,6 @@ const styles = StyleSheet.create({
   overallRating: {
     alignItems: "center",
     marginBottom: 20,
-  },
-  flavorRatings: {
-    marginTop: 16,
   },
   notesText: {
     fontSize: 16,

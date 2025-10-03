@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import NumberInput from "./NumberInput";
+import NumberInputField from "./NumberInputField";
 import { TouchableOpacity, Text } from "react-native";
-import { inputStyles } from "./styles";
+import { inputStyles } from "../styles";
 import { Ionicons } from "@expo/vector-icons";
 
-interface WaterTempNumberInputProps {
+interface WaterTempFieldProps {
   label: string;
   value: string; // Always in Celsius
   onChangeText: (text: string) => void; // Always receives Celsius
@@ -34,7 +34,7 @@ const fahrenheitToCelsius = (fahrenheit: string): string => {
   return (((number - 32) * 5) / 9).toFixed(1).toString();
 };
 
-const WaterTempNumberInput: React.FC<WaterTempNumberInputProps> = ({
+const WaterTempField: React.FC<WaterTempFieldProps> = ({
   label,
   value,
   onChangeText,
@@ -79,7 +79,7 @@ const WaterTempNumberInput: React.FC<WaterTempNumberInputProps> = ({
   );
 
   return isCelsius ? (
-    <NumberInput
+    <NumberInputField
       label={label}
       unit="°C"
       value={celsiusValue}
@@ -93,7 +93,7 @@ const WaterTempNumberInput: React.FC<WaterTempNumberInputProps> = ({
       toggleComponent={toggleComponent}
     />
   ) : (
-    <NumberInput
+    <NumberInputField
       label={label}
       unit="°F"
       value={fahrenheitValue}
@@ -109,4 +109,4 @@ const WaterTempNumberInput: React.FC<WaterTempNumberInputProps> = ({
   );
 };
 
-export default WaterTempNumberInput;
+export default WaterTempField;

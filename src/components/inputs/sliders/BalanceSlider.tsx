@@ -2,11 +2,10 @@ import React, { useRef } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
-import SvgIcon from "./SvgIcon";
-import { colors } from "../themes/colors";
+import SvgIcon from "../../SvgIcon";
+import { colors } from "../../../themes/colors";
 
 interface BalanceSliderProps {
-  label: string;
   value: number;
   onValueChange: (value: number) => void;
   min?: number;
@@ -20,7 +19,6 @@ const HANDLE_SIZE = 28;
 const TRACK_HEIGHT = 8;
 
 const BalanceSlider: React.FC<BalanceSliderProps> = ({
-  label,
   value,
   onValueChange,
   min = -1,
@@ -123,64 +121,58 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
     });
 
   return (
-    <View style={styles.container}>
-      <View style={styles.labelContainer}>
-        <Text style={styles.label}>{label}</Text>
-        {/* <Text style={styles.currentValue}>{value}</Text> */}
+    <View style={styles.sliderContainer}>
+      <View
+        style={styles.trackContainer}
+        onLayout={(event) => {
+          const { width } = event.nativeEvent.layout;
+          sliderWidth.current = width;
+          // Initialize position when we get the width
+          const initialPosition = getPositionFromValue(value, width);
+          translateX.setValue(initialPosition);
+          lastOffset.current = initialPosition;
+        }}
+      >
+        {/* Track */}
+        <View style={[styles.track, disabled && styles.trackDisabled]} />
+
+        {/* Handle */}
+        <GestureDetector gesture={panGesture}>
+          <Animated.View
+            style={[
+              styles.handle,
+              {
+                transform: [{ translateX }, { scale }],
+              },
+            ]}
+          >
+            <SvgIcon name={getIconName(value)} size={HANDLE_SIZE} />
+          </Animated.View>
+        </GestureDetector>
       </View>
-      <View style={styles.sliderContainer}>
-        <View
-          style={styles.trackContainer}
-          onLayout={(event) => {
-            const { width } = event.nativeEvent.layout;
-            sliderWidth.current = width;
-            // Initialize position when we get the width
-            const initialPosition = getPositionFromValue(value, width);
-            translateX.setValue(initialPosition);
-            lastOffset.current = initialPosition;
-          }}
-        >
-          {/* Track */}
-          <View style={[styles.track, disabled && styles.trackDisabled]} />
 
-          {/* Handle */}
-          <GestureDetector gesture={panGesture}>
-            <Animated.View
-              style={[
-                styles.handle,
-                {
-                  transform: [{ translateX }, { scale }],
-                },
-              ]}
-            >
-              <SvgIcon name={getIconName(value)} size={HANDLE_SIZE} />
-            </Animated.View>
-          </GestureDetector>
-        </View>
-
-        {/* Quality indicators below track
-         */}
-        <View style={styles.qualityIndicators}>
-          {qualityIndicators.map((level, index) => (
-            <Text
-              key={level}
-              style={[
-                styles.qualityIndicator,
-                qualityIndicators.length === 3 && {
-                  flex: index === 1 ? 0 : 1,
-                  textAlign:
-                    index === 0 ? "left" : index === 1 ? "center" : "right",
-                },
-                qualityIndicators.length === 2 && {
-                  flex: 1,
-                  textAlign: index === 0 ? "left" : "right",
-                },
-              ]}
-            >
-              {level}
-            </Text>
-          ))}
-        </View>
+      {/* Quality indicators below track
+       */}
+      <View style={styles.qualityIndicators}>
+        {qualityIndicators.map((level, index) => (
+          <Text
+            key={level}
+            style={[
+              styles.qualityIndicator,
+              qualityIndicators.length === 3 && {
+                flex: index === 1 ? 0 : 1,
+                textAlign:
+                  index === 0 ? "left" : index === 1 ? "center" : "right",
+              },
+              qualityIndicators.length === 2 && {
+                flex: 1,
+                textAlign: index === 0 ? "left" : "right",
+              },
+            ]}
+          >
+            {level}
+          </Text>
+        ))}
       </View>
     </View>
   );

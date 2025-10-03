@@ -11,6 +11,7 @@ import { colors } from "../../themes/colors";
 import CoachingModal from "../modals/CoachingModal";
 import { CoachingService } from "../../coaching/service/CoachingService";
 import { Suggestion } from "../../coaching/types";
+import RatingSlider from "../inputs/sliders/RatingSlider";
 
 type ShotCardNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -130,28 +131,15 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
 
         {shot.rating && (
           <View style={styles.ratingContainer}>
-            <Text style={styles.ratingLabel}>Rating: </Text>
-            <View style={styles.stars}>
-              {[1, 2, 3, 4, 5].map((star) => {
-                const isFilled = star <= shot.rating!;
-                const isHalfFilled =
-                  star - 0.5 <= shot.rating! && shot.rating! < star;
-
-                return (
-                  <View key={star} style={styles.beanContainer}>
-                    <SvgIcon
-                      name={isFilled ? "bean_filled" : "bean"}
-                      size={20}
-                    />
-                    {isHalfFilled && (
-                      <View style={styles.halfBeanOverlay}>
-                        <SvgIcon name="bean_filled" size={20} />
-                      </View>
-                    )}
-                  </View>
-                );
-              })}
-            </View>
+            <Text style={styles.ratingLabel}>Overall Rating:</Text>
+            <RatingSlider
+              value={shot.rating}
+              onValueChange={() => {}} // No-op for readonly mode
+              readonly={true}
+              iconType="star"
+              size={24}
+              fullWidth={false}
+            />
           </View>
         )}
 
@@ -213,47 +201,30 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
 };
 
 const styles = StyleSheet.create({
-  shotInfo: {
-    flex: 1,
-  },
-  shotTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 4,
-  },
-  shotSubtitle: {
-    fontSize: 14,
-    color: colors.textMedium,
-    marginBottom: 4,
-  },
-  shotDate: {
-    fontSize: 12,
-    color: colors.textLight,
-  },
-  shotActions: {
+  ratingContainer: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 8,
   },
-  actionButton: {
-    padding: 8,
-    marginLeft: 4,
+  ratingLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.textDark,
   },
   additionalContent: {
     flexDirection: "column",
-    justifyContent: "space-between",
     alignItems: "flex-start",
-    marginTop: 12,
     width: "100%",
+    marginTop: 12,
+    paddingTop: 20,
+    gap: 20,
+    borderTopWidth: 1,
+    borderTopColor: colors.divider,
   },
   shotMetrics: {
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-around",
-    marginBottom: 12,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: colors.divider,
   },
   metric: {
     alignItems: "center",
@@ -264,36 +235,6 @@ const styles = StyleSheet.create({
     color: colors.textDark,
     marginTop: 8,
   },
-  ratingContainer: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingTop: 8,
-    borderTopWidth: 1,
-    borderTopColor: colors.divider,
-  },
-  ratingLabel: {
-    fontSize: 14,
-    color: colors.textMedium,
-    marginRight: 8,
-  },
-  stars: {
-    flexDirection: "row",
-    gap: 4,
-  },
-  beanContainer: {
-    position: "relative",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  halfBeanOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "50%",
-    height: "100%",
-    overflow: "hidden",
-  },
   coachingButton: {
     width: "100%",
     flexDirection: "row",
@@ -303,7 +244,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 12,
-    marginTop: 12,
     gap: 8,
   },
   coachingButtonText: {

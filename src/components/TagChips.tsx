@@ -175,9 +175,7 @@ const TagChipComponent = React.memo(
 );
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-  },
+  container: {},
   chip: {
     paddingHorizontal: 12,
     paddingVertical: 8,

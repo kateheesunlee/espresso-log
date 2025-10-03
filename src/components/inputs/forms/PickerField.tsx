@@ -3,25 +3,24 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Modal,
   FlatList,
   StyleSheet,
   TextInput,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { colors } from "../themes/colors";
+import { colors } from "../../../themes/colors";
+import FormField, { FormFieldProps } from "../FormField";
+import BaseModal from "../../modals/BaseModal";
 
 interface PickerOption {
   id: string;
   name: string;
 }
 
-interface CustomPickerProps {
-  label: string;
+interface PickerFieldProps extends Omit<FormFieldProps, "children"> {
   value: string;
   options: PickerOption[];
   onValueChange: (value: string) => void;
-  required?: boolean;
   placeholder?: string;
   onCreateNew?: () => void;
   createButtonText?: string;
@@ -29,12 +28,13 @@ interface CustomPickerProps {
   showClearButton?: boolean;
 }
 
-const CustomPicker: React.FC<CustomPickerProps> = ({
+const PickerField: React.FC<PickerFieldProps> = ({
   label,
+  subtitle,
+  required = false,
   value,
   options,
   onValueChange,
-  required = false,
   placeholder = `Select ${label}`,
   onCreateNew,
   createButtonText,
@@ -62,9 +62,9 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <>
       {compact ? (
-        <View style={styles.rowContainer}>
+        <View style={styles.compactRowContainer}>
           <Text style={styles.compactLabel}>
             {label} {required && <Text style={styles.required}>*</Text>}
           </Text>
@@ -108,11 +108,7 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
           </View>
         </View>
       ) : (
-        <>
-          <Text style={styles.label}>
-            {label} {required && <Text style={styles.required}>*</Text>}
-          </Text>
-
+        <FormField label={label} required={required} subtitle={subtitle}>
           <TouchableOpacity
             style={styles.pickerButton}
             onPress={() => setIsVisible(true)}
@@ -127,111 +123,87 @@ const CustomPicker: React.FC<CustomPickerProps> = ({
             </Text>
             <Ionicons name="chevron-down" size={20} color={colors.textMedium} />
           </TouchableOpacity>
-        </>
+        </FormField>
       )}
 
-      <Modal
+      <BaseModal
+        headerTitle={`Select ${label}`}
         visible={isVisible}
-        transparent
-        animationType="fade"
         onRequestClose={() => setIsVisible(false)}
+        buttonConfigs={
+          onCreateNew
+            ? [
+                {
+                  text: createButtonText || `Create ${label}`,
+                  onPress: handleCreateNew,
+                },
+              ]
+            : []
+        }
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select {label}</Text>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => setIsVisible(false)}
-              >
-                <Ionicons name="close" size={24} color={colors.textMedium} />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.searchContainer}>
-              <Ionicons
-                name="search"
-                size={20}
-                color={colors.textMedium}
-                style={styles.searchIcon}
-              />
-              <TextInput
-                style={styles.searchInput}
-                placeholder={`Search ${label.toLowerCase()}...`}
-                value={searchText}
-                onChangeText={setSearchText}
-                autoFocus
-              />
-            </View>
-
-            <FlatList
-              data={filteredOptions}
-              keyExtractor={(item) => item.id}
-              style={styles.optionsList}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[
-                    styles.optionItem,
-                    item.id === value && styles.selectedOption,
-                  ]}
-                  onPress={() => handleSelect(item.id)}
-                >
-                  <Text
-                    style={[
-                      styles.optionText,
-                      item.id === value && styles.selectedOptionText,
-                    ]}
-                  >
-                    {item.name}
-                  </Text>
-                  {item.id === value && (
-                    <Ionicons
-                      name="checkmark"
-                      size={20}
-                      color={colors.primary}
-                    />
-                  )}
-                </TouchableOpacity>
-              )}
-              ListEmptyComponent={
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>
-                    No {label.toLowerCase()} found
-                  </Text>
-                </View>
-              }
+        <View style={styles.modalContent}>
+          <View style={styles.searchContainer}>
+            <Ionicons
+              name="search"
+              size={20}
+              color={colors.textMedium}
+              style={styles.searchIcon}
             />
-
-            {onCreateNew && (
-              <View style={styles.modalFooter}>
-                <TouchableOpacity
-                  style={styles.createButton}
-                  onPress={handleCreateNew}
-                >
-                  <Ionicons name="add" size={20} color={colors.white} />
-                  <Text style={styles.createButtonText}>
-                    {createButtonText || `Create ${label}`}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
+            <TextInput
+              style={styles.searchInput}
+              placeholder={`Search ${label.toLowerCase()}...`}
+              value={searchText}
+              onChangeText={setSearchText}
+            />
           </View>
+
+          <FlatList
+            data={filteredOptions}
+            keyExtractor={(item) => item.id}
+            style={styles.optionsList}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={[
+                  styles.optionItem,
+                  item.id === value && styles.selectedOption,
+                ]}
+                onPress={() => handleSelect(item.id)}
+              >
+                <Text
+                  style={[
+                    styles.optionText,
+                    item.id === value && styles.selectedOptionText,
+                  ]}
+                >
+                  {item.name}
+                </Text>
+                {item.id === value && (
+                  <Ionicons name="checkmark" size={20} color={colors.primary} />
+                )}
+              </TouchableOpacity>
+            )}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>
+                  No {label.toLowerCase()} found
+                </Text>
+              </View>
+            }
+          />
         </View>
-      </Modal>
-    </View>
+      </BaseModal>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-  },
   // Compact styles (for filters)
-  rowContainer: {
+  compactRowContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    marginBottom: 16,
   },
   compactLabel: {
     fontSize: 14,
@@ -270,13 +242,6 @@ const styles = StyleSheet.create({
   clearButtonDisabled: {
     opacity: 0.3,
   },
-  // Original styles (for forms)
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 8,
-  },
   required: {
     color: colors.error,
   },
@@ -299,40 +264,14 @@ const styles = StyleSheet.create({
   placeholderText: {
     color: colors.textLight,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
   modalContent: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
     width: "100%",
     maxHeight: "80%",
     minHeight: 400,
   },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: colors.textDark,
-  },
-  closeButton: {
-    padding: 4,
-  },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    margin: 16,
     backgroundColor: colors.bgLight,
     borderRadius: 8,
     paddingHorizontal: 12,
@@ -348,7 +287,6 @@ const styles = StyleSheet.create({
   },
   optionsList: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   optionItem: {
     flexDirection: "row",
@@ -378,25 +316,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.textMedium,
   },
-  modalFooter: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
-  },
-  createButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    padding: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-  },
-  createButtonText: {
-    fontSize: 16,
-    color: colors.white,
-    fontWeight: "600",
-  },
 });
 
-export default CustomPicker;
+export default PickerField;

@@ -5,7 +5,7 @@ import { colors } from "../../themes/colors";
 export const inputStyles = StyleSheet.create({
   // Common container styles
   inputGroup: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
 
   // Label and text styles

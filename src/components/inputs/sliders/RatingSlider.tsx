@@ -2,48 +2,52 @@ import React, { useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
-import SvgIcon from "./SvgIcon";
-import { colors } from "../themes/colors";
+import SvgIcon from "../../SvgIcon";
+import { colors } from "../../../themes/colors";
+import { inputStyles } from "../styles";
 
-type IconType = 'star' | 'coffee-bean';
-
+type IconType = "star" | "coffee-bean";
 interface RatingSliderProps {
-  label: string;
   value: number;
   onValueChange: (value: number) => void;
-  disabled?: boolean;
+  readonly?: boolean;
   iconType?: IconType;
+  size?: number;
+  fullWidth?: boolean;
 }
 
 // Icon and color mapping configuration
 const iconConfig = {
   star: {
-    filledIcon: 'star_filled',
-    emptyIcon: 'star',
+    filledIcon: "star_filled",
+    emptyIcon: "star",
     color: colors.star,
     secondaryColor: colors.starLight,
   },
-  'coffee-bean': {
-    filledIcon: 'bean_filled',
-    emptyIcon: 'bean',
+  "coffee-bean": {
+    filledIcon: "bean_filled",
+    emptyIcon: "bean",
     color: colors.primary,
     secondaryColor: colors.primaryLight,
   },
 } as const;
 
 const RatingSlider: React.FC<RatingSliderProps> = ({
-  label,
   value,
   onValueChange,
-  disabled = false,
-  iconType = 'star',
+  readonly = false,
+  iconType = "star",
+  size = 32,
+  fullWidth = true,
 }) => {
   const min = 1;
   const max = 5;
   const step = 0.5;
-  const iconSize = 32;
+  const iconSize = size;
   const totalIcons = 5;
-  
+
+  const styles = getStyles(fullWidth);
+
   // Get current icon configuration
   const currentIconConfig = iconConfig[iconType];
 
@@ -75,7 +79,7 @@ const RatingSlider: React.FC<RatingSliderProps> = ({
   };
 
   const panGesture = Gesture.Pan()
-    .enabled(!disabled)
+    .enabled(!readonly)
     .onStart((event) => {
       // Light haptic feedback when starting to drag
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -99,11 +103,11 @@ const RatingSlider: React.FC<RatingSliderProps> = ({
     });
 
   const handleIconPress = (iconValue: number) => {
-    if (disabled) return;
-    
+    if (readonly) return;
+
     // Light haptic feedback when tapping an icon
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    
+
     // If clicking the same icon that's already selected, toggle to half value using step
     if (iconValue === value) {
       const newValue = value % 1 === 0 ? value - step : value + step;
@@ -122,13 +126,19 @@ const RatingSlider: React.FC<RatingSliderProps> = ({
         key={iconValue}
         style={styles.iconContainer}
         onPress={() => handleIconPress(iconValue)}
-        disabled={disabled}
+        disabled={readonly}
       >
         <SvgIcon
-          name={isFilled ? currentIconConfig.filledIcon : currentIconConfig.emptyIcon}
+          name={
+            isFilled
+              ? currentIconConfig.filledIcon
+              : currentIconConfig.emptyIcon
+          }
           size={iconSize}
           color={isFilled ? currentIconConfig.color : colors.borderLight}
-          secondaryColor={isFilled ? currentIconConfig.secondaryColor : colors.border}
+          secondaryColor={
+            isFilled ? currentIconConfig.secondaryColor : colors.border
+          }
         />
         {isHalfFilled && (
           <View style={styles.halfIconOverlay}>
@@ -146,100 +156,90 @@ const RatingSlider: React.FC<RatingSliderProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.labelContainer}>
-        <Text style={styles.label}>{label}</Text>
-        {/* <Text style={styles.currentValue}>{value}</Text> */}
-      </View>
-      <View style={styles.sliderAndLabelsContainer}>
-        <View style={styles.sliderContainer}>
-          {/* Track with icons inside for drag gestures */}
-          <GestureDetector gesture={panGesture}>
-            <View style={styles.trackContainer}>
-              {/* Visible icons */}
-              <View
-                style={styles.iconsContainer}
-                onLayout={(event) => {
-                  const { width } = event.nativeEvent.layout;
-                  iconsWidth.current = width;
-                  // Update slider width to match icons width
-                  sliderWidth.current = width;
-                }}
-              >
-                {Array.from({ length: totalIcons }, (_, i) => min + i).map(
-                  renderIcon
-                )}
-              </View>
+      <View style={styles.sliderContainer}>
+        {/* Track with icons inside for drag gestures */}
+        <GestureDetector gesture={panGesture}>
+          <View style={[styles.trackContainer]}>
+            {/* Visible icons */}
+            <View
+              style={styles.iconsContainer}
+              onLayout={(event) => {
+                const { width } = event.nativeEvent.layout;
+                iconsWidth.current = width;
+                // Update slider width to match icons width
+                sliderWidth.current = width;
+              }}
+            >
+              {Array.from({ length: totalIcons }, (_, i) => min + i).map(
+                renderIcon
+              )}
             </View>
-          </GestureDetector>
-        </View>
-
+          </View>
+        </GestureDetector>
+      </View>
+      {!readonly && (
         <View style={styles.scaleLabels}>
           <Text style={styles.scaleLabel}>Poor</Text>
           <Text style={styles.scaleLabel}>Excellent</Text>
         </View>
-      </View>
+      )}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  sliderAndLabelsContainer: {
-    width: "100%",
-    alignSelf: "center",
-  },
-  container: {
-    marginBottom: 20,
-  },
-  labelContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textDark,
-  },
-  sliderContainer: {
-    position: "relative",
-    marginBottom: 8,
-  },
-  trackContainer: {
-    height: 40,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  iconsContainer: {
-    flexDirection: "row",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: 40,
-  },
-  iconContainer: {
-    position: "relative",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  halfIconOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "50%",
-    height: "100%",
-    overflow: "hidden",
-  },
-  scaleLabels: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 8,
-  },
-  scaleLabel: {
-    fontSize: 12,
-    color: colors.textMedium,
-    fontWeight: "500",
-  },
-});
+const getStyles = (fullWidth: boolean) =>
+  StyleSheet.create({
+    container: {
+      width: fullWidth ? "100%" : "auto",
+      alignSelf: "center",
+    },
+    labelContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 12,
+    },
+    label: {
+      fontSize: 16,
+      fontWeight: "600",
+      color: colors.textDark,
+    },
+    sliderContainer: {
+      position: "relative",
+    },
+    trackContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    iconsContainer: {
+      flexDirection: "row",
+      width: fullWidth ? "100%" : "auto",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    iconContainer: {
+      position: "relative",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    halfIconOverlay: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "50%",
+      height: "100%",
+      overflow: "hidden",
+    },
+    scaleLabels: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      paddingHorizontal: 8,
+    },
+    scaleLabel: {
+      fontSize: 12,
+      color: colors.textMedium,
+      fontWeight: "500",
+    },
+  });
 
 export default RatingSlider;

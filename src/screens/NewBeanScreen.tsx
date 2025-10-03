@@ -12,18 +12,13 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import {
-  RoastLevel,
-  AromaTag,
-  AROMA_TAGS,
-} from "../database/UniversalDatabase";
+import { RoastLevel, AROMA_TAGS } from "../database/UniversalDatabase";
 import SvgIcon from "../components/SvgIcon";
 import Avatar from "../components/Avatar";
-import RoastingSlider from "../components/RoastingSlider";
-import TagChips from "../components/TagChips";
+import RoastingSlider from "../components/inputs/sliders/RoastingSlider";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
-import { TextInput, TagChipsInput } from "../components/inputs";
+import { TextField, TagChipsField, FormField } from "../components/inputs";
 import { showImagePickerOptions } from "../utils/imageUtils";
 import { colors } from "../themes/colors";
 
@@ -191,7 +186,7 @@ const NewBeanScreen: React.FC = () => {
             </View>
           </View>
 
-          <TextInput
+          <TextField
             label="Bean Name"
             value={formData.name}
             onChangeText={(text) =>
@@ -201,7 +196,7 @@ const NewBeanScreen: React.FC = () => {
             required={true}
           />
 
-          <TextInput
+          <TextField
             label="Origin"
             value={formData.origin}
             onChangeText={(text) =>
@@ -210,7 +205,7 @@ const NewBeanScreen: React.FC = () => {
             placeholder="e.g., Ethiopia, Colombia, Brazil"
           />
 
-          <TextInput
+          <TextField
             label="Process"
             value={formData.process}
             onChangeText={(text) =>
@@ -219,15 +214,16 @@ const NewBeanScreen: React.FC = () => {
             placeholder="e.g., Washed, Natural, Honey"
           />
 
-          <RoastingSlider
-            label="Roast Level"
-            value={formData.roastLevel || "Medium"}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, roastLevel: value }))
-            }
-          />
+          <FormField label="Roast Level">
+            <RoastingSlider
+              value={formData.roastLevel || "Medium"}
+              onValueChange={(value) =>
+                setFormData((prev) => ({ ...prev, roastLevel: value }))
+              }
+            />
+          </FormField>
 
-          <TagChipsInput
+          <TagChipsField
             label="Aroma Tags"
             value={formData.aromaTags}
             onChange={handleAromaTagsChange}
@@ -235,7 +231,7 @@ const NewBeanScreen: React.FC = () => {
             allowCustom={true}
           />
 
-          <TextInput
+          <TextField
             label="Roast Date"
             value={formData.roastDate}
             onChangeText={(text) =>
@@ -244,7 +240,7 @@ const NewBeanScreen: React.FC = () => {
             placeholder="YYYY-MM-DD"
           />
 
-          <TextInput
+          <TextField
             label="Notes"
             value={formData.notes}
             onChangeText={(text) =>

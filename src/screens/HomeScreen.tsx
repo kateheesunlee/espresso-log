@@ -6,7 +6,7 @@ import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { Shot } from "../database/UniversalDatabase";
 import SvgIcon from "../components/SvgIcon";
-import CustomPicker from "../components/CustomPicker";
+import PickerField from "../components/inputs/forms/PickerField";
 import ScrollableListView from "../components/ScrollableListView";
 import EmptyEntity from "../components/EmptyEntity";
 import ShotCard from "../components/cards/ShotCard";
@@ -140,7 +140,7 @@ const HomeScreen: React.FC = () => {
       {(showBeanFilter || showMachineFilter) && (
         <View style={styles.filtersContainer}>
           {showBeanFilter && (
-            <CustomPicker
+            <PickerField
               label="Bean"
               value={selectedBeanId}
               options={beanOptions}
@@ -151,7 +151,7 @@ const HomeScreen: React.FC = () => {
             />
           )}
           {showMachineFilter && (
-            <CustomPicker
+            <PickerField
               label="Machine"
               value={selectedMachineId}
               options={machineOptions}

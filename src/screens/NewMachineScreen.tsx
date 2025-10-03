@@ -16,7 +16,7 @@ import SvgIcon from "../components/SvgIcon";
 import Avatar from "../components/Avatar";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
-import { TextInput } from "../components/inputs";
+import { TextField } from "../components/inputs";
 import { showImagePickerOptions } from "../utils/imageUtils";
 import { colors } from "../themes/colors";
 
@@ -170,7 +170,7 @@ const NewMachineScreen: React.FC = () => {
             </View>
           </View>
 
-          <TextInput
+          <TextField
             label="Brand"
             value={formData.brand}
             onChangeText={(text) =>
@@ -180,7 +180,7 @@ const NewMachineScreen: React.FC = () => {
             required={true}
           />
 
-          <TextInput
+          <TextField
             label="Model"
             value={formData.model}
             onChangeText={(text) =>
@@ -190,7 +190,7 @@ const NewMachineScreen: React.FC = () => {
             required={true}
           />
 
-          <TextInput
+          <TextField
             label="Grinder"
             value={formData.grinder}
             onChangeText={(text) =>
@@ -200,7 +200,7 @@ const NewMachineScreen: React.FC = () => {
             subtitle="Specify the grinder model name if using a separate grinder"
           />
 
-          <TextInput
+          <TextField
             label="Nickname (Optional)"
             value={formData.nickname}
             onChangeText={(text) =>

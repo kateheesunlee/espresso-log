@@ -18,17 +18,18 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { TastingTag, TASTING_TAGS } from "../database/UniversalDatabase";
-import CustomPicker from "../components/CustomPicker";
-import BalanceSlider from "../components/BalanceSlider";
+import PickerField from "../components/inputs/forms/PickerField";
+import BalanceSlider from "../components/inputs/sliders/BalanceSlider";
 import SvgIcon from "../components/SvgIcon";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
-import RatingSlider from "../components/RatingSlider";
+import RatingSlider from "../components/inputs/sliders/RatingSlider";
 import {
-  TextInput,
-  NumberInput,
-  WaterTempNumberInput,
-  TagChipsInput,
+  TextField,
+  NumberInputField,
+  WaterTempField,
+  TagChipsField,
+  FormField,
 } from "../components/inputs";
 import { inputStyles } from "../components/inputs/styles";
 import { colors } from "../themes/colors";
@@ -370,7 +371,7 @@ const NewShotScreen: React.FC = () => {
     onCreateNew?: () => void,
     createButtonText?: string
   ) => (
-    <CustomPicker
+    <PickerField
       label={label}
       value={value}
       options={options}
@@ -432,7 +433,7 @@ const NewShotScreen: React.FC = () => {
 
           <Text style={styles.sectionTitle}>Brew Parameters</Text>
 
-          <NumberInput
+          <NumberInputField
             label="Grind Setting"
             value={formData.grindSetting}
             onChangeText={(text) => handleInputChange("grindSetting", text)}
@@ -442,7 +443,7 @@ const NewShotScreen: React.FC = () => {
             minValue={0}
           />
 
-          <NumberInput
+          <NumberInputField
             label="Dose"
             value={formData.dose_g}
             onChangeText={(text) => handleInputChange("dose_g", text)}
@@ -453,7 +454,7 @@ const NewShotScreen: React.FC = () => {
             minValue={0}
           />
 
-          <NumberInput
+          <NumberInputField
             label="Yield"
             value={formData.yield_g}
             onChangeText={(text) => handleInputChange("yield_g", text)}
@@ -464,7 +465,7 @@ const NewShotScreen: React.FC = () => {
             minValue={0}
           />
 
-          <TextInput
+          <TextField
             label="Ratio (auto-calculated)"
             value={formData.ratio}
             placeholder="Auto-calculated from dose/yield"
@@ -472,7 +473,7 @@ const NewShotScreen: React.FC = () => {
             onChangeText={() => {}}
           />
 
-          <NumberInput
+          <NumberInputField
             label="Shot Time"
             value={formData.shotTime_s}
             onChangeText={(text) => handleInputChange("shotTime_s", text)}
@@ -483,7 +484,7 @@ const NewShotScreen: React.FC = () => {
             minValue={0}
           />
 
-          <WaterTempNumberInput
+          <WaterTempField
             label="Water Temperature"
             value={formData.waterTemp_C}
             onChangeText={(text) => handleInputChange("waterTemp_C", text)}
@@ -492,7 +493,7 @@ const NewShotScreen: React.FC = () => {
             minValue={0}
           />
 
-          <NumberInput
+          <NumberInputField
             label="Preinfusion Time"
             value={formData.preinfusion_s}
             onChangeText={(text) => handleInputChange("preinfusion_s", text)}
@@ -504,42 +505,46 @@ const NewShotScreen: React.FC = () => {
 
           <Text style={styles.sectionTitle}>Tasting Notes</Text>
 
-          <BalanceSlider
-            label="Acidity"
-            value={formData.acidity}
-            onValueChange={(value) => handleInputChange("acidity", value)}
-            qualityIndicators={["Flat", "Balanced", "Sharp"]}
-          />
+          <FormField label="Acidity">
+            <BalanceSlider
+              value={formData.acidity}
+              onValueChange={(value) => handleInputChange("acidity", value)}
+              qualityIndicators={["Flat", "Balanced", "Sharp"]}
+            />
+          </FormField>
 
-          <BalanceSlider
-            label="Bitterness"
-            value={formData.bitterness}
-            onValueChange={(value) => handleInputChange("bitterness", value)}
-            qualityIndicators={["None", "Balanced", "Bitter/Burnt"]}
-          />
+          <FormField label="Bitterness">
+            <BalanceSlider
+              value={formData.bitterness}
+              onValueChange={(value) => handleInputChange("bitterness", value)}
+              qualityIndicators={["None", "Balanced", "Bitter/Burnt"]}
+            />
+          </FormField>
 
-          <BalanceSlider
-            label="Body"
-            value={formData.body}
-            onValueChange={(value) => handleInputChange("body", value)}
-            qualityIndicators={["Thin/Watery", "Balanced", "Thick/Heavy"]}
-          />
+          <FormField label="Body">
+            <BalanceSlider
+              value={formData.body}
+              onValueChange={(value) => handleInputChange("body", value)}
+              qualityIndicators={["Thin/Watery", "Balanced", "Thick/Heavy"]}
+            />
+          </FormField>
+          <FormField label="Aftertaste">
+            <BalanceSlider
+              value={formData.aftertaste}
+              onValueChange={(value) => handleInputChange("aftertaste", value)}
+              qualityIndicators={["Short/Faint", "Balanced", "Lingering/Harsh"]}
+            />
+          </FormField>
 
-          <BalanceSlider
-            label="Aftertaste"
-            value={formData.aftertaste}
-            onValueChange={(value) => handleInputChange("aftertaste", value)}
-            qualityIndicators={["Short/Faint", "Balanced", "Lingering/Harsh"]}
-          />
+          <FormField label="Overall Rating">
+            <RatingSlider
+              value={formData.rating}
+              onValueChange={(value) => handleInputChange("rating", value)}
+              iconType="star"
+            />
+          </FormField>
 
-          <RatingSlider
-            label="Overall Rating"
-            value={formData.rating}
-            onValueChange={(value) => handleInputChange("rating", value)}
-            iconType="coffee-bean"
-          />
-
-          <TagChipsInput
+          <TagChipsField
             label="Additional Tasting Tags"
             value={formData.tastingTags}
             onChange={handleTastingTagsChange}
@@ -548,7 +553,7 @@ const NewShotScreen: React.FC = () => {
             subtitle="Add descriptive tags to complement your tasting notes above"
           />
 
-          <TextInput
+          <TextField
             label="Notes"
             value={formData.notes}
             onChangeText={(text) => handleInputChange("notes", text)}

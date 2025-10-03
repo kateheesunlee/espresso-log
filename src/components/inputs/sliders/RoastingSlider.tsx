@@ -2,12 +2,11 @@ import React, { useRef } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
-import SvgIcon from "./SvgIcon";
-import { colors } from "../themes/colors";
-import { RoastLevel, ROAST_LEVELS } from "../database/UniversalDatabase";
+import SvgIcon from "../../SvgIcon";
+import { colors } from "../../../themes/colors";
+import { RoastLevel, ROAST_LEVELS } from "../../../database/UniversalDatabase";
 
 interface RoastingSliderProps {
-  label: string;
   value: RoastLevel;
   onValueChange: (value: RoastLevel) => void;
   disabled?: boolean;
@@ -35,7 +34,6 @@ const roastingColorMapLight = {
 };
 
 const RoastingSlider: React.FC<RoastingSliderProps> = ({
-  label,
   value,
   onValueChange,
   disabled = false,
@@ -134,76 +132,54 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
     });
 
   return (
-    <View style={styles.container}>
-      <View style={styles.labelContainer}>
-        <Text style={styles.label}>{label}</Text>
-        {/* <Text style={styles.currentValue}>{value}</Text> */}
+    <View style={styles.sliderContainer}>
+      <View
+        style={styles.trackContainer}
+        onLayout={(event) => {
+          const { width } = event.nativeEvent.layout;
+          sliderWidth.current = width;
+          // Initialize position when we get the width
+          const initialPosition = getPositionFromValue(value, width);
+          translateX.setValue(initialPosition);
+          lastOffset.current = initialPosition;
+        }}
+      >
+        {/* Track */}
+        <View style={styles.track} />
+
+        {/* Handle */}
+        <GestureDetector gesture={panGesture}>
+          <Animated.View
+            style={[
+              styles.handle,
+              {
+                transform: [{ translateX }, { scale }],
+              },
+            ]}
+          >
+            <SvgIcon
+              name="bean_filled"
+              size={HANDLE_SIZE}
+              color={roastingColorMap[getValidRoastLevel(value)]}
+              secondaryColor={roastingColorMapLight[getValidRoastLevel(value)]}
+            />
+          </Animated.View>
+        </GestureDetector>
       </View>
-      <View style={styles.sliderContainer}>
-        <View
-          style={styles.trackContainer}
-          onLayout={(event) => {
-            const { width } = event.nativeEvent.layout;
-            sliderWidth.current = width;
-            // Initialize position when we get the width
-            const initialPosition = getPositionFromValue(value, width);
-            translateX.setValue(initialPosition);
-            lastOffset.current = initialPosition;
-          }}
-        >
-          {/* Track */}
-          <View style={styles.track} />
 
-          {/* Handle */}
-          <GestureDetector gesture={panGesture}>
-            <Animated.View
-              style={[
-                styles.handle,
-                {
-                  transform: [{ translateX }, { scale }],
-                },
-              ]}
-            >
-              <SvgIcon
-                name="bean_filled"
-                size={HANDLE_SIZE}
-                color={roastingColorMap[getValidRoastLevel(value)]}
-                secondaryColor={
-                  roastingColorMapLight[getValidRoastLevel(value)]
-                }
-              />
-            </Animated.View>
-          </GestureDetector>
-        </View>
-
-        {/* Roasting level indicators below track */}
-        <View style={styles.roastingIndicators}>
-          {ROASTING_LEVELS.map((level) => (
-            <Text key={level} style={styles.roastingIndicator}>
-              {level}
-            </Text>
-          ))}
-        </View>
+      {/* Roasting level indicators below track */}
+      <View style={styles.roastingIndicators}>
+        {ROASTING_LEVELS.map((level) => (
+          <Text key={level} style={styles.roastingIndicator}>
+            {level}
+          </Text>
+        ))}
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 20,
-  },
-  labelContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textDark,
-  },
   sliderContainer: {
     marginBottom: 8,
   },
