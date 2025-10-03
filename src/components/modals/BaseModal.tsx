@@ -13,15 +13,7 @@ import { colors } from "../../themes/colors";
 import SvgIcon, { IconName } from "../SvgIcon";
 
 export interface IconConfig {
-  name:
-    | "coffee"
-    | "bean"
-    | "coffeemaker"
-    | "star"
-    | "add-notes"
-    | "warning"
-    | "magic_hat"
-    | "delete";
+  name: IconName;
   size?: number;
   color?: string;
 }

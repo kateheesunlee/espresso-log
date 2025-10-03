@@ -40,6 +40,7 @@ export interface BaseCardProps {
   onEdit?: () => void;
   onFavorite?: () => void | Promise<void>;
   onDuplicate?: () => Promise<string | null>;
+  onOneMore?: () => void;
   showDeleteGesture?: boolean;
   showDate?: boolean;
   isFavorite?: boolean;
@@ -62,6 +63,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
   additionalContent,
   onDelete,
   onDuplicate,
+  onOneMore,
   onPress,
   onEdit,
   onFavorite,
@@ -229,6 +231,19 @@ const BaseCard: React.FC<BaseCardProps> = ({
               <SvgIcon name="edit" size={20} />
             </TouchableOpacity>
           )}
+          {onDuplicate && (
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={handleDuplicate}
+            >
+              <SvgIcon name="copy" size={20} />
+            </TouchableOpacity>
+          )}
+          {onOneMore && (
+            <TouchableOpacity style={styles.actionButton} onPress={onOneMore}>
+              <SvgIcon name="add-notes" size={20} />
+            </TouchableOpacity>
+          )}
           {onFavorite && (
             <TouchableOpacity
               style={styles.actionButton}
@@ -242,14 +257,6 @@ const BaseCard: React.FC<BaseCardProps> = ({
                   isFavorite ? colors.heartLight : colors.primaryLight
                 }
               />
-            </TouchableOpacity>
-          )}
-          {onDuplicate && (
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleDuplicate}
-            >
-              <SvgIcon name="copy" size={20} />
             </TouchableOpacity>
           )}
         </View>

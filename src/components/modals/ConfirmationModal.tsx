@@ -1,5 +1,6 @@
 import React from "react";
-import BaseModal, { ButtonConfig } from "./BaseModal";
+import BaseModal, { ButtonConfig, IconConfig } from "./BaseModal";
+import { IconName } from "../SvgIcon";
 
 interface ConfirmationModalProps {
   visible: boolean;
@@ -10,6 +11,7 @@ interface ConfirmationModalProps {
   onConfirm: () => void;
   onCancel: () => void;
   destructive?: boolean;
+  icon?: IconName;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -21,6 +23,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onConfirm,
   onCancel,
   destructive = false,
+  icon,
 }) => {
   const buttonConfigs: ButtonConfig[] = [
     {
@@ -43,6 +46,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       title={title}
       message={message}
       buttonConfigs={buttonConfigs}
+      iconConfig={icon ? { name: icon } : undefined}
     />
   );
 };

@@ -148,7 +148,7 @@ const NewShotScreen: React.FC = () => {
     try {
       const shot = shots.find((s) => s.id === shotId);
       if (shot) {
-        setEditingShotId(shotId); // Track that we're editing this shot
+        // Don't set editingShotId - we want to create a new shot, not edit the existing one
         setFormData({
           beanId: shot.beanId || "",
           machineId: shot.machineId || "",
@@ -400,8 +400,8 @@ const NewShotScreen: React.FC = () => {
             <View style={styles.duplicateNotice}>
               <SvgIcon name="copy" size={20} />
               <Text style={styles.duplicateNoticeText}>
-                This shot was duplicated from a previous entry. Modify the
-                parameters as needed.
+                This form is pre-filled with data from a previous shot. Modify
+                the parameters as needed before saving.
               </Text>
             </View>
           )}

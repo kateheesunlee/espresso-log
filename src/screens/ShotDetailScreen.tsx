@@ -17,7 +17,6 @@ import SvgIcon from "../components/SvgIcon";
 import BalanceSlider from "../components/inputs/sliders/BalanceSlider";
 import RatingSlider from "../components/inputs/sliders/RatingSlider";
 import ConfirmationModal from "../components/modals/ConfirmationModal";
-import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
 import { colors } from "../themes/colors";
 import { FormField } from "../components/inputs";
@@ -33,21 +32,11 @@ type ShotDetailScreenRouteProp = RouteProp<RootStackParamList, "ShotDetail">;
 const ShotDetailScreen: React.FC = () => {
   const navigation = useNavigation<ShotDetailScreenNavigationProp>();
   const route = useRoute<ShotDetailScreenRouteProp>();
-  const {
-    shots,
-    beans,
-    machines,
-    toggleFavoriteShot,
-    duplicateShot,
-    deleteShot,
-  } = useStore();
+  const { shots, beans, machines, toggleFavoriteShot, deleteShot } = useStore();
 
   const [shot, setShot] = useState<Shot | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
-  const [successModal, setSuccessModal] = useState<{
-    visible: boolean;
-    newShotId: string | null;
-  }>({ visible: false, newShotId: null });
+  const [oneMoreModalVisible, setOneMoreModalVisible] = useState(false);
 
   const [errorModal, setErrorModal] = useState<{
     visible: boolean;
@@ -72,28 +61,14 @@ const ShotDetailScreen: React.FC = () => {
     }
   };
 
-  const handleOneMore = async () => {
+  const handleOneMore = () => {
     if (!shot) return;
-
-    try {
-      const newShotId = await duplicateShot(shot.id);
-      if (newShotId) {
-        setSuccessModal({ visible: true, newShotId });
-      }
-    } catch (error) {
-      setErrorModal({ visible: true, message: "Failed to duplicate shot" });
-    }
+    setOneMoreModalVisible(true);
   };
 
-  const handleEditDuplicatedShot = () => {
-    if (successModal.newShotId) {
-      navigation.navigate("NewShot", { duplicateFrom: successModal.newShotId });
-    }
-    setSuccessModal({ visible: false, newShotId: null });
-  };
-
-  const handleCancelSuccess = () => {
-    setSuccessModal({ visible: false, newShotId: null });
+  const handleOneMoreConfirm = () => {
+    setOneMoreModalVisible(false);
+    navigation.navigate("NewShot", { duplicateFrom: shot!.id });
   };
 
   const handleDelete = () => {
@@ -334,14 +309,14 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
         destructive={true}
       />
 
-      <SuccessModal
-        visible={successModal.visible}
+      <ConfirmationModal
+        visible={oneMoreModalVisible}
         title="One More Shot"
-        message="Shot duplicated successfully! You can now modify the parameters."
-        primaryButtonText="Edit"
-        secondaryButtonText="Done"
-        onPrimaryPress={handleEditDuplicatedShot}
-        onSecondaryPress={handleCancelSuccess}
+        message="This will open a new shot form pre-filled with the current shot's parameters. You can modify any values before saving."
+        confirmText="One More"
+        cancelText="Cancel"
+        onConfirm={handleOneMoreConfirm}
+        onCancel={() => setOneMoreModalVisible(false)}
         icon="add-notes"
       />
 

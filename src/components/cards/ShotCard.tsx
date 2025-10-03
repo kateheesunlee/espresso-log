@@ -13,6 +13,7 @@ import { CoachingService } from "../../coaching/service/CoachingService";
 import { Suggestion } from "../../coaching/types";
 import RatingSlider from "../inputs/sliders/RatingSlider";
 import RoastingIndicator from "../RoastingIndicator";
+import ConfirmationModal from "../modals/ConfirmationModal";
 
 type ShotCardNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -22,16 +23,12 @@ interface ShotCardProps {
 
 const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
   const navigation = useNavigation<ShotCardNavigationProp>();
-  const {
-    allBeans,
-    allMachines,
-    toggleFavoriteShot,
-    duplicateShot,
-    deleteShot,
-  } = useStore();
+  const { allBeans, allMachines, toggleFavoriteShot, deleteShot } = useStore();
 
   const bean = allBeans.find((b) => b.id === shot.beanId);
   const machine = allMachines.find((m) => m.id === shot.machineId);
+
+  const [oneMoreModalVisible, setOneMoreModalVisible] = useState(false);
 
   // Coaching modal state
   const [coachingModalVisible, setCoachingModalVisible] = useState(false);
@@ -55,8 +52,13 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
     await toggleFavoriteShot(shot.id);
   };
 
-  const handleDuplicate = async () => {
-    return await duplicateShot(shot.id);
+  const handleOneMore = () => {
+    setOneMoreModalVisible(true);
+  };
+
+  const handleOneMoreConfirm = () => {
+    setOneMoreModalVisible(false);
+    navigation.navigate("NewShot", { duplicateFrom: shot.id });
   };
 
   const handleDelete = async () => {
@@ -194,7 +196,7 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
         additionalContent={additionalContent()}
         fallbackIcon="coffee"
         onDelete={handleDelete}
-        onDuplicate={handleDuplicate}
+        onOneMore={handleOneMore}
         onFavorite={handleToggleFavorite}
         onPress={handleShotPress}
         showDeleteGesture={true}
@@ -206,6 +208,17 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
         visible={coachingModalVisible}
         suggestions={suggestions}
         onClose={() => setCoachingModalVisible(false)}
+      />
+
+      <ConfirmationModal
+        visible={oneMoreModalVisible}
+        title="One More Shot"
+        message="This will open a new shot form pre-filled with the current shot's parameters. You can modify any values before saving."
+        confirmText="One More"
+        cancelText="Cancel"
+        onConfirm={handleOneMoreConfirm}
+        onCancel={() => setOneMoreModalVisible(false)}
+        icon="add-notes"
       />
     </>
   );
