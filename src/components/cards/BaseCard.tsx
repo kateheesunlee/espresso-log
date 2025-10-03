@@ -257,10 +257,20 @@ const BaseCard: React.FC<BaseCardProps> = ({
     </View>
   );
 
+  const handleCardPress = () => {
+    if (showDeleteButton) {
+      hideDeleteButtonAnimation();
+      return;
+    }
+    if (onPress) {
+      onPress();
+    }
+  };
+
   const wrappedContent = onPress ? (
     <TouchableOpacity
       style={styles.cardContent}
-      onPress={onPress}
+      onPress={handleCardPress}
       activeOpacity={0.7}
     >
       {cardContent}
