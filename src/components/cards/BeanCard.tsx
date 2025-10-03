@@ -10,13 +10,12 @@ import { Text } from "react-native";
 
 export interface BeanCardProps {
   bean: Bean;
-  onPress?: () => void;
 }
 
 type BeanCardNavigationProp = StackNavigationProp<RootStackParamList>;
 
-const BeanCard: React.FC<BeanCardProps> = ({ bean, onPress }) => {
-  const { deleteBean } = useStore();
+const BeanCard: React.FC<BeanCardProps> = ({ bean }) => {
+  const { deleteBean, toggleFavoriteBean } = useStore();
   const navigation = useNavigation<BeanCardNavigationProp>();
 
   const formatDate = (dateString: string) => {
@@ -35,12 +34,16 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean, onPress }) => {
     details.push(`Aroma: ${bean.aromaTags.join(", ")}`);
   }
 
-  const handleEdit = () => {
+  const handlePress = () => {
     (navigation as any).navigate("NewBean", { beanId: bean.id });
   };
 
   const handleDelete = async () => {
     await deleteBean(bean.id);
+  };
+
+  const handleToggleFavorite = async () => {
+    await toggleFavoriteBean(bean.id);
   };
 
   const title = () => {
@@ -65,10 +68,11 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean, onPress }) => {
       details={details}
       fallbackIcon="bean"
       onDelete={handleDelete}
-      onEdit={handleEdit}
-      onPress={onPress}
+      onFavorite={handleToggleFavorite}
+      onPress={handlePress}
       showDeleteGesture={true}
       showDate={false}
+      isFavorite={bean.isFavorite}
     />
   );
 };

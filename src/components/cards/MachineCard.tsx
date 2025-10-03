@@ -8,12 +8,11 @@ import { RootStackParamList } from "../../navigation/AppNavigator";
 
 export interface MachineCardProps {
   machine: Machine;
-  onPress?: () => void;
 }
 
 type MachineCardNavigationProp = StackNavigationProp<RootStackParamList>;
 
-const MachineCard: React.FC<MachineCardProps> = ({ machine, onPress }) => {
+const MachineCard: React.FC<MachineCardProps> = ({ machine }) => {
   const { deleteMachine } = useStore();
   const navigation = useNavigation<MachineCardNavigationProp>();
 
@@ -22,7 +21,7 @@ const MachineCard: React.FC<MachineCardProps> = ({ machine, onPress }) => {
     machine.grinder ? ` + ${machine.grinder}` : ""
   }`;
 
-  const handleEdit = () => {
+  const handlePress = () => {
     (navigation as any).navigate("NewMachine", { machineId: machine.id });
   };
 
@@ -38,8 +37,7 @@ const MachineCard: React.FC<MachineCardProps> = ({ machine, onPress }) => {
       subtitle={subtitle}
       fallbackIcon="coffeemaker"
       onDelete={handleDelete}
-      onEdit={handleEdit}
-      onPress={onPress}
+      onPress={handlePress}
       showDeleteGesture={true}
       showDate={false}
     />

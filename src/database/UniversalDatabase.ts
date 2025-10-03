@@ -118,6 +118,7 @@ export interface Bean {
   aromaTags?: string[]; // Don't use AromaTag type here to allow custom tags
   notes?: string;
   imageUri?: string;
+  isFavorite?: boolean;
   deleted?: boolean;
   createdAt: string;
   updatedAt: string;
@@ -429,6 +430,47 @@ class UniversalDatabase {
         (a: Shot, b: Shot) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
+  }
+
+  async toggleFavoriteBean(id: string): Promise<void> {
+    const bean = await this.getBean(id);
+    if (bean) {
+      const data = this.getData();
+      const index = data.beans.findIndex((b: Bean) => b.id === id);
+
+      if (index !== -1) {
+        const currentBean = data.beans[index];
+        const newFavoriteValue = !currentBean.isFavorite;
+
+        // Toggle the current bean's favorite status
+        data.beans[index].isFavorite = newFavoriteValue;
+        data.beans[index].updatedAt = new Date().toISOString();
+      }
+
+      await this.setData(data);
+    }
+  }
+
+  async getFavoriteBean(userId: string): Promise<Bean | null> {
+    const data = this.getData();
+    return (
+      data.beans.find((b: Bean) => b.userId === userId && b.isFavorite) || null
+    );
+  }
+
+  async getFavoriteBeans(userId: string): Promise<Bean[]> {
+    const data = this.getData();
+    return data.beans
+      .filter((b: Bean) => b.userId === userId && b.isFavorite)
+      .sort(
+        (a: Bean, b: Bean) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+  }
+
+  async getBean(id: string): Promise<Bean | null> {
+    const data = this.getData();
+    return data.beans.find((b: Bean) => b.id === id) || null;
   }
 }
 

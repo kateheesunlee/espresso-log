@@ -40,6 +40,7 @@ interface AppState {
   createBean: (bean: Omit<Bean, "createdAt" | "updatedAt">) => Promise<void>;
   updateBean: (bean: Bean) => Promise<void>;
   deleteBean: (id: string) => Promise<void>;
+  toggleFavoriteBean: (id: string) => Promise<void>;
 
   // Shot actions
   loadShots: () => Promise<void>;
@@ -218,6 +219,17 @@ export const useStore = create<AppState>((set, get) => ({
       await get().loadAllBeans();
     } catch (error) {
       console.error("Failed to delete bean:", error);
+    }
+  },
+
+  toggleFavoriteBean: async (id) => {
+    try {
+      await database.toggleFavoriteBean(id);
+      await get().loadBeans();
+      await get().loadAllBeans();
+    } catch (error) {
+      console.error("Failed to toggle favorite bean:", error);
+      throw error;
     }
   },
 
