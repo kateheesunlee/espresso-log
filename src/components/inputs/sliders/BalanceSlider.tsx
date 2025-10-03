@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
     borderRadius: TRACK_HEIGHT / 2,
   },
   trackHighlightReadOnly: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.disabled,
     opacity: 0.5,
   },
   qualityIndicators: {
