@@ -120,6 +120,7 @@ export default function AppNavigator() {
           component={NewBeanScreen}
           options={({ route }) => ({
             title: route.params?.beanId ? "Edit Bean" : "New Bean",
+            headerBackTitle: "Beans",
           })}
         />
         <Stack.Screen
@@ -127,6 +128,7 @@ export default function AppNavigator() {
           component={NewMachineScreen}
           options={({ route }) => ({
             title: route.params?.machineId ? "Edit Machine" : "New Machine",
+            headerBackTitle: "Machines",
           })}
         />
       </Stack.Navigator>
