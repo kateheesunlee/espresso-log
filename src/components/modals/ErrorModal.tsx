@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
+
 import { colors } from "../../themes/colors";
 import BaseModal, { ButtonConfig, IconConfig } from "./BaseModal";
 

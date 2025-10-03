@@ -5,20 +5,20 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert,
   Share,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+
 import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { Shot } from "../database/UniversalDatabase";
+import { Shot } from "@types";
+import { colors } from "../themes/colors";
+
 import SvgIcon from "../components/SvgIcon";
-import BalanceSlider from "../components/inputs/sliders/BalanceSlider";
 import RatingSlider from "../components/inputs/sliders/RatingSlider";
 import ConfirmationModal from "../components/modals/ConfirmationModal";
 import ErrorModal from "../components/modals/ErrorModal";
-import { colors } from "../themes/colors";
 import { FormField } from "../components/inputs";
 import RoastingIndicator from "../components/RoastingIndicator";
 import TastingNotes from "../components/TastingNotes";

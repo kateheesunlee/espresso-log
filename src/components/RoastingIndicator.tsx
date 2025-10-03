@@ -1,7 +1,8 @@
 import React from "react";
 import { View, StyleSheet, ViewStyle, Text, TextStyle } from "react-native";
+
+import { RoastLevel } from "@types";
 import { colors } from "../themes/colors";
-import { RoastLevel } from "../database/UniversalDatabase";
 
 interface RoastingIndicatorProps {
   roastLevel: RoastLevel;

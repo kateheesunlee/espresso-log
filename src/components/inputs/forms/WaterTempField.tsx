@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import NumberInputField from "./NumberInputField";
 import { TouchableOpacity, Text } from "react-native";
-import { inputStyles } from "../styles";
 import { Ionicons } from "@expo/vector-icons";
+
+import { inputStyles } from "../styles";
+import NumberInputField from "./NumberInputField";
 
 interface WaterTempFieldProps {
   label: string;

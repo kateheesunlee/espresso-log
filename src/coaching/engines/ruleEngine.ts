@@ -1,4 +1,5 @@
-import { RoastLevel, Suggestion, ShotInput, CoachField } from "../types";
+import { RoastLevel } from "@types";
+import { Suggestion, ShotInput, CoachField } from "../types";
 import { classifyExtraction } from "../extraction";
 import {
   THRESHOLDS,

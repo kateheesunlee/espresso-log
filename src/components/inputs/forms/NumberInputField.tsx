@@ -7,6 +7,7 @@ import {
   Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+
 import { inputStyles } from "../styles";
 import FormField, { FormFieldProps } from "../FormField";
 

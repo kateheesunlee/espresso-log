@@ -9,6 +9,7 @@ import {
   ViewStyle,
   TextStyle,
 } from "react-native";
+
 import { colors } from "../../themes/colors";
 import SvgIcon, { IconName } from "../SvgIcon";
 

@@ -1,16 +1,20 @@
 import React, { useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useStore } from "../store/useStore";
-import { Machine } from "../database/UniversalDatabase";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
-import { MainTabParamList } from "../navigation/AppNavigator";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../navigation/AppNavigator";
+
+import { useStore } from "../store/useStore";
+import { Machine } from "@types";
+import {
+  MainTabParamList,
+  RootStackParamList,
+} from "../navigation/AppNavigator";
+import { colors } from "../themes/colors";
+
 import SvgIcon from "../components/SvgIcon";
 import MachineCard from "../components/cards/MachineCard";
 import ScrollableListView from "../components/ScrollableListView";
 import EmptyEntity from "../components/EmptyEntity";
-import { colors } from "../themes/colors";
 
 type MachinesScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 

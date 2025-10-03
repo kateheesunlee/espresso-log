@@ -1,16 +1,20 @@
 import React, { useEffect } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useStore } from "../store/useStore";
-import { Bean } from "../database/UniversalDatabase";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
-import { MainTabParamList } from "../navigation/AppNavigator";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../navigation/AppNavigator";
+
+import { useStore } from "../store/useStore";
+import { Bean } from "@types";
+import {
+  MainTabParamList,
+  RootStackParamList,
+} from "../navigation/AppNavigator";
+import { colors } from "../themes/colors";
+
 import SvgIcon from "../components/SvgIcon";
 import BeanCard from "../components/cards/BeanCard";
 import ScrollableListView from "../components/ScrollableListView";
 import EmptyEntity from "../components/EmptyEntity";
-import { colors } from "../themes/colors";
 
 type BeansScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 

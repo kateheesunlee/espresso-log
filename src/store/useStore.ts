@@ -1,11 +1,6 @@
 import { create } from "zustand";
-import {
-  database,
-  User,
-  Machine,
-  Bean,
-  Shot,
-} from "../database/UniversalDatabase";
+import { database } from "../database/UniversalDatabase";
+import { User, Machine, Bean, Shot } from "@types";
 
 interface AppState {
   // User

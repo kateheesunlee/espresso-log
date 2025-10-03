@@ -1,10 +1,12 @@
 import React from "react";
-import { Bean } from "../../database/UniversalDatabase";
-import BaseCard from "./BaseCard";
-import { useStore } from "../../store/useStore";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+
+import { Bean } from "@types";
+import { useStore } from "../../store/useStore";
 import { RootStackParamList } from "../../navigation/AppNavigator";
+
+import BaseCard from "./BaseCard";
 import RoastingIndicator from "../RoastingIndicator";
 
 export interface BeanCardProps {

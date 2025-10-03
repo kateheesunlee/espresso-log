@@ -1,5 +1,5 @@
-// src/coaching/extraction.ts
-import { RoastLevel, ExtractionClass } from "./types";
+import { RoastLevel } from "@types";
+import { ExtractionClass } from "./types";
 import { EXTRACTION_BANDS, DEAD_BAND } from "./constants";
 
 export function classifyExtraction(

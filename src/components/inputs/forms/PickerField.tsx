@@ -8,6 +8,7 @@ import {
   TextInput,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+
 import { colors } from "../../../themes/colors";
 import FormField, { FormFieldProps } from "../FormField";
 import BaseModal from "../../modals/BaseModal";

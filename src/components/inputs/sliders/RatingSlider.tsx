@@ -2,8 +2,9 @@ import React, { useRef } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
-import SvgIcon from "../../SvgIcon";
+
 import { colors } from "../../../themes/colors";
+import SvgIcon from "../../SvgIcon";
 import { inputStyles } from "../styles";
 
 type IconType = "star" | "coffee-bean";

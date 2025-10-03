@@ -10,15 +10,17 @@ import {
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+
 import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
+import { colors } from "../themes/colors";
+import { showImagePickerOptions } from "../utils/imageUtils";
+
 import SvgIcon from "../components/SvgIcon";
 import Avatar from "../components/Avatar";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
 import { TextField } from "../components/inputs";
-import { showImagePickerOptions } from "../utils/imageUtils";
-import { colors } from "../themes/colors";
 
 type NewMachineScreenNavigationProp = StackNavigationProp<
   RootStackParamList,

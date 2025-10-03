@@ -1,6 +1,7 @@
 import React from "react";
-import BaseModal, { ButtonConfig, IconConfig } from "./BaseModal";
+
 import { IconName } from "../SvgIcon";
+import BaseModal, { ButtonConfig, IconConfig } from "./BaseModal";
 
 interface ConfirmationModalProps {
   visible: boolean;

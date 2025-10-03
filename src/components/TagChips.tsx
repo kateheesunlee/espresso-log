@@ -1,4 +1,3 @@
-// components/TagChips.tsx
 import React, { useMemo, useState, useCallback } from "react";
 import {
   View,
@@ -9,6 +8,7 @@ import {
   FlatList,
 } from "react-native";
 import * as Haptics from "expo-haptics";
+
 import { colors } from "../themes/colors";
 
 type Props = {

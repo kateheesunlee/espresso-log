@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
+
+import { Shot } from "@types";
 import { colors } from "../../themes/colors";
 import { Suggestion, ShotInput } from "../../coaching/types";
 import { CoachingService } from "../../coaching/service/CoachingService";
-import { Shot } from "../../database/UniversalDatabase";
+
 import BaseModal, { ButtonConfig } from "./BaseModal";
 
 interface CoachingModalProps {

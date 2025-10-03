@@ -10,17 +10,19 @@ import {
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+
 import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { RoastLevel, AROMA_TAGS } from "../database/UniversalDatabase";
+import { RoastLevel, AROMA_TAGS } from "@types";
+import { colors } from "../themes/colors";
+import { showImagePickerOptions } from "../utils/imageUtils";
+
 import SvgIcon from "../components/SvgIcon";
 import Avatar from "../components/Avatar";
 import RoastingSlider from "../components/inputs/sliders/RoastingSlider";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
 import { TextField, TagChipsField, FormField } from "../components/inputs";
-import { showImagePickerOptions } from "../utils/imageUtils";
-import { colors } from "../themes/colors";
 
 type NewBeanScreenNavigationProp = StackNavigationProp<
   RootStackParamList,

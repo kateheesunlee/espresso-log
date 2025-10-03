@@ -1,5 +1,6 @@
 import React from "react";
 import { TextInput as RNTextInput } from "react-native";
+
 import { inputStyles } from "../styles";
 import FormField, { FormFieldProps } from "../FormField";
 

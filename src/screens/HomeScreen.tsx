@@ -2,15 +2,17 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+
 import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { Shot } from "../database/UniversalDatabase";
+import { Shot } from "@types";
+import { colors } from "../themes/colors";
+
 import SvgIcon from "../components/SvgIcon";
 import PickerField from "../components/inputs/forms/PickerField";
 import ScrollableListView from "../components/ScrollableListView";
 import EmptyEntity from "../components/EmptyEntity";
 import ShotCard from "../components/cards/ShotCard";
-import { colors } from "../themes/colors";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 

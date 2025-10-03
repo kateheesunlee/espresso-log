@@ -15,11 +15,13 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+
 import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { TastingTag, TASTING_TAGS } from "../database/UniversalDatabase";
+import { TastingTag, TASTING_TAGS } from "@types";
+import { colors } from "../themes/colors";
+
 import PickerField from "../components/inputs/forms/PickerField";
-import BalanceSlider from "../components/inputs/sliders/BalanceSlider";
 import SvgIcon from "../components/SvgIcon";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
@@ -32,7 +34,6 @@ import {
   FormField,
 } from "../components/inputs";
 import { inputStyles } from "../components/inputs/styles";
-import { colors } from "../themes/colors";
 import TastingNotes from "../components/TastingNotes";
 
 type NewShotScreenNavigationProp = StackNavigationProp<

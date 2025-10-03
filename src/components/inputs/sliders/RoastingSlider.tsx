@@ -2,9 +2,10 @@ import React, { useRef } from "react";
 import { View, Text, StyleSheet, Animated } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
-import SvgIcon from "../../SvgIcon";
+
+import { RoastLevel, ROAST_LEVELS } from "@types";
 import { colors } from "../../../themes/colors";
-import { RoastLevel, ROAST_LEVELS } from "../../../database/UniversalDatabase";
+import SvgIcon from "../../SvgIcon";
 
 interface RoastingSliderProps {
   value: RoastLevel;

@@ -1,10 +1,12 @@
 import React from "react";
-import { Machine } from "../../database/UniversalDatabase";
-import BaseCard from "./BaseCard";
-import { useStore } from "../../store/useStore";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+
+import { Machine } from "@types";
+import { useStore } from "../../store/useStore";
 import { RootStackParamList } from "../../navigation/AppNavigator";
+
+import BaseCard from "./BaseCard";
 
 export interface MachineCardProps {
   machine: Machine;

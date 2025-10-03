@@ -1,4 +1,5 @@
 import React from "react";
+
 import { colors } from "../themes/colors";
 
 // React component icons
@@ -6,12 +7,14 @@ import AddNotesIcon from "./icons/AddNotesIcon";
 import BeanFilledIcon from "./icons/BeanFilledIcon";
 import BeanIcon from "./icons/BeanIcon";
 import CameraIcon from "./icons/CameraIcon";
+import CloseIcon from "./icons/CloseIcon";
 import CoffeeIcon from "./icons/CoffeeIcon";
 import CoffeeFilledIcon from "./icons/CoffeeFilledIcon";
 import CoffeemakerIcon from "./icons/CoffeemakerIcon";
 import CoffeemakerFilledIcon from "./icons/CoffeemakerFilledIcon";
 import CopyIcon from "./icons/CopyIcon";
 import DeleteIcon from "./icons/DeleteIcon";
+import DialIcon from "./icons/DialIcon";
 import EditIcon from "./icons/EditIcon";
 import HeartBroken2FilledIcon from "./icons/HeartBroken2FilledIcon";
 import HeartBroken2Icon from "./icons/HeartBroken2Icon";
@@ -22,20 +25,18 @@ import HeartIcon from "./icons/HeartIcon";
 import MagicHatIcon from "./icons/MagicHatIcon";
 import NoteFilledIcon from "./icons/NoteFilledIcon";
 import PlusIcon from "./icons/PlusIcon";
+import RatioIcon from "./icons/RatioIcon";
+import ScaleIcon from "./icons/ScaleIcon";
 import SendIcon from "./icons/SendIcon";
 import ShareIcon from "./icons/ShareIcon";
-import StarIcon from "./icons/StarIcon";
 import StarFilledIcon from "./icons/StarFilledIcon";
+import StarIcon from "./icons/StarIcon";
+import TempIcon from "./icons/TemperatureIcon";
 import ThumbDownIcon from "./icons/ThumbDownIcon";
 import ThumbUpIcon from "./icons/ThumbUpIcon";
-import ScaleIcon from "./icons/ScaleIcon";
-import WaterIcon from "./icons/WaterIcon";
 import TimerIcon from "./icons/TimerIcon";
-import RatioIcon from "./icons/RatioIcon";
-import DialIcon from "./icons/DialIcon";
 import WarningIcon from "./icons/WarningIcon";
-import TempIcon from "./icons/TemperatureIcon";
-import CloseIcon from "./icons/CloseIcon";
+import WaterIcon from "./icons/WaterIcon";
 
 const ICONS = {
   "add-notes": AddNotesIcon,

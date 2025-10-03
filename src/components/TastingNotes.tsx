@@ -1,10 +1,11 @@
-import FormField from "./inputs/FormField";
-import BalanceSlider from "./inputs/sliders/BalanceSlider";
 import {
   TASTE_BALANCE_LABELS,
-  TASTE_BALANCE_QUALITY_INDICATORS_BY_LABEL,
   TasteBalanceLabel,
-} from "../database/UniversalDatabase";
+  TASTE_BALANCE_QUALITY_INDICATORS_BY_LABEL,
+} from "@types";
+
+import FormField from "./inputs/FormField";
+import BalanceSlider from "./inputs/sliders/BalanceSlider";
 
 interface TastingNotesFormData {
   acidity: number;

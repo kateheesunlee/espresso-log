@@ -1,13 +1,15 @@
 import React, { useState } from "react";
+import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+
+import { Shot } from "@types";
 import { useStore } from "../../store/useStore";
-import { Shot } from "../../database/UniversalDatabase";
 import { RootStackParamList } from "../../navigation/AppNavigator";
-import BaseCard, { ActionConfig } from "./BaseCard";
-import { View, Text, StyleSheet } from "react-native";
-import SvgIcon from "../SvgIcon";
 import { colors } from "../../themes/colors";
+
+import BaseCard, { ActionConfig } from "./BaseCard";
+import SvgIcon from "../SvgIcon";
 import CoachingModal from "../modals/CoachingModal";
 import RatingSlider from "../inputs/sliders/RatingSlider";
 import RoastingIndicator from "../RoastingIndicator";

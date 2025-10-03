@@ -1,6 +1,4 @@
-import { RoastLevel as RoastLevelEnum } from "../database/UniversalDatabase";
-
-export type RoastLevel = RoastLevelEnum;
+import { RoastLevel } from "@types";
 
 export type BalanceVal = -1 | -0.5 | 0 | 0.5 | 1;
 

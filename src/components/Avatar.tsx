@@ -1,7 +1,8 @@
 import React from "react";
 import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
-import SvgIcon, { IconName } from "./SvgIcon";
+
 import { colors } from "../themes/colors";
+import SvgIcon, { IconName } from "./SvgIcon";
 
 interface AvatarProps {
   imageUri?: string;

@@ -9,14 +9,16 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+
+import { RootStackParamList } from "../../navigation/AppNavigator";
+import { colors } from "../../themes/colors";
+
 import SvgIcon, { IconName } from "../SvgIcon";
 import Avatar from "../Avatar";
 import ConfirmationModal from "../modals/ConfirmationModal";
 import SuccessModal from "../modals/SuccessModal";
 import ErrorModal from "../modals/ErrorModal";
-import { colors } from "../../themes/colors";
-import { RootStackParamList } from "../../navigation/AppNavigator";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 export interface CardData {
   id: string;
