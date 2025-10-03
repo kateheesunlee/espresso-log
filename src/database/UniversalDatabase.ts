@@ -1,6 +1,25 @@
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+export const TASTE_BALANCE_LABELS = [
+  "Acidity",
+  "Bitterness",
+  "Body",
+  "Aftertaste",
+] as const;
+
+export type TasteBalanceLabel = (typeof TASTE_BALANCE_LABELS)[number];
+
+export const TASTE_BALANCE_QUALITY_INDICATORS_BY_LABEL: Record<
+  TasteBalanceLabel,
+  string[]
+> = {
+  Acidity: ["Flat", "Balanced", "Sharp"],
+  Bitterness: ["Flat", "Balanced", "Bitter"],
+  Body: ["Watery", "Balanced", "Heavy"],
+  Aftertaste: ["Faint", "Balanced", "Harsh"],
+} as const;
+
 export const ROAST_LEVELS = [
   "Light",
   "Medium Light",

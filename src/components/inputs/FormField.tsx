@@ -4,6 +4,7 @@ import { inputStyles } from "./styles";
 export interface FormFieldProps {
   children: React.ReactNode;
   label: string;
+  subLabel?: string;
   required?: boolean;
   subtitle?: string;
   toggleComponent?: React.ReactNode;
@@ -12,22 +13,20 @@ export interface FormFieldProps {
 const FormField = ({
   children,
   label,
+  subLabel,
   required,
   subtitle,
   toggleComponent,
-}: {
-  children: React.ReactNode;
-  label: string;
-  required?: boolean;
-  subtitle?: string;
-  toggleComponent?: React.ReactNode;
-}) => {
+}: FormFieldProps) => {
   return (
     <View style={inputStyles.inputGroup}>
       <View style={inputStyles.labelRow}>
-        <Text style={inputStyles.label}>
-          {label} {required && <Text style={inputStyles.required}>*</Text>}
-        </Text>
+        <View style={inputStyles.labelContainer}>
+          <Text style={inputStyles.label}>
+            {label} {required && <Text style={inputStyles.required}>*</Text>}
+          </Text>
+          {subLabel && <Text style={inputStyles.subLabel}>{subLabel}</Text>}
+        </View>
         {toggleComponent && toggleComponent}
       </View>
       {subtitle && <Text style={inputStyles.subtitle}>{subtitle}</Text>}

@@ -33,6 +33,7 @@ import {
 } from "../components/inputs";
 import { inputStyles } from "../components/inputs/styles";
 import { colors } from "../themes/colors";
+import TastingNotes from "../components/TastingNotes";
 
 type NewShotScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -505,36 +506,10 @@ const NewShotScreen: React.FC = () => {
 
           <Text style={styles.sectionTitle}>Tasting Notes</Text>
 
-          <FormField label="Acidity">
-            <BalanceSlider
-              value={formData.acidity}
-              onValueChange={(value) => handleInputChange("acidity", value)}
-              qualityIndicators={["Flat", "Balanced", "Sharp"]}
-            />
-          </FormField>
-
-          <FormField label="Bitterness">
-            <BalanceSlider
-              value={formData.bitterness}
-              onValueChange={(value) => handleInputChange("bitterness", value)}
-              qualityIndicators={["None", "Balanced", "Bitter/Burnt"]}
-            />
-          </FormField>
-
-          <FormField label="Body">
-            <BalanceSlider
-              value={formData.body}
-              onValueChange={(value) => handleInputChange("body", value)}
-              qualityIndicators={["Thin/Watery", "Balanced", "Thick/Heavy"]}
-            />
-          </FormField>
-          <FormField label="Aftertaste">
-            <BalanceSlider
-              value={formData.aftertaste}
-              onValueChange={(value) => handleInputChange("aftertaste", value)}
-              qualityIndicators={["Short/Faint", "Balanced", "Lingering/Harsh"]}
-            />
-          </FormField>
+          <TastingNotes
+            formData={formData}
+            setFormData={(formData) => setFormData(formData as FormData)}
+          />
 
           <FormField label="Overall Rating">
             <RatingSlider

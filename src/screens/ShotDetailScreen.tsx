@@ -22,6 +22,7 @@ import ErrorModal from "../components/modals/ErrorModal";
 import { colors } from "../themes/colors";
 import { FormField } from "../components/inputs";
 import RoastingIndicator from "../components/RoastingIndicator";
+import TastingNotes from "../components/TastingNotes";
 
 type ShotDetailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -154,38 +155,6 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
     });
   };
 
-  const renderBalanceSlider = (label: string, value: number | undefined) => {
-    let qualityIndicators: string[];
-
-    switch (label) {
-      case "Acidity":
-        qualityIndicators = ["Flat", "Balanced", "Sharp"];
-        break;
-      case "Bitterness":
-        qualityIndicators = ["None", "Balanced", "Bitter/Burnt"];
-        break;
-      case "Body":
-        qualityIndicators = ["Thin/Watery", "Balanced", "Thick/Heavy"];
-        break;
-      case "Aftertaste":
-        qualityIndicators = ["Short/Faint", "Balanced", "Lingering/Harsh"];
-        break;
-      default:
-        qualityIndicators = ["Low", "Balanced", "High"];
-    }
-
-    return (
-      <FormField label={label}>
-        <BalanceSlider
-          value={value ?? 0}
-          onValueChange={() => {}} // No-op since it's disabled
-          disabled={true}
-          qualityIndicators={qualityIndicators}
-        />
-      </FormField>
-    );
-  };
-
   if (!shot) {
     return (
       <View style={styles.loadingContainer}>
@@ -294,10 +263,16 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tasting Notes</Text>
             <View style={styles.ratingSection}>
-              {renderBalanceSlider("Acidity", shot.acidity)}
-              {renderBalanceSlider("Bitterness", shot.bitterness)}
-              {renderBalanceSlider("Body", shot.body)}
-              {renderBalanceSlider("Aftertaste", shot.aftertaste)}
+              <TastingNotes
+                formData={{
+                  acidity: shot.acidity || 0,
+                  bitterness: shot.bitterness || 0,
+                  body: shot.body || 0,
+                  aftertaste: shot.aftertaste || 0,
+                }}
+                readOnly={true}
+              />
+
               <FormField label="Overall Rating">
                 <RatingSlider
                   value={shot.rating}

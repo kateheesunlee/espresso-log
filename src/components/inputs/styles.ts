@@ -15,10 +15,20 @@ export const inputStyles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 8,
   },
+  labelContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+  },
   label: {
     fontSize: 16,
     fontWeight: "600",
     color: colors.textDark,
+    marginRight: 8,
+  },
+  subLabel: {
+    fontSize: 14,
+    color: colors.textMedium,
     marginRight: 8,
     flex: 1,
   },
