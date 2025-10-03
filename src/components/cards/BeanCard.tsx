@@ -6,7 +6,6 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/AppNavigator";
 import RoastingIndicator from "../RoastingIndicator";
-import { Text } from "react-native";
 
 export interface BeanCardProps {
   bean: Bean;
@@ -46,15 +45,6 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean }) => {
     await toggleFavoriteBean(bean.id);
   };
 
-  const title = () => {
-    return (
-      <Text>
-        {bean.name}{" "}
-        <RoastingIndicator roastLevel={bean.roastLevel!} size="lg" compact />
-      </Text>
-    );
-  };
-
   const subtitle = () => {
     return <RoastingIndicator roastLevel={bean.roastLevel!} size="md" />;
   };
@@ -68,7 +58,12 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean }) => {
       details={details}
       fallbackIcon="bean"
       onDelete={handleDelete}
-      onFavorite={handleToggleFavorite}
+      actionConfigs={[
+        {
+          icon: bean.isFavorite ? "heart_filled" : "heart",
+          onPress: handleToggleFavorite,
+        },
+      ]}
       onPress={handlePress}
       showDeleteGesture={true}
       showDate={false}

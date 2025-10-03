@@ -25,6 +25,11 @@ export interface CardData {
   [key: string]: any; // Allow additional properties
 }
 
+export interface ActionConfig {
+  icon: IconName;
+  onPress: () => void | Promise<void>;
+}
+
 export interface BaseCardProps {
   showAvatar: boolean;
   data: CardData;
@@ -35,6 +40,7 @@ export interface BaseCardProps {
   subtitle2?: string | React.ReactNode;
   details?: string[];
   additionalContent?: React.ReactNode;
+  actionConfigs?: ActionConfig[];
   onDelete?: () => void | Promise<void>;
   onPress?: () => void;
   onEdit?: () => void;
@@ -61,6 +67,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
   subtitle2,
   details = [],
   additionalContent,
+  actionConfigs,
   onDelete,
   onDuplicate,
   onOneMore,
@@ -224,41 +231,17 @@ const BaseCard: React.FC<BaseCardProps> = ({
           <Text style={styles.date}>{formatDate(data.createdAt)}</Text>
         )}
       </View>
-      {(onEdit || onFavorite) && (
+      {actionConfigs && actionConfigs.length > 0 && (
         <View style={styles.actionsContainer}>
-          {onEdit && (
-            <TouchableOpacity style={styles.actionButton} onPress={onEdit}>
-              <SvgIcon name="edit" size={20} />
-            </TouchableOpacity>
-          )}
-          {onDuplicate && (
+          {actionConfigs.map((action, index) => (
             <TouchableOpacity
+              key={index}
               style={styles.actionButton}
-              onPress={handleDuplicate}
+              onPress={action.onPress}
             >
-              <SvgIcon name="copy" size={20} />
+              <SvgIcon name={action.icon} size={20} />
             </TouchableOpacity>
-          )}
-          {onOneMore && (
-            <TouchableOpacity style={styles.actionButton} onPress={onOneMore}>
-              <SvgIcon name="add-notes" size={20} />
-            </TouchableOpacity>
-          )}
-          {onFavorite && (
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleFavorite}
-            >
-              <SvgIcon
-                name={isFavorite ? "heart_filled" : "heart"}
-                size={20}
-                color={isFavorite ? colors.heart : colors.primary}
-                secondaryColor={
-                  isFavorite ? colors.heartLight : colors.primaryLight
-                }
-              />
-            </TouchableOpacity>
-          )}
+          ))}
         </View>
       )}
     </View>

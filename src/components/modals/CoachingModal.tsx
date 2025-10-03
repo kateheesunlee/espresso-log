@@ -1,20 +1,78 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { colors } from "../../themes/colors";
-import { Suggestion } from "../../coaching/types";
+import { Suggestion, ShotInput } from "../../coaching/types";
+import { CoachingService } from "../../coaching/service/CoachingService";
+import { Shot } from "../../database/UniversalDatabase";
 import BaseModal, { ButtonConfig } from "./BaseModal";
 
 interface CoachingModalProps {
   visible: boolean;
-  suggestions: Suggestion[];
+  shot: Shot | null;
+  bean: any; // Bean type from database
   onClose: () => void;
 }
 
 const CoachingModal: React.FC<CoachingModalProps> = ({
   visible,
-  suggestions,
+  shot,
+  bean,
   onClose,
 }) => {
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (visible && shot && bean) {
+      generateSuggestions();
+    }
+  }, [visible, shot, bean]);
+
+  const generateSuggestions = async () => {
+    if (!shot || !bean || !bean.roastLevel) {
+      return;
+    }
+
+    if (
+      shot.acidity === undefined &&
+      shot.bitterness === undefined &&
+      shot.body === undefined &&
+      shot.aftertaste === undefined
+    ) {
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Build coaching input from shot data
+      const coachingService = new CoachingService("rule");
+      const input: ShotInput = {
+        roast: bean.roastLevel,
+        dose_g: shot.dose_g,
+        yield_g: shot.yield_g,
+        shotTime_s: shot.shotTime_s,
+        ratio: shot.ratio,
+        waterTemp_C: shot.waterTemp_C,
+        preinfusion_s: shot.preinfusion_s,
+        grindStep: shot.grindSetting,
+        balance: {
+          acidity: shot.acidity,
+          bitterness: shot.bitterness,
+          body: shot.body,
+          aftertaste: shot.aftertaste,
+        },
+      };
+
+      const results = await coachingService.getSuggestions(input);
+      setSuggestions(results);
+    } catch (error) {
+      console.error("Error generating suggestions:", error);
+      setSuggestions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
   const getConfidenceColor = (confidence: "low" | "med" | "high") => {
     switch (confidence) {
       case "high":
@@ -146,7 +204,14 @@ const CoachingModal: React.FC<CoachingModalProps> = ({
       buttonConfigs={buttonConfigs}
     >
       <View style={styles.content}>
-        {suggestions.length === 0 ? (
+        {loading ? (
+          <View style={styles.loadingState}>
+            <Text style={styles.loadingTitle}>Analyzing Your Shot...</Text>
+            <Text style={styles.loadingSubtitle}>
+              Please wait while we generate personalized suggestions.
+            </Text>
+          </View>
+        ) : suggestions.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyTitle}>No Suggestions Available</Text>
             <Text style={styles.emptySubtitle}>
@@ -262,6 +327,22 @@ const styles = StyleSheet.create({
   reasonText: {
     fontSize: 14,
     color: colors.textMedium,
+    lineHeight: 20,
+  },
+  loadingState: {
+    alignItems: "center",
+    paddingVertical: 40,
+  },
+  loadingTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: colors.textDark,
+    marginBottom: 8,
+  },
+  loadingSubtitle: {
+    fontSize: 14,
+    color: colors.textMedium,
+    textAlign: "center",
     lineHeight: 20,
   },
   emptyState: {
