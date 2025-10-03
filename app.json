@@ -9,7 +9,6 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "description": "Track, refine, and master your espresso extractions.",
-    "privacy": "public",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",

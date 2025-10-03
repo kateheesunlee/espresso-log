@@ -13,9 +13,20 @@
     },
     "production": {
       "autoIncrement": true
+    },
+    "testflight": {
+      "ios": {
+        "distribution": "store"
+      },
+      "autoIncrement": true
     }
   },
   "submit": {
-    "production": {}
+    "production": {},
+    "testflight": {
+      "ios": {
+        "appleId": "kateheesunlee@example.com"
+      }
+    }
   }
 }
