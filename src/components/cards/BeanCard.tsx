@@ -5,6 +5,8 @@ import { useStore } from "../../store/useStore";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/AppNavigator";
+import RoastingIndicator from "../RoastingIndicator";
+import { Text } from "react-native";
 
 export interface BeanCardProps {
   bean: Bean;
@@ -26,9 +28,12 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean, onPress }) => {
   };
 
   const details: string[] = [];
+  if (bean.origin) details.push(`Origin: ${bean.origin}`);
   if (bean.process) details.push(`Process: ${bean.process}`);
-  if (bean.roastLevel) details.push(`Roast: ${bean.roastLevel}`);
   if (bean.roastDate) details.push(`Roasted: ${formatDate(bean.roastDate)}`);
+  if (bean.aromaTags && bean.aromaTags.length > 0) {
+    details.push(`Aroma: ${bean.aromaTags.join(", ")}`);
+  }
 
   const handleEdit = () => {
     (navigation as any).navigate("NewBean", { beanId: bean.id });
@@ -38,19 +43,32 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean, onPress }) => {
     await deleteBean(bean.id);
   };
 
+  const title = () => {
+    return (
+      <Text>
+        {bean.name}{" "}
+        <RoastingIndicator roastLevel={bean.roastLevel!} size="lg" compact />
+      </Text>
+    );
+  };
+
+  const subtitle = () => {
+    return <RoastingIndicator roastLevel={bean.roastLevel!} size="md" />;
+  };
+
   return (
     <BaseCard
       showAvatar={true}
       data={bean as any}
       title={bean.name}
-      subtitle={bean.origin}
+      subtitle={subtitle()}
       details={details}
       fallbackIcon="bean"
       onDelete={handleDelete}
       onEdit={handleEdit}
       onPress={onPress}
       showDeleteGesture={true}
-      showDate={true}
+      showDate={false}
     />
   );
 };

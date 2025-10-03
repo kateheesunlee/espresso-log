@@ -41,7 +41,7 @@ const MachineCard: React.FC<MachineCardProps> = ({ machine, onPress }) => {
       onEdit={handleEdit}
       onPress={onPress}
       showDeleteGesture={true}
-      showDate={true}
+      showDate={false}
     />
   );
 };

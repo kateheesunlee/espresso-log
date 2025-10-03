@@ -12,6 +12,7 @@ import CoachingModal from "../modals/CoachingModal";
 import { CoachingService } from "../../coaching/service/CoachingService";
 import { Suggestion } from "../../coaching/types";
 import RatingSlider from "../inputs/sliders/RatingSlider";
+import RoastingIndicator from "../RoastingIndicator";
 
 type ShotCardNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -164,6 +165,16 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
 
   const subtitle =
     bean?.name || "Unknown Bean" + (bean?.deleted ? " (deleted)" : "");
+
+  const renderSubtitle = () => {
+    return (
+      <Text>
+        {subtitle}{" "}
+        <RoastingIndicator roastLevel={bean?.roastLevel!} size="sm" compact />
+      </Text>
+    );
+  };
+
   const subtitle2 =
     machine?.nickname ||
     `${machine?.brand} ${machine?.model}${
@@ -177,7 +188,7 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
         showAvatar={false}
         data={shot as any}
         title={formatDate(shot.createdAt)}
-        subtitle={subtitle}
+        subtitle={renderSubtitle()}
         subtitle2={subtitle2}
         details={[]}
         additionalContent={additionalContent()}

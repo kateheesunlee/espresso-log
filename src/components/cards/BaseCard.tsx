@@ -29,9 +29,10 @@ export interface BaseCardProps {
   showAvatar: boolean;
   data: CardData;
   fallbackIcon: IconName;
-  title: string;
-  subtitle?: string;
-  subtitle2?: string;
+  title: string | React.ReactNode;
+  // titleBadge?: React.ReactNode;
+  subtitle?: string | React.ReactNode;
+  subtitle2?: string | React.ReactNode;
   details?: string[];
   additionalContent?: React.ReactNode;
   onDelete?: () => void | Promise<void>;
@@ -396,20 +397,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.primary,
     fontWeight: "500",
-    marginBottom: 4,
+    marginBottom: 6,
   },
   subtitle2: {
     fontSize: 14,
     color: colors.textMedium,
-    marginBottom: 4,
+    marginBottom: 6,
   },
   detailsContainer: {
-    marginBottom: 4,
+    marginBottom: 0,
   },
   detail: {
     fontSize: 12,
     color: colors.textMedium,
-    marginBottom: 2,
+    marginBottom: 4,
   },
   date: {
     fontSize: 12,
