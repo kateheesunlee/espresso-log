@@ -292,7 +292,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
               hideDeleteButtonAnimation();
             }}
           >
-            <SvgIcon name="delete" size={24} />
+            <SvgIcon name="delete" size={24} color={colors.white} />
             <Text style={styles.deleteButtonText}>Delete</Text>
           </TouchableOpacity>
         </View>
