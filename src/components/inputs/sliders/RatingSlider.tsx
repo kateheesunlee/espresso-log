@@ -179,9 +179,9 @@ const RatingSlider: React.FC<RatingSliderProps> = ({
         </GestureDetector>
       </View>
       {!readonly && (
-        <View style={styles.scaleLabels}>
-          <Text style={styles.scaleLabel}>Poor</Text>
-          <Text style={styles.scaleLabel}>Excellent</Text>
+        <View style={styles.ratingLabels}>
+          <Text style={styles.ratingLabel}>Poor</Text>
+          <Text style={styles.ratingLabel}>Excellent</Text>
         </View>
       )}
     </View>
@@ -231,12 +231,13 @@ const getStyles = (fullWidth: boolean) =>
       height: "100%",
       overflow: "hidden",
     },
-    scaleLabels: {
+    ratingLabels: {
       flexDirection: "row",
       justifyContent: "space-between",
       paddingHorizontal: 8,
+      marginTop: 8,
     },
-    scaleLabel: {
+    ratingLabel: {
       fontSize: 12,
       color: colors.textMedium,
       fontWeight: "500",

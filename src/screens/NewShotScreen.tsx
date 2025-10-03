@@ -525,7 +525,7 @@ const NewShotScreen: React.FC = () => {
             value={formData.tastingTags}
             onChange={handleTastingTagsChange}
             suggestions={[...TASTING_TAGS]}
-            allowCustom={false}
+            allowCustom={true}
             subtitle="Add descriptive tags to complement your tasting notes above"
           />
 

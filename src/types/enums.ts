@@ -68,6 +68,8 @@ export const TASTING_TAGS = [
   "syrupy",
   "chocolatey",
   "caramelly",
+  "fruity",
+  "nutty",
   "under",
   "over",
   "sour",
