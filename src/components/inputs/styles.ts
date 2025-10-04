@@ -96,8 +96,7 @@ export const inputStyles = StyleSheet.create({
   unitOverlay: {
     position: "absolute",
     right: 12,
-    top: "50%",
-    transform: [{ translateY: -12 }], // Can't use percentage here. Roughly half of unit overlay height
+    top: 12,
     fontSize: 16,
     color: colors.textMedium,
     pointerEvents: "none", // Don't interfere with input
