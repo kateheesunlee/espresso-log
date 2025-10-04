@@ -1,5 +1,10 @@
-import { RoastLevel } from "@types";
-import { Suggestion, ShotInput, CoachField } from "../types";
+import {
+  RoastLevel,
+  Suggestion,
+  CoachField,
+  ShotFormData,
+  ExtractionSummary,
+} from "@types";
 import { classifyExtraction } from "../extraction";
 import {
   THRESHOLDS,
@@ -564,7 +569,7 @@ function normalizeRatioTarget(
 /**
  * Generates coaching suggestions based on shot taste profile and parameters.
  *
- * @param input - Shot parameters and taste balance
+ * @param shotFormData - user entered shot form data
  * @returns Array of up to 3 prioritized suggestions (lower priority number = more important)
  *
  * Priority scale:
@@ -572,9 +577,23 @@ function normalizeRatioTarget(
  * - 3-4: Secondary adjustments (fine-tuning)
  * - 5-6: Tertiary adjustments (minor improvements)
  */
-export function ruleCoachShot(input: ShotInput): Suggestion[] {
-  const { roast, dose_g, yield_g, shotTime_s, waterTemp_C, balance } = input;
-  const ratio = input.ratio ?? toRatio(dose_g, yield_g);
+export function ruleCoachShot(
+  shotFormData: ShotFormData,
+  extraction: ExtractionSummary,
+  roast: RoastLevel
+): Suggestion[] {
+  const {
+    waterTemp_C,
+    ratio: ratioStr,
+    bitterness,
+    acidity,
+    body,
+    aftertaste,
+  } = shotFormData as any;
+
+  // Convert string values to numbers
+  const ratio = parseFloat(ratioStr) || 2.0; // Default to 2.0 if invalid
+  const waterTemp = waterTemp_C ? parseFloat(waterTemp_C) : undefined;
 
   // Accumulate suggestions from all taste dimensions
   const S: Suggestion[] = [];
@@ -585,25 +604,25 @@ export function ruleCoachShot(input: ShotInput): Suggestion[] {
 
   // Generate suggestions for each taste dimension
   const bitternessSuggestions = generateBitternessSuggestions(
-    balance.bitterness ?? 0,
+    bitterness ?? 0,
     threshold,
     ratio,
-    waterTemp_C,
+    waterTemp,
     DEFAULT_DELTAS
   );
   bitternessSuggestions.forEach(push);
 
   const aciditySuggestions = generateAciditySuggestions(
-    balance.acidity ?? 0,
+    acidity ?? 0,
     threshold,
     ratio,
-    waterTemp_C,
+    waterTemp,
     DEFAULT_DELTAS
   );
   aciditySuggestions.forEach(push);
 
   const bodySuggestions = generateBodySuggestions(
-    balance.body ?? 0,
+    body ?? 0,
     threshold,
     ratio,
     DEFAULT_DELTAS
@@ -611,27 +630,13 @@ export function ruleCoachShot(input: ShotInput): Suggestion[] {
   bodySuggestions.forEach(push);
 
   const aftertasteSuggestions = generateAftertasteSuggestions(
-    balance.aftertaste ?? 0,
+    aftertaste ?? 0,
     threshold,
     ratio,
-    waterTemp_C,
+    waterTemp,
     DEFAULT_DELTAS
   );
   aftertasteSuggestions.forEach(push);
-
-  // Classify overall extraction state (under/balanced/over)
-  // This provides directional weighting for final suggestion ranking
-  const extraction = classifyExtraction(
-    {
-      acidity: balance.acidity,
-      bitterness: balance.bitterness,
-      body: balance.body,
-      aftertaste: balance.aftertaste,
-      shotTime_s,
-      ratio,
-    },
-    roast
-  );
 
   // ---- Deduplication & Conflict Resolution ----
   // When multiple suggestions target the same field, keep only the highest priority one.

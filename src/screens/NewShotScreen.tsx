@@ -18,7 +18,13 @@ import { StackNavigationProp } from "@react-navigation/stack";
 
 import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { TastingTag, TASTING_TAGS } from "@types";
+import {
+  TastingTag,
+  TASTING_TAGS,
+  ShotFormData,
+  shotToShotFormData,
+  shotFormDataToShot,
+} from "@types";
 import { colors } from "../themes/colors";
 
 import PickerField from "../components/inputs/forms/PickerField";
@@ -42,50 +48,34 @@ type NewShotScreenNavigationProp = StackNavigationProp<
 >;
 type NewShotScreenRouteProp = RouteProp<RootStackParamList, "NewShot">;
 
-interface FormData {
-  beanId: string;
-  machineId: string;
-  dose_g: string;
-  yield_g: string;
-  shotTime_s: string;
-  ratio: string;
-  grindSetting: string;
-  waterTemp_C: string;
-  preinfusion_s: string;
-  rating: number;
-  acidity: number;
-  bitterness: number;
-  body: number;
-  aftertaste: number;
-  tastingTags: TastingTag[];
-  notes: string;
-  isFavorite: boolean;
-}
+const initialFormData: Partial<ShotFormData> = {
+  beanId: "",
+  machineId: "",
+  dose_g: "",
+  yield_g: "",
+  shotTime_s: "",
+  ratio: "",
+  grindSetting: "",
+  waterTemp_C: "",
+  preinfusion_s: "",
+  rating: 3,
+  acidity: 0,
+  bitterness: 0,
+  body: 0,
+  aftertaste: 0,
+  tastingTags: [],
+  notes: "",
+  isFavorite: false,
+};
 
 const NewShotScreen: React.FC = () => {
   const navigation = useNavigation<NewShotScreenNavigationProp>();
   const route = useRoute<NewShotScreenRouteProp>();
   const { beans, machines, createShot, updateShot, shots } = useStore();
 
-  const [formData, setFormData] = useState<FormData>({
-    beanId: "",
-    machineId: "",
-    dose_g: "",
-    yield_g: "",
-    shotTime_s: "",
-    ratio: "",
-    grindSetting: "",
-    waterTemp_C: "",
-    preinfusion_s: "",
-    rating: 3,
-    acidity: 0,
-    bitterness: 0,
-    body: 0,
-    aftertaste: 0,
-    tastingTags: [],
-    notes: "",
-    isFavorite: false,
-  });
+  const [formData, setFormData] = useState<ShotFormData>(
+    initialFormData as ShotFormData
+  );
 
   const [isLoading, setIsLoading] = useState(false);
   const [editingShotId, setEditingShotId] = useState<string | null>(null);
@@ -150,25 +140,8 @@ const NewShotScreen: React.FC = () => {
       const shot = shots.find((s) => s.id === shotId);
       if (shot) {
         // Don't set editingShotId - we want to create a new shot, not edit the existing one
-        setFormData({
-          beanId: shot.beanId || "",
-          machineId: shot.machineId || "",
-          dose_g: shot.dose_g.toString(),
-          yield_g: shot.yield_g.toString(),
-          shotTime_s: shot.shotTime_s.toString(),
-          ratio: shot.ratio?.toString() || "",
-          grindSetting: shot.grindSetting.toString(),
-          waterTemp_C: shot.waterTemp_C?.toString() || "",
-          preinfusion_s: shot.preinfusion_s?.toString() || "",
-          rating: shot.rating || 3,
-          acidity: shot.acidity || 0,
-          bitterness: shot.bitterness || 0,
-          body: shot.body || 0,
-          aftertaste: shot.aftertaste || 0,
-          tastingTags: shot.tastingTags || [],
-          notes: shot.notes || "",
-          isFavorite: false, // New shot is never marked as favorite initially
-        });
+        const formData = shotToShotFormData(shot);
+        setFormData(formData);
       }
     } catch (error) {
       console.error("Failed to load shot data:", error);
@@ -260,7 +233,7 @@ const NewShotScreen: React.FC = () => {
   };
 
   const handleInputChange = (
-    field: keyof FormData,
+    field: keyof ShotFormData,
     value: string | boolean | number | TastingTag[]
   ) => {
     setFormData((prev) => {
@@ -311,45 +284,23 @@ const NewShotScreen: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const shotData = {
-        id: editingShotId || `shot-${Date.now()}`,
-        userId: "default-user", // This will be set by the store
-        beanId: formData.beanId,
-        machineId: formData.machineId,
-        dose_g: parseFloat(formData.dose_g),
-        yield_g: parseFloat(formData.yield_g),
-        shotTime_s: parseFloat(formData.shotTime_s),
-        ratio: formData.ratio ? parseFloat(formData.ratio) : undefined,
-        grindSetting: parseFloat(formData.grindSetting),
-        waterTemp_C: formData.waterTemp_C
-          ? parseFloat(formData.waterTemp_C)
-          : undefined,
-        preinfusion_s: formData.preinfusion_s
-          ? parseFloat(formData.preinfusion_s)
-          : undefined,
-        rating: formData.rating || undefined,
-        acidity: formData.acidity || undefined,
-        bitterness: formData.bitterness || undefined,
-        body: formData.body || undefined,
-        aftertaste: formData.aftertaste || undefined,
-        tastingTags: formData.tastingTags || [],
-        notes: formData.notes || undefined,
-        isFavorite: formData.isFavorite,
-      };
+      const shotOverride = shotFormDataToShot(formData);
 
       if (editingShotId) {
         // Update existing shot (duplicated shot)
         const existingShot = shots.find((s) => s.id === editingShotId);
-        const updateData = {
-          ...shotData,
-          createdAt: existingShot?.createdAt || new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        };
-        await updateShot(updateData);
-        setSuccessModal({ visible: true, isUpdate: true });
+        if (existingShot) {
+          const updateData = {
+            ...existingShot,
+            ...shotOverride,
+            updatedAt: new Date().toISOString(),
+          };
+          await updateShot(updateData);
+          setSuccessModal({ visible: true, isUpdate: true });
+        }
       } else {
         // Create new shot
-        await createShot(shotData);
+        await createShot(formData);
         setSuccessModal({ visible: true, isUpdate: false });
       }
     } catch (error) {
@@ -509,7 +460,7 @@ const NewShotScreen: React.FC = () => {
 
           <TastingNotes
             formData={formData}
-            setFormData={(formData) => setFormData(formData as FormData)}
+            setFormData={(formData) => setFormData(formData as ShotFormData)}
           />
 
           <FormField label="Overall Rating">

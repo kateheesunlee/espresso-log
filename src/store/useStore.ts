@@ -1,6 +1,21 @@
 import { create } from "zustand";
 import { database } from "../database/UniversalDatabase";
-import { User, Machine, Bean, Shot } from "@types";
+import {
+  User,
+  Machine,
+  Bean,
+  Shot,
+  ShotFormData,
+  shotFormDataToShot,
+} from "@types";
+import { classifyExtraction } from "../coaching/extraction";
+import { CoachingManager } from "../coaching/service/CoachingManager";
+import {
+  EXTRACTION_CONFIG,
+  generateInputHash,
+  shouldRegenerateSnapshot,
+  getLatestVersion,
+} from "../coaching/versions";
 
 interface AppState {
   // User
@@ -13,12 +28,19 @@ interface AppState {
   allMachines: Machine[]; // Includes deleted machines for shot display
   allBeans: Bean[]; // Includes deleted beans for shot display
 
+  // Coaching
+  coachingManager: CoachingManager;
+
   // Loading states
   isLoading: boolean;
 
   // Actions
   initializeApp: () => Promise<void>;
   setCurrentUser: (user: User) => void;
+  configureCoaching: (
+    mode: "rule" | "ai" | "hybrid",
+    aiApiKey?: string
+  ) => void;
 
   // Machine actions
   loadMachines: () => Promise<void>;
@@ -39,13 +61,12 @@ interface AppState {
 
   // Shot actions
   loadShots: () => Promise<void>;
-  createShot: (shot: Omit<Shot, "createdAt" | "updatedAt">) => Promise<void>;
+  createShot: (shot: ShotFormData) => Promise<void>;
   updateShot: (shot: Shot) => Promise<void>;
   deleteShot: (id: string) => Promise<void>;
   toggleFavoriteShot: (id: string) => Promise<void>;
-
-  // One More flow
-  duplicateShot: (shotId: string) => Promise<string | null>;
+  refreshCoaching: (shotId: string, forceRefresh?: boolean) => Promise<void>;
+  checkAndUpdateOutdatedSnapshots: () => Promise<void>;
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -56,6 +77,11 @@ export const useStore = create<AppState>((set, get) => ({
   shots: [],
   allMachines: [],
   allBeans: [],
+  coachingManager: new CoachingManager({
+    mode: "rule",
+    enableCaching: false, // Not needed for current workflow (coaching stored in shot snapshots)
+    maxCacheAge: 24 * 60 * 60 * 1000, // 24 hours (for future use)
+  }),
   isLoading: false,
 
   // Initialize app
@@ -93,6 +119,17 @@ export const useStore = create<AppState>((set, get) => ({
 
   setCurrentUser: (user: User) => {
     set({ currentUser: user });
+  },
+
+  configureCoaching: (mode: "rule" | "ai" | "hybrid", aiApiKey?: string) => {
+    const { coachingManager } = get();
+    const newManager = new CoachingManager({
+      mode,
+      aiApiKey,
+      enableCaching: false, // Disabled for current workflow, can be enabled for future features
+      maxCacheAge: 24 * 60 * 60 * 1000, // 24 hours
+    });
+    set({ coachingManager: newManager });
   },
 
   // Machine actions
@@ -241,14 +278,88 @@ export const useStore = create<AppState>((set, get) => ({
     }
   },
 
-  createShot: async (shotData) => {
-    const { currentUser } = get();
+  createShot: async (shotFormData) => {
+    const { currentUser, coachingManager } = get();
     if (!currentUser) return;
 
+    // Convert form data to shot data
+    const shotData = shotFormDataToShot(
+      shotFormData,
+      undefined,
+      currentUser.id
+    );
+
     try {
+      // Get bean information
+      const bean = shotFormData.beanId
+        ? await database.getBean(shotFormData.beanId)
+        : undefined;
+
+      if (!bean?.roastLevel) {
+        // Create shot without coaching if no bean/roast level
+        await database.createShot({
+          ...shotData,
+          extractionSnapshot: undefined,
+          coachingSnapshot: undefined,
+        });
+        await get().loadShots();
+        return;
+      }
+
+      // Generate extraction snapshot
+      const extractionSnapshot = classifyExtraction(
+        shotFormData,
+        bean.roastLevel
+      );
+
+      // Generate coaching snapshot using CoachingManager
+      const coachingSnapshot = await coachingManager.getSuggestions(
+        shotFormData,
+        bean.roastLevel,
+        {
+          useCache: false, // Not needed since results are stored in shot snapshot
+          forceRefresh: false,
+        }
+      );
+
+      // Generate input hash for extraction snapshot
+      const extractionInputHash = generateInputHash({
+        ratio: parseFloat(shotFormData.ratio),
+        shotTime_s: parseFloat(shotFormData.shotTime_s),
+        roast: bean.roastLevel,
+        balance: {
+          acidity: shotFormData.acidity,
+          bitterness: shotFormData.bitterness,
+          body: shotFormData.body,
+          aftertaste: shotFormData.aftertaste,
+        },
+        version: EXTRACTION_CONFIG.version,
+      });
+
+      // Create shot with both snapshots
       await database.createShot({
         ...shotData,
-        userId: currentUser.id,
+        extractionSnapshot: {
+          version: EXTRACTION_CONFIG.version,
+          score: extractionSnapshot.score,
+          label: extractionSnapshot.label,
+          confidence: extractionSnapshot.confidence,
+          reason: extractionSnapshot.reason,
+          basedOn: {
+            ratio: parseFloat(shotFormData.ratio),
+            shotTime_s: parseFloat(shotFormData.shotTime_s),
+            roast: bean.roastLevel,
+            balance: {
+              acidity: shotFormData.acidity,
+              bitterness: shotFormData.bitterness,
+              body: shotFormData.body,
+              aftertaste: shotFormData.aftertaste,
+            },
+          },
+          inputHash: extractionInputHash,
+          computedAt: new Date().toISOString(),
+        },
+        coachingSnapshot,
       });
       await get().loadShots();
     } catch (error) {
@@ -284,30 +395,130 @@ export const useStore = create<AppState>((set, get) => ({
     }
   },
 
-  // One More flow - duplicate a shot with new timestamp
-  duplicateShot: async (shotId) => {
-    const { currentUser } = get();
-    if (!currentUser) return null;
-
+  refreshCoaching: async (shotId, forceRefresh = false) => {
+    const { coachingManager, allBeans } = get();
     try {
-      const originalShot = await database.getShot(shotId);
-      if (!originalShot) return null;
+      const shot = await database.getShot(shotId);
+      if (!shot) {
+        console.warn(`Shot with id ${shotId} not found`);
+        return;
+      }
 
-      const newShotId = `shot-${Date.now()}`;
-      const duplicatedShot = {
-        ...originalShot,
-        id: newShotId,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        isBest: false, // New shot is not marked as favorite
+      const bean = allBeans.find((b) => b.id === shot.beanId);
+      if (!bean?.roastLevel) {
+        console.warn(`Bean with roast level not found for shot ${shotId}`);
+        return;
+      }
+
+      // Convert shot back to form data for coaching
+      const shotFormData = {
+        beanId: shot.beanId,
+        machineId: shot.machineId,
+        dose_g: shot.dose_g.toString(),
+        yield_g: shot.yield_g.toString(),
+        shotTime_s: shot.shotTime_s.toString(),
+        ratio: shot.ratio.toString(),
+        grindSetting: shot.grindSetting.toString(),
+        waterTemp_C: shot.waterTemp_C.toString(),
+        preinfusion_s: shot.preinfusion_s.toString(),
+        rating: shot.rating,
+        acidity: shot.acidity,
+        bitterness: shot.bitterness,
+        body: shot.body,
+        aftertaste: shot.aftertaste,
+        tastingTags: shot.tastingTags,
+        notes: shot.notes,
+        isFavorite: shot.isFavorite,
       };
 
-      await database.createShot(duplicatedShot);
+      // Generate new coaching snapshot
+      const coachingSnapshot = await coachingManager.getSuggestions(
+        shotFormData,
+        bean.roastLevel,
+        {
+          useCache: false, // Not needed since results are stored in shot snapshot
+          forceRefresh,
+        }
+      );
+
+      // Update shot with new coaching snapshot
+      const updatedShot = {
+        ...shot,
+        coachingSnapshot,
+        updatedAt: new Date().toISOString(),
+      };
+
+      await database.updateShot(updatedShot);
       await get().loadShots();
-      return newShotId;
     } catch (error) {
-      console.error("Failed to duplicate shot:", error);
-      return null;
+      console.error("Failed to refresh coaching:", error);
+      throw error;
+    }
+  },
+
+  checkAndUpdateOutdatedSnapshots: async () => {
+    const { shots, coachingManager, allBeans } = get();
+    const currentExtractionVersion = getLatestVersion("extraction");
+    const currentCoachingVersion = coachingManager.getVersion();
+
+    console.log(`Checking snapshots for version updates...`);
+    console.log(`Current extraction version: ${currentExtractionVersion}`);
+    console.log(`Current coaching version: ${currentCoachingVersion}`);
+
+    let updatedCount = 0;
+
+    for (const shot of shots) {
+      let needsUpdate = false;
+
+      // Check extraction snapshot
+      if (shot.extractionSnapshot) {
+        const shouldRegenerateExtraction = shouldRegenerateSnapshot(
+          currentExtractionVersion,
+          shot.extractionSnapshot.version,
+          "extraction"
+        );
+
+        if (shouldRegenerateExtraction) {
+          console.log(
+            `Shot ${shot.id} needs extraction update: ${shot.extractionSnapshot.version} -> ${currentExtractionVersion}`
+          );
+          needsUpdate = true;
+        }
+      }
+
+      // Check coaching snapshot
+      if (shot.coachingSnapshot) {
+        const shouldRegenerateCoaching = shouldRegenerateSnapshot(
+          currentCoachingVersion,
+          shot.coachingSnapshot.version,
+          "coaching"
+        );
+
+        if (shouldRegenerateCoaching) {
+          console.log(
+            `Shot ${shot.id} needs coaching update: ${shot.coachingSnapshot.version} -> ${currentCoachingVersion}`
+          );
+          needsUpdate = true;
+        }
+      }
+
+      if (needsUpdate) {
+        try {
+          await get().refreshCoaching(shot.id, true); // Force refresh
+          updatedCount++;
+        } catch (error) {
+          console.error(
+            `Failed to update snapshots for shot ${shot.id}:`,
+            error
+          );
+        }
+      }
+    }
+
+    if (updatedCount > 0) {
+      console.log(`Updated ${updatedCount} shots with new snapshot versions`);
+    } else {
+      console.log("All snapshots are up to date");
     }
   },
 }));

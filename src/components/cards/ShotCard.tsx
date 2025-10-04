@@ -3,11 +3,10 @@ import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
-import { Bean, Shot } from "@types";
+import { Shot } from "@types";
 import { useStore } from "../../store/useStore";
 import { RootStackParamList } from "../../navigation/AppNavigator";
 import { colors } from "../../themes/colors";
-import { classifyExtraction, ExtractionInfo } from "../../coaching/extraction";
 
 import BaseCard, { ActionConfig } from "./BaseCard";
 import SvgIcon from "../SvgIcon";
@@ -31,24 +30,6 @@ const formatDate = (dateString: string) => {
   });
 };
 
-// Get extraction classification
-const getExtractionInfo = (bean: Bean | undefined, shot: Shot) => {
-  if (!bean?.roastLevel) return null;
-
-  const extractionInfo = classifyExtraction(
-    {
-      acidity: shot.acidity,
-      bitterness: shot.bitterness,
-      body: shot.body,
-      aftertaste: shot.aftertaste,
-      shotTime_s: shot.shotTime_s,
-      ratio: shot.ratio,
-    },
-    bean.roastLevel
-  );
-  return extractionInfo;
-};
-
 const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
   const navigation = useNavigation<ShotCardNavigationProp>();
   const { allBeans, allMachines, toggleFavoriteShot, deleteShot } = useStore();
@@ -60,8 +41,6 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
 
   // Coaching modal state
   const [coachingModalVisible, setCoachingModalVisible] = useState(false);
-
-  const extractionInfo = getExtractionInfo(bean, shot);
 
   // Format extraction class for display
   const formatExtractionClass = (label: string) => {
@@ -168,14 +147,18 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
         </View>
 
         {/* Extraction Class */}
-        {extractionInfo && (
+        {shot.extractionSnapshot && (
           <Text
             style={[
               styles.extractionClass,
-              { backgroundColor: getExtractionColor(extractionInfo.label) },
+              {
+                backgroundColor: getExtractionColor(
+                  shot.extractionSnapshot.label
+                ),
+              },
             ]}
           >
-            {formatExtractionClass(extractionInfo.label)}
+            {formatExtractionClass(shot.extractionSnapshot.label)}
           </Text>
         )}
 
@@ -259,7 +242,6 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
       <CoachingModal
         visible={coachingModalVisible}
         shot={shot}
-        bean={bean}
         onClose={() => setCoachingModalVisible(false)}
       />
 

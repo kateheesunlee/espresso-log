@@ -1,25 +1,15 @@
-import { RoastLevel } from "@types";
-import { ExtractionClass } from "./types";
+import {
+  RoastLevel,
+  ExtractionClass,
+  ShotFormData,
+  ExtractionSummary,
+} from "@types";
 import { EXTRACTION_BANDS, DEAD_BAND } from "./constants";
 
-export interface ExtractionInfo {
-  score: number;
-  label: ExtractionClass;
-  confidence: "low" | "med" | "high";
-  reason: string;
-}
-
 export function classifyExtraction(
-  params: {
-    acidity?: number;
-    bitterness?: number;
-    body?: number;
-    aftertaste?: number;
-    shotTime_s?: number;
-    ratio?: number; // unified name
-  },
+  shotFormData: ShotFormData,
   roast: RoastLevel
-): ExtractionInfo {
+): ExtractionSummary {
   const {
     acidity = 0,
     bitterness = 0,
@@ -27,7 +17,7 @@ export function classifyExtraction(
     aftertaste = 0,
     shotTime_s,
     ratio,
-  } = params as any;
+  } = shotFormData as any;
 
   // Default weights (preserve your intent)
   let wAcidity = 0.55; // +acidity → under
