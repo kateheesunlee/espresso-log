@@ -174,16 +174,16 @@ function generateAciditySuggestions(
     // High acidity - too sour/bright
     suggestions.push(
       createSuggestion("grindStep", {
-        delta: +deltas.grindStep,
-        reason: "Acidity high → coarser grind",
+        delta: -deltas.grindStep,
+        reason: "Acidity high → finer grind",
         priority: 1,
         confidence: confFromMag(magnitude(acidityValue)),
       })
     );
     suggestions.push(
       createSuggestion("ratio", {
-        target: +(ratio + deltas.ratio).toFixed(1),
-        reason: "Higher ratio to smooth sharpness",
+        target: +(ratio - 0.1).toFixed(1),
+        reason: "Lower ratio to tame sharpness",
         priority: 2,
         confidence: "med",
       })
@@ -191,8 +191,8 @@ function generateAciditySuggestions(
     if (waterTemp_C !== undefined) {
       suggestions.push(
         createSuggestion("waterTemp_C", {
-          delta: -deltas.waterTemp_C,
-          reason: "Lower temp slightly",
+          delta: +deltas.waterTemp_C,
+          reason: "Raise temp slightly",
           priority: 4,
           confidence: "low",
         })
@@ -416,6 +416,149 @@ function applyRoastBias(roast: RoastLevel, s: Suggestion): Suggestion {
   return out;
 }
 
+/**
+ * Creates a weight function to rank suggestions based on extraction state.
+ *
+ * @param ratio - Current brew ratio
+ * @param extraction - Extraction classification (under/over + confidence)
+ * @returns Function that adds weight to suggestion priority (negative = higher rank)
+ */
+function weightForFactory(
+  ratio: number,
+  extraction: ReturnType<typeof classifyExtraction>
+) {
+  const DROP_WEIGHT = 1e6; // effectively removes a suggestion from top-N
+
+  // Map extraction label -> coarse direction
+  const dir = extraction.label.startsWith("under")
+    ? "under"
+    : extraction.label.startsWith("over")
+    ? "over"
+    : "balanced";
+
+  // Helper to read delta sign safely
+  const sign = (v?: number) => ((v ?? 0) === 0 ? 0 : v! > 0 ? +1 : -1);
+
+  return (s: Suggestion) => {
+    // Default (balanced) → minimal shaping
+    if (dir === "balanced") {
+      // small nudge to avoid grind dominating everything
+      return s.field === "ratio" ? -0.05 : 0;
+    }
+
+    // ---- 1) Hard gate: drop suggestions that contradict the direction ----
+    if (dir === "under") {
+      // Need: finer(-), time+, temp+, ratio↓, (dose+ slightly)
+      if (
+        (s.field === "grindStep" && sign(s.delta) === +1) || // coarser (bad)
+        (s.field === "shotTime_s" && sign(s.delta) === -1) || // shorter (bad)
+        (s.field === "waterTemp_C" && sign(s.delta) === -1) || // lower temp (bad)
+        (s.field === "ratio" && (s.target ?? ratio) > ratio) || // higher ratio (bad)
+        (s.field === "dose_g" && sign(s.delta) === -1) // less dose (bad)
+      ) {
+        return DROP_WEIGHT;
+      }
+    } else if (dir === "over") {
+      // Need: coarser(+), time-, temp-, ratio↑, (dose- slightly)
+      if (
+        (s.field === "grindStep" && sign(s.delta) === -1) || // finer (bad)
+        (s.field === "shotTime_s" && sign(s.delta) === +1) || // longer (bad)
+        (s.field === "waterTemp_C" && sign(s.delta) === +1) || // higher temp (bad)
+        (s.field === "ratio" && (s.target ?? ratio) < ratio) || // lower ratio (bad)
+        (s.field === "dose_g" && sign(s.delta) === +1) // more dose (bad)
+      ) {
+        return DROP_WEIGHT;
+      }
+    }
+
+    // ---- 2) Directional boost: reward suggestions that align with the direction ----
+    let w = 0;
+
+    if (dir === "under") {
+      if (s.field === "grindStep" && sign(s.delta) === -1) w -= 2.0; // finer
+      if (s.field === "shotTime_s" && sign(s.delta) === +1) w -= 1.5; // longer
+      if (s.field === "waterTemp_C" && sign(s.delta) === +1) w -= 1.0; // higher temp
+      if (s.field === "ratio" && (s.target ?? ratio) < ratio) w -= 1.2; // lower ratio
+      if (s.field === "dose_g" && sign(s.delta) === +1) w -= 0.5; // a bit more dose
+    } else if (dir === "over") {
+      if (s.field === "grindStep" && sign(s.delta) === +1) w -= 2.0; // coarser
+      if (s.field === "shotTime_s" && sign(s.delta) === -1) w -= 1.5; // shorter
+      if (s.field === "waterTemp_C" && sign(s.delta) === -1) w -= 1.0; // lower temp
+      if (s.field === "ratio" && (s.target ?? ratio) > ratio) w -= 1.2; // higher ratio
+      if (s.field === "dose_g" && sign(s.delta) === -1) w -= 0.5; // a bit less dose
+    }
+
+    // Confidence multiplier
+    if (extraction.confidence === "high") w *= 1.2;
+
+    // Slight emphasis for ratio targets so it doesn't lose to grind all the time
+    if (s.field === "ratio") w *= 1.15;
+
+    return w;
+  };
+}
+
+type DeltaRule = {
+  round: (x: number) => number; // rounding method for each field
+  min: number;
+  max: number;
+};
+
+// delta normalization rules for each field
+const DELTA_RULES: Partial<Record<CoachField, DeltaRule>> = {
+  waterTemp_C: {
+    round: Math.round,
+    min: -MAX_DELTAS.waterTemp_C,
+    max: +MAX_DELTAS.waterTemp_C,
+  },
+  shotTime_s: {
+    round: Math.round,
+    min: -MAX_DELTAS.shotTime_s,
+    max: +MAX_DELTAS.shotTime_s,
+  },
+  grindStep: {
+    round: Math.round,
+    min: -MAX_DELTAS.grindStep,
+    max: +MAX_DELTAS.grindStep,
+  },
+  dose_g: {
+    // 0.1g precision
+    round: (x) => Math.round(x * 10) / 10,
+    min: -MAX_DELTAS.dose_g,
+    max: +MAX_DELTAS.dose_g,
+  },
+};
+
+function normalizeDelta(field: CoachField, delta: number | undefined) {
+  if (delta === undefined)
+    return { keep: true as const, value: undefined as number | undefined };
+  const rule = DELTA_RULES[field];
+  if (!rule) return { keep: true as const, value: delta };
+
+  let v = clamp(rule.round(delta), rule.min, rule.max);
+  if (Object.is(v, -0)) v = 0; //treat -0 as 0
+  // if the change is 0, discard
+  if (v === 0) return { keep: false as const, value: 0 };
+  return { keep: true as const, value: v };
+}
+
+function normalizeRatioTarget(
+  target: number | undefined,
+  currentRatio: number
+) {
+  if (target === undefined)
+    return { keep: true as const, value: undefined as number | undefined };
+  const t = clamp(
+    +target.toFixed(1),
+    MAX_DELTAS.ratio.min,
+    MAX_DELTAS.ratio.max
+  );
+  // if the change is less than 0.05, discard
+  if (Math.abs(t - currentRatio) < 0.05)
+    return { keep: false as const, value: t };
+  return { keep: true as const, value: t };
+}
+
 // ---- Core Rules ---------------------------------------------
 
 /**
@@ -490,121 +633,56 @@ export function ruleCoachShot(input: ShotInput): Suggestion[] {
     roast
   );
 
-  /**
-   * Create a weighting function based on extraction state.
-   * Reduces priority number (= increases importance) for suggestions that align
-   * with the extraction direction (under/over).
-   *
-   * For under-extraction: boost finer grind, longer time, higher temp, lower ratio
-   * For over-extraction: boost coarser grind, shorter time, lower temp, higher ratio
-   *
-   * Also applies confidence boost and slight ratio influence increase.
-   */
-  function weightForFactory(
-    ratio: number,
-    extraction: ReturnType<typeof classifyExtraction>
-  ) {
-    return (s: Suggestion) => {
-      const dir = extraction.label.startsWith("under")
-        ? "under"
-        : extraction.label.startsWith("over")
-        ? "over"
-        : "balanced";
-
-      let w = 0;
-      const sign = (v?: number) => ((v ?? 0) === 0 ? 0 : v! > 0 ? +1 : -1);
-
-      if (dir === "under") {
-        // Under-extraction: prioritize these adjustments
-        if (s.field === "grindStep" && sign(s.delta) === -1) w -= 2; // Finer grind
-        if (s.field === "shotTime_s" && sign(s.delta) === +1) w -= 1.5; // Longer time
-        if (s.field === "waterTemp_C" && sign(s.delta) === +1) w -= 1; // Higher temp
-        if (s.field === "ratio" && (s.target ?? ratio) < ratio) w -= 1.2; // Lower ratio
-        if (s.field === "dose_g" && sign(s.delta) === +1) w -= 0.5; // More dose
-      } else if (dir === "over") {
-        // Over-extraction: prioritize these adjustments
-        if (s.field === "grindStep" && sign(s.delta) === +1) w -= 2; // Coarser grind
-        if (s.field === "shotTime_s" && sign(s.delta) === -1) w -= 1.5; // Shorter time
-        if (s.field === "waterTemp_C" && sign(s.delta) === -1) w -= 1; // Lower temp
-        if (s.field === "ratio" && (s.target ?? ratio) > ratio) w -= 1.2; // Higher ratio
-        if (s.field === "dose_g" && sign(s.delta) === -1) w -= 0.5; // Less dose
-      }
-
-      // Apply confidence multiplier (high confidence gets 1.2x weight boost)
-      if (extraction.confidence === "high") w *= 1.2;
-
-      // Slightly increase ratio influence to reduce conflicts with grind
-      if (s.field === "ratio") w *= 1.15;
-
-      return w;
-    };
-  }
-
   // ---- Deduplication & Conflict Resolution ----
   // When multiple suggestions target the same field, keep only the highest priority one.
   // Prefer 'target' suggestions over 'delta' suggestions (target is more specific).
   const byField = new Map<CoachField, Suggestion>();
+  const weightFor = weightForFactory(ratio, extraction);
+
+  // Sort by priority first, then by weight
+  // Then deduplicate by field, keeping the highest priority one
   for (const s of S.sort((a, b) => a.priority - b.priority)) {
     const prev = byField.get(s.field);
     if (!prev) {
       byField.set(s.field, s);
     } else {
-      // Score: target suggestions (more specific) > delta suggestions
-      const score = (x: Suggestion) => (x.target !== undefined ? 2 : 1);
-      if (score(s) > score(prev)) byField.set(s.field, s);
+      // When tie, choose the one with the lower 'priority + weight'
+      const scoreKind = (x: Suggestion) => (x.target !== undefined ? 2 : 1);
+      if (scoreKind(s) > scoreKind(prev)) {
+        byField.set(s.field, s);
+      } else if (scoreKind(s) === scoreKind(prev)) {
+        const curScore = s.priority + weightFor(s);
+        const prevScore = prev.priority + weightFor(prev);
+        if (curScore < prevScore) byField.set(s.field, s);
+      }
     }
   }
 
   // ---- Normalization & Clamping ----
-  // Round and clamp all deltas/targets to safe ranges.
-  // Filter out zero-delta suggestions (no actual change).
   const normalized = Array.from(byField.values())
-    .map((out) => {
-      const s = { ...out };
-      if (s.field === "waterTemp_C" && s.delta !== undefined) {
-        s.delta = clamp(
-          Math.round(s.delta),
-          -MAX_DELTAS.waterTemp_C,
-          +MAX_DELTAS.waterTemp_C
-        );
-        if (s.delta === 0) return null;
+    .map((orig) => {
+      const s = { ...orig };
+
+      // delta normalization (field-specific rules applied automatically)
+      if (s.delta !== undefined) {
+        const d = normalizeDelta(s.field, s.delta);
+        if (!d.keep) return null;
+        s.delta = d.value;
       }
-      if (s.field === "shotTime_s" && s.delta !== undefined) {
-        s.delta = clamp(
-          Math.round(s.delta),
-          -MAX_DELTAS.shotTime_s,
-          +MAX_DELTAS.shotTime_s
-        );
-        if (s.delta === 0) return null;
-      }
-      if (s.field === "grindStep" && s.delta !== undefined) {
-        s.delta = clamp(
-          Math.round(s.delta),
-          -MAX_DELTAS.grindStep,
-          +MAX_DELTAS.grindStep
-        );
-        if (s.delta === 0) return null;
-      }
-      if (s.field === "dose_g" && s.delta !== undefined) {
-        const rounded = Math.round(s.delta * 10) / 10; // 0.1g precision
-        s.delta = clamp(rounded, -MAX_DELTAS.dose_g, +MAX_DELTAS.dose_g);
-        if (s.delta === 0) return null;
-      }
+
+      // ratio target normalization
       if (s.field === "ratio" && s.target !== undefined) {
-        s.target = clamp(
-          +s.target.toFixed(1),
-          MAX_DELTAS.ratio.min,
-          MAX_DELTAS.ratio.max
-        );
+        const r = normalizeRatioTarget(s.target, ratio);
+        if (!r.keep) return null;
+        s.target = r.value;
       }
+
       return s;
     })
     .filter(Boolean) as Suggestion[];
 
   // ---- Final Ranking ----
-  // Sort by: priority (base importance) + extraction-based weight
-  // Lower combined score = higher importance
-  const weightFor = weightForFactory(ratio, extraction);
+  // Sort by priority first, then by weight
   normalized.sort(
     (a, b) => a.priority + weightFor(a) - (b.priority + weightFor(b))
   );

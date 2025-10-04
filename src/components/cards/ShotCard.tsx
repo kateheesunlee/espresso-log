@@ -3,10 +3,11 @@ import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
-import { Shot } from "@types";
+import { Bean, Shot } from "@types";
 import { useStore } from "../../store/useStore";
 import { RootStackParamList } from "../../navigation/AppNavigator";
 import { colors } from "../../themes/colors";
+import { classifyExtraction, ExtractionInfo } from "../../coaching/extraction";
 
 import BaseCard, { ActionConfig } from "./BaseCard";
 import SvgIcon from "../SvgIcon";
@@ -21,6 +22,33 @@ interface ShotCardProps {
   shot: Shot;
 }
 
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+// Get extraction classification
+const getExtractionInfo = (bean: Bean | undefined, shot: Shot) => {
+  if (!bean?.roastLevel) return null;
+
+  const extractionInfo = classifyExtraction(
+    {
+      acidity: shot.acidity,
+      bitterness: shot.bitterness,
+      body: shot.body,
+      aftertaste: shot.aftertaste,
+      shotTime_s: shot.shotTime_s,
+      ratio: shot.ratio,
+    },
+    bean.roastLevel
+  );
+  return extractionInfo;
+};
+
 const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
   const navigation = useNavigation<ShotCardNavigationProp>();
   const { allBeans, allMachines, toggleFavoriteShot, deleteShot } = useStore();
@@ -33,13 +61,42 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
   // Coaching modal state
   const [coachingModalVisible, setCoachingModalVisible] = useState(false);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  const extractionInfo = getExtractionInfo(bean, shot);
+
+  // Format extraction class for display
+  const formatExtractionClass = (label: string) => {
+    switch (label) {
+      case "under":
+        return "Under-extracted";
+      case "slightly-under":
+        return "Slightly under";
+      case "balanced":
+        return "Balanced";
+      case "slightly-over":
+        return "Slightly over";
+      case "over":
+        return "Over-extracted";
+      default:
+        return label;
+    }
+  };
+
+  // Get color for extraction class
+  const getExtractionColor = (label: string) => {
+    switch (label) {
+      case "under":
+        return colors.roastingLight;
+      case "slightly-under":
+        return colors.roastingMediumLight;
+      case "balanced":
+        return colors.roastingMedium;
+      case "slightly-over":
+        return colors.roastingMediumDark;
+      case "over":
+        return colors.roastingDark;
+      default:
+        return colors.primary;
+    }
   };
 
   // Handler functions
@@ -109,6 +166,18 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
             <Text style={styles.metricValue}>{shot.shotTime_s}s</Text>
           </View>
         </View>
+
+        {/* Extraction Class */}
+        {extractionInfo && (
+          <Text
+            style={[
+              styles.extractionClass,
+              { backgroundColor: getExtractionColor(extractionInfo.label) },
+            ]}
+          >
+            {formatExtractionClass(extractionInfo.label)}
+          </Text>
+        )}
 
         {shot.rating && (
           <View style={styles.ratingContainer}>
@@ -225,14 +294,33 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: 12,
     paddingTop: 20,
-    gap: 20,
+    gap: 12,
     borderTopWidth: 1,
     borderTopColor: colors.divider,
+  },
+  extractionContainer: {
+    flexDirection: "column",
+    gap: 4,
+    alignItems: "flex-start",
+  },
+  extractionClass: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.white,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+  },
+  extractionReason: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    fontStyle: "italic",
   },
   shotMetrics: {
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-around",
+    marginBottom: 4, // slight adjustment for visual balance
   },
   metric: {
     alignItems: "center",

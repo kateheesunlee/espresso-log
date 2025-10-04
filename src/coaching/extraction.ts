@@ -2,6 +2,13 @@ import { RoastLevel } from "@types";
 import { ExtractionClass } from "./types";
 import { EXTRACTION_BANDS, DEAD_BAND } from "./constants";
 
+export interface ExtractionInfo {
+  score: number;
+  label: ExtractionClass;
+  confidence: "low" | "med" | "high";
+  reason: string;
+}
+
 export function classifyExtraction(
   params: {
     acidity?: number;
@@ -12,12 +19,7 @@ export function classifyExtraction(
     ratio?: number; // unified name
   },
   roast: RoastLevel
-): {
-  score: number;
-  label: ExtractionClass;
-  confidence: "low" | "med" | "high";
-  reason: string;
-} {
+): ExtractionInfo {
   const {
     acidity = 0,
     bitterness = 0,
