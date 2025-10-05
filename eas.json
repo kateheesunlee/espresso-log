@@ -9,23 +9,22 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
-    },
-    "production": {
+      "distribution": "store",
       "autoIncrement": true
     },
-    "testflight": {
-      "ios": {
-        "distribution": "store"
-      },
+    "production": {
       "autoIncrement": true
     }
   },
   "submit": {
-    "production": {},
-    "testflight": {
+    "preview": {
       "ios": {
-        "appleId": "kateheesunlee@example.com"
+        "appleId": "hslee.33754@gmail.com"
+      }
+    },
+    "production": {
+      "ios": {
+        "appleId": "hslee.33754@gmail.com"
       }
     }
   }
