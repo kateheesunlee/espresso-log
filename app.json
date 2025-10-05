@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "description": "Track, refine, and master your espresso extractions.",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash-icon-light.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
