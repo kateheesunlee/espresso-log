@@ -10,6 +10,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import * as Haptics from "expo-haptics";
 
 import { RootStackParamList } from "../../navigation/AppNavigator";
 import { colors } from "../../themes/colors";
@@ -37,18 +38,13 @@ export interface BaseCardProps {
   data: CardData;
   fallbackIcon: IconName;
   title: string | React.ReactNode;
-  // titleBadge?: React.ReactNode;
   subtitle?: string | React.ReactNode;
   subtitle2?: string | React.ReactNode;
   details?: string[];
   additionalContent?: React.ReactNode;
-  actionConfigs?: ActionConfig[];
+  actionConfigs?: ActionConfig[]; // other than onPress and onDelete
   onDelete?: () => void | Promise<void>;
   onPress?: () => void;
-  onEdit?: () => void;
-  onFavorite?: () => void | Promise<void>;
-  onDuplicate?: () => Promise<string | null>;
-  onOneMore?: () => void;
   showDeleteGesture?: boolean;
   showDate?: boolean;
   isFavorite?: boolean;
@@ -71,14 +67,9 @@ const BaseCard: React.FC<BaseCardProps> = ({
   additionalContent,
   actionConfigs,
   onDelete,
-  onDuplicate,
-  onOneMore,
   onPress,
-  onEdit,
-  onFavorite,
   showDeleteGesture = true,
   showDate = false,
-  isFavorite = false,
   editScreenName,
 }) => {
   const navigation = useNavigation<BaseCardNavigationProp>();
@@ -141,9 +132,14 @@ const BaseCard: React.FC<BaseCardProps> = ({
       } else if (e.translationX > 0 && showDeleteButton) {
         hideDeleteButtonAnimation();
       }
+    })
+    .onEnd(() => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     });
 
   const handleDelete = () => {
+    // Add haptic feedback when delete button is clicked
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setDeleteConfirmation(true);
   };
 
@@ -164,32 +160,6 @@ const BaseCard: React.FC<BaseCardProps> = ({
 
   const cancelDelete = () => {
     setDeleteConfirmation(false);
-  };
-
-  const handleFavorite = async () => {
-    try {
-      if (onFavorite) {
-        await onFavorite();
-      }
-    } catch (error) {
-      setErrorModal({
-        visible: true,
-        message: "Failed to update favorite",
-      });
-    }
-  };
-
-  const handleDuplicate = async () => {
-    try {
-      if (onDuplicate) {
-        const newItemId = await onDuplicate();
-        if (newItemId) {
-          setSuccessModal({ visible: true, newItemId });
-        }
-      }
-    } catch (error) {
-      setErrorModal({ visible: true, message: "Failed to duplicate item" });
-    }
   };
 
   const handleEditDuplicatedItem = () => {
