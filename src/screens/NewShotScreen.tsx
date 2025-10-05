@@ -135,6 +135,44 @@ const NewShotScreen: React.FC = () => {
     }, [pendingBeanSelection, pendingMachineSelection])
   );
 
+  // Auto-select newly created beans/machines when returning from creation
+  useFocusEffect(
+    React.useCallback(() => {
+      // Check if we have a newly created bean (most recent one)
+      if (beans.length > 0) {
+        const latestBean = beans.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )[0];
+
+        // If we don't have a bean selected, or if the latest bean is newer than our current selection
+        if (
+          !formData.beanId ||
+          (latestBean && !beans.find((bean) => bean.id === formData.beanId))
+        ) {
+          setFormData((prev) => ({ ...prev, beanId: latestBean.id }));
+        }
+      }
+
+      // Check if we have a newly created machine (most recent one)
+      if (machines.length > 0) {
+        const latestMachine = machines.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )[0];
+
+        // If we don't have a machine selected, or if the latest machine is newer than our current selection
+        if (
+          !formData.machineId ||
+          (latestMachine &&
+            !machines.find((machine) => machine.id === formData.machineId))
+        ) {
+          setFormData((prev) => ({ ...prev, machineId: latestMachine.id }));
+        }
+      }
+    }, [beans, machines, formData.beanId, formData.machineId])
+  );
+
   const loadShotData = async (shotId: string) => {
     try {
       const shot = shots.find((s) => s.id === shotId);
@@ -201,27 +239,13 @@ const NewShotScreen: React.FC = () => {
   };
 
   const handleCreateBean = () => {
-    // Set pending selection to the latest bean ID (will be updated when we return)
-    const latestBean = beans.sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )[0];
-    setPendingBeanSelection(latestBean?.id || "");
-
-    // Navigate to NewBean screen
-    (navigation as any).navigate("NewBean");
+    // Navigate to NewBean screen - auto-selection will handle the rest
+    navigation.navigate("NewBean", { returnTo: "NewShot" });
   };
 
   const handleCreateMachine = () => {
-    // Set pending selection to the latest machine ID (will be updated when we return)
-    const latestMachine = machines.sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )[0];
-    setPendingMachineSelection(latestMachine?.id || "");
-
-    // Navigate to NewMachine screen
-    (navigation as any).navigate("NewMachine");
+    // Navigate to NewMachine screen - auto-selection will handle the rest
+    navigation.navigate("NewMachine", { returnTo: "NewShot" });
   };
 
   const handleTastingTagsChange = (tags: string[]) => {

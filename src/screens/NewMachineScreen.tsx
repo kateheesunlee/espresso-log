@@ -130,9 +130,13 @@ const NewMachineScreen: React.FC = () => {
 
   const handleSuccessModalClose = () => {
     setSuccessModal({ visible: false, isUpdate: false });
-    navigation.navigate("Shots", {
-      screen: "Machines",
-    } as any);
+    if (route.params?.returnTo === "NewShot") {
+      navigation.goBack();
+    } else {
+      navigation.navigate("Shots", {
+        screen: "Machines",
+      } as any);
+    }
   };
 
   return (
@@ -235,7 +239,11 @@ const NewMachineScreen: React.FC = () => {
             ? "Your machine has been updated successfully!"
             : "Your machine has been saved successfully!"
         }
-        primaryButtonText="View Machines"
+        primaryButtonText={
+          route.params?.returnTo === "NewShot"
+            ? "Continue Recording Shot"
+            : "View Machines"
+        }
         onPrimaryPress={handleSuccessModalClose}
         icon="coffeemaker"
       />

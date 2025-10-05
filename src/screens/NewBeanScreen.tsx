@@ -146,9 +146,13 @@ const NewBeanScreen: React.FC = () => {
 
   const handleSuccessModalClose = () => {
     setSuccessModal({ visible: false, isUpdate: false });
-    navigation.navigate("Shots", {
-      screen: "Beans",
-    } as any);
+    if (route.params?.returnTo === "NewShot") {
+      navigation.goBack();
+    } else {
+      navigation.navigate("Shots", {
+        screen: "Beans",
+      } as any);
+    }
   };
 
   return (
@@ -277,7 +281,11 @@ const NewBeanScreen: React.FC = () => {
             ? "Your bean has been updated successfully!"
             : "Your bean has been saved successfully!"
         }
-        primaryButtonText="View Beans"
+        primaryButtonText={
+          route.params?.returnTo === "NewShot"
+            ? "Continue Recording Shot"
+            : "View Beans"
+        }
         onPrimaryPress={handleSuccessModalClose}
         icon="bean"
       />

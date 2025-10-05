@@ -12,6 +12,7 @@ import SvgIcon from "../components/SvgIcon";
 import PickerField from "../components/inputs/forms/PickerField";
 import ScrollableListView from "../components/ScrollableListView";
 import EmptyEntity from "../components/EmptyEntity";
+import EmptyEntityWithPrerequisites from "../components/EmptyEntityWithPrerequisites";
 import ShotCard from "../components/cards/ShotCard";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList>;
@@ -172,21 +173,25 @@ const HomeScreen: React.FC = () => {
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         emptyComponent={
-          <EmptyEntity
-            icon="coffee"
-            title={
-              shots.length === 0 ? "No shots yet" : "No shots match filters"
-            }
-            subtitle={
-              shots.length === 0
-                ? "Log your first espresso shot and begin your extraction journey."
-                : "Try adjusting your filter selections to see more shots."
-            }
-            buttonText={
-              shots.length === 0 ? "Record Your First Shot" : undefined
-            }
-            onButtonPress={shots.length === 0 ? handleNewShot : undefined}
-          />
+          shots.length === 0 ? (
+            <EmptyEntityWithPrerequisites
+              icon="coffee"
+              title="No shots yet"
+              subtitle="Log your first espresso shot and begin your extraction journey."
+              primaryButtonText="Record Your First Shot"
+              onPrimaryPress={handleNewShot}
+              hasBeans={beans.length > 0}
+              hasMachines={machines.length > 0}
+              onAddBean={() => (navigation as any).navigate("NewBean")}
+              onAddMachine={() => (navigation as any).navigate("NewMachine")}
+            />
+          ) : (
+            <EmptyEntity
+              icon="coffee"
+              title="No shots match filters"
+              subtitle="Try adjusting your filter selections to see more shots."
+            />
+          )
         }
       />
     </View>

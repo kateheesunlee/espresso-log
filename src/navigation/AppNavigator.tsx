@@ -20,8 +20,8 @@ export type RootStackParamList = {
     selectedBeanId?: string;
     selectedMachineId?: string;
   };
-  NewBean: { beanId?: string };
-  NewMachine: { machineId?: string };
+  NewBean: { beanId?: string; returnTo?: string };
+  NewMachine: { machineId?: string; returnTo?: string };
 };
 
 export type MainTabParamList = {
