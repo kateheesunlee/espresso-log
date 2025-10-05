@@ -15,6 +15,7 @@ import {
   useFocusEffect,
 } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import * as Haptics from "expo-haptics";
 
 import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -516,17 +517,15 @@ const NewShotScreen: React.FC = () => {
           <View style={inputStyles.inputGroup}>
             <TouchableOpacity
               style={styles.checkboxContainer}
-              onPress={() =>
-                handleInputChange("isFavorite", !formData.isFavorite)
-              }
+              onPress={() => {
+                handleInputChange("isFavorite", !formData.isFavorite);
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              }}
             >
               <SvgIcon
                 name={formData.isFavorite ? "heart_filled" : "heart"}
-                color={formData.isFavorite ? colors.heart : colors.primary}
-                secondaryColor={
-                  formData.isFavorite ? colors.heartLight : colors.primaryLight
-                }
-                size={24}
+                size={28}
+                useContentColor={true}
               />
               <Text style={styles.checkboxLabel}>Mark as favorite shot</Text>
             </TouchableOpacity>

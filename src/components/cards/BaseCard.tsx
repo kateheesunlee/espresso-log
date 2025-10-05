@@ -30,6 +30,7 @@ export interface CardData {
 
 export interface ActionConfig {
   icon: IconName;
+  useContentColor?: boolean;
   onPress: () => void | Promise<void>;
 }
 
@@ -211,7 +212,11 @@ const BaseCard: React.FC<BaseCardProps> = ({
               style={styles.actionButton}
               onPress={action.onPress}
             >
-              <SvgIcon name={action.icon} size={20} />
+              <SvgIcon
+                name={action.icon}
+                size={20}
+                useContentColor={action.useContentColor}
+              />
             </TouchableOpacity>
           ))}
         </View>

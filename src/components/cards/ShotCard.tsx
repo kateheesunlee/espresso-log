@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import * as Haptics from "expo-haptics";
 
 import { Shot } from "@types";
 import { useStore } from "../../store/useStore";
@@ -85,6 +86,7 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
 
   const handleToggleFavorite = async () => {
     await toggleFavoriteShot(shot.id);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
   const handleOneMore = () => {
@@ -233,6 +235,7 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
           },
           {
             icon: shot.isFavorite ? "heart_filled" : "heart",
+            useContentColor: true,
             onPress: handleToggleFavorite,
           },
           ...(showCoachingButton ? [coachingButtonConfig] : []),

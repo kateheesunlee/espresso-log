@@ -82,6 +82,7 @@ type Props = {
   size: number;
   color?: string;
   secondaryColor?: string;
+  useContentColor?: boolean;
 };
 
 export default function SvgIcon({
@@ -89,8 +90,16 @@ export default function SvgIcon({
   size = 24,
   color = colors.primary,
   secondaryColor = colors.primaryLight,
+  useContentColor = false,
 }: Props) {
   const C = ICONS[name];
 
-  return <C size={size} color={color} secondaryColor={secondaryColor} />;
+  return (
+    <C
+      size={size}
+      color={color}
+      secondaryColor={secondaryColor}
+      useContentColor={useContentColor}
+    />
+  );
 }
