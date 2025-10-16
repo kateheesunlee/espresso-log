@@ -7,18 +7,14 @@ import {
   Animated,
   Platform,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import * as Haptics from "expo-haptics";
-
-import { RootStackParamList } from "../../navigation/AppNavigator";
 import { colors } from "../../themes/colors";
+import { formatDateTime } from "../../utils/formatDate";
 
 import SvgIcon, { IconName } from "../SvgIcon";
 import Avatar from "../Avatar";
 import ConfirmationModal from "../modals/ConfirmationModal";
-import SuccessModal from "../modals/SuccessModal";
 import ErrorModal from "../modals/ErrorModal";
 
 export interface CardData {
@@ -48,11 +44,7 @@ export interface BaseCardProps {
   onPress?: () => void;
   showDeleteGesture?: boolean;
   showDate?: boolean;
-  isFavorite?: boolean;
-  editScreenName?: keyof RootStackParamList;
 }
-
-type BaseCardNavigationProp = StackNavigationProp<RootStackParamList>;
 
 const OPEN = -80;
 const CLOSED = 0;
@@ -70,19 +62,13 @@ const BaseCard: React.FC<BaseCardProps> = ({
   onDelete,
   onPress,
   showDeleteGesture = true,
-  showDate = false,
-  editScreenName,
+  showDate: showCreatedDate = false,
 }) => {
-  const navigation = useNavigation<BaseCardNavigationProp>();
   const translateX = useRef(new Animated.Value(CLOSED));
   const [showDeleteButton, setShowDeleteButton] = useState(false);
 
   // Modal states
   const [deleteConfirmation, setDeleteConfirmation] = useState(false);
-  const [successModal, setSuccessModal] = useState<{
-    visible: boolean;
-    newItemId: string | null;
-  }>({ visible: false, newItemId: null });
   const [errorModal, setErrorModal] = useState<{
     visible: boolean;
     message: string;
@@ -94,14 +80,6 @@ const BaseCard: React.FC<BaseCardProps> = ({
       translateX.current.stopAnimation();
     };
   }, []);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
 
   const hideDeleteButtonAnimation = useCallback(() => {
     setShowDeleteButton(false);
@@ -163,19 +141,6 @@ const BaseCard: React.FC<BaseCardProps> = ({
     setDeleteConfirmation(false);
   };
 
-  const handleEditDuplicatedItem = () => {
-    if (successModal.newItemId && editScreenName) {
-      navigation.navigate(editScreenName, {
-        duplicateFrom: successModal.newItemId,
-      } as any);
-    }
-    setSuccessModal({ visible: false, newItemId: null });
-  };
-
-  const handleCancelSuccess = () => {
-    setSuccessModal({ visible: false, newItemId: null });
-  };
-
   const cardContent = (
     <View style={styles.cardLayout}>
       {showAvatar && (
@@ -200,8 +165,8 @@ const BaseCard: React.FC<BaseCardProps> = ({
             ))}
           </View>
         )}
-        {showDate && (
-          <Text style={styles.date}>{formatDate(data.createdAt)}</Text>
+        {showCreatedDate && data.createdAt && (
+          <Text style={styles.date}>{formatDateTime(data.createdAt)}</Text>
         )}
       </View>
       {actionConfigs && actionConfigs.length > 0 && (
@@ -290,17 +255,6 @@ const BaseCard: React.FC<BaseCardProps> = ({
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
         destructive={true}
-      />
-
-      <SuccessModal
-        visible={successModal.visible}
-        title="One More Shot"
-        message="Shot duplicated successfully! You can now modify the parameters."
-        primaryButtonText="Edit"
-        secondaryButtonText="Done"
-        onPrimaryPress={handleEditDuplicatedItem}
-        onSecondaryPress={handleCancelSuccess}
-        icon="add-notes"
       />
 
       <ErrorModal

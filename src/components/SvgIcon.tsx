@@ -24,13 +24,17 @@ import HeartFilledIcon from "./icons/HeartFilledIcon";
 import HeartIcon from "./icons/HeartIcon";
 import MagicHatIcon from "./icons/MagicHatIcon";
 import NoteFilledIcon from "./icons/NoteFilledIcon";
+import OpenBagIcon from "./icons/OpenBagIcon";
 import PlusIcon from "./icons/PlusIcon";
 import RatioIcon from "./icons/RatioIcon";
+import RefreshCoffeeBagIcon from "./icons/RefreshCoffeeBagIcon";
+import RoasterIcon from "./icons/RoasterIcon";
 import ScaleIcon from "./icons/ScaleIcon";
 import SendIcon from "./icons/SendIcon";
 import ShareIcon from "./icons/ShareIcon";
 import StarFilledIcon from "./icons/StarFilledIcon";
 import StarIcon from "./icons/StarIcon";
+import SunIcon from "./icons/SunIcon";
 import TempIcon from "./icons/TemperatureIcon";
 import ThumbDownIcon from "./icons/ThumbDownIcon";
 import ThumbUpIcon from "./icons/ThumbUpIcon";
@@ -58,17 +62,21 @@ const ICONS = {
   heart_broken_filled: HeartBrokenFilledIcon,
   heart_filled: HeartFilledIcon,
   note_filled: NoteFilledIcon,
+  open_bag: OpenBagIcon,
   plus: PlusIcon,
   send: SendIcon,
   share: ShareIcon,
   star: StarIcon,
   star_filled: StarFilledIcon,
+  sun: SunIcon,
   "thumb-down": ThumbDownIcon,
   "thumb-up": ThumbUpIcon,
   scale: ScaleIcon,
   water: WaterIcon,
   timer: TimerIcon,
   ratio: RatioIcon,
+  "refresh-coffee-bag": RefreshCoffeeBagIcon,
+  roaster: RoasterIcon,
   dial: DialIcon,
   warning: WarningIcon,
   temp: TempIcon,

@@ -13,7 +13,13 @@ import { StackNavigationProp } from "@react-navigation/stack";
 
 import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { RoastLevel, AROMA_TAGS } from "@types";
+import {
+  RoastLevel,
+  AROMA_TAGS,
+  normalizeDateForStorage,
+  createBeanDateEntry,
+  getLastBeanDate,
+} from "@types";
 import { colors } from "../themes/colors";
 import { showImagePickerOptions } from "../utils/imageUtils";
 
@@ -23,6 +29,8 @@ import RoastingSlider from "../components/inputs/sliders/RoastingSlider";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
 import { TextField, TagChipsField, FormField } from "../components/inputs";
+import BeanFreshnessForm from "../components/BeanManager/BeanFreshnessForm";
+import { DEFAULT_EXPIRATION_PERIOD_WEEKS } from "../components/BeanManager/constants";
 
 type NewBeanScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -37,7 +45,8 @@ interface BeanFormData {
   roastLevel: RoastLevel;
   aromaTags: string[];
   roastDate: string;
-  notes: string;
+  dateType: "roasting" | "opening";
+  expirationPeriodWeeks: number;
   imageUri?: string;
 }
 
@@ -53,12 +62,14 @@ const NewBeanScreen: React.FC = () => {
     roastLevel: "Medium",
     aromaTags: [],
     roastDate: "",
-    notes: "",
+    dateType: "roasting",
+    expirationPeriodWeeks: 2, // Default to 2 weeks
     imageUri: "",
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [editingBeanId, setEditingBeanId] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const [successModal, setSuccessModal] = useState<{
     visible: boolean;
@@ -76,16 +87,29 @@ const NewBeanScreen: React.FC = () => {
       const bean = beans.find((b) => b.id === route.params!.beanId!);
       if (bean) {
         setEditingBeanId(bean.id);
+        // Get the last date entry from the bean's dates array
+        const lastDateEntry = getLastBeanDate(bean);
+        const lastDate = lastDateEntry?.date || bean.roastDate || "";
+        const lastDateType = lastDateEntry?.type || "roasting";
+
         setFormData({
           name: bean.name,
           origin: bean.origin || "",
           process: bean.process || "",
           roastLevel: bean.roastLevel || "Medium",
           aromaTags: bean.aromaTags || [],
-          roastDate: bean.roastDate || "",
-          notes: bean.notes || "",
+          roastDate: lastDate,
+          dateType: lastDateType,
+          expirationPeriodWeeks:
+            bean.expirationPeriodWeeks || DEFAULT_EXPIRATION_PERIOD_WEEKS,
           imageUri: bean.imageUri || "",
         });
+
+        // Set the selected date if there's a date
+        if (lastDate) {
+          const date = new Date(lastDate);
+          setSelectedDate(date);
+        }
       }
     }
   }, [route.params?.beanId, beans]);
@@ -93,6 +117,16 @@ const NewBeanScreen: React.FC = () => {
   const handleAromaTagsChange = (tags: string[]) => {
     // Accept any strings for custom aroma tags
     setFormData((prev) => ({ ...prev, aromaTags: tags }));
+  };
+
+  const handleDateChange = (date: Date) => {
+    setSelectedDate(date);
+    const normalizedDate = normalizeDateForStorage(date);
+    setFormData((prev) => ({ ...prev, roastDate: normalizedDate }));
+  };
+
+  const handleDateTypeChange = (dateType: "roasting" | "opening") => {
+    setFormData((prev) => ({ ...prev, dateType }));
   };
 
   const handleImageCapture = async () => {
@@ -119,10 +153,38 @@ const NewBeanScreen: React.FC = () => {
 
     setIsLoading(true);
     try {
+      // Handle dates array properly
+      let dates = [];
+
+      if (editingBeanId) {
+        // When updating an existing bean, preserve existing dates
+        const existingBean = beans.find((b) => b.id === editingBeanId);
+        dates = existingBean?.dates || [];
+
+        // If a new date is provided, add it to the dates array
+        if (formData.roastDate) {
+          const dateEntry = createBeanDateEntry(
+            formData.roastDate,
+            formData.dateType
+          );
+          dates.push(dateEntry);
+        }
+      } else {
+        // When creating a new bean, create initial date entry if provided
+        if (formData.roastDate) {
+          const dateEntry = createBeanDateEntry(
+            formData.roastDate,
+            formData.dateType
+          );
+          dates.push(dateEntry);
+        }
+      }
+
       const beanData = {
         id: editingBeanId || `bean-${Date.now()}`,
         userId: "default-user",
         ...formData,
+        dates,
         createdAt: editingBeanId
           ? beans.find((b) => b.id === editingBeanId)?.createdAt ||
             new Date().toISOString()
@@ -158,7 +220,7 @@ const NewBeanScreen: React.FC = () => {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "position" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
     >
       <ScrollView
@@ -237,24 +299,22 @@ const NewBeanScreen: React.FC = () => {
             allowCustom={true}
           />
 
-          <TextField
-            label="Roast Date"
-            value={formData.roastDate}
-            onChangeText={(text) =>
-              setFormData((prev) => ({ ...prev, roastDate: text }))
+          <BeanFreshnessForm
+            initialDate={
+              editingBeanId && formData.roastDate
+                ? new Date(formData.roastDate)
+                : new Date()
             }
-            placeholder="YYYY-MM-DD"
-          />
-
-          <TextField
-            label="Notes"
-            value={formData.notes}
-            onChangeText={(text) =>
-              setFormData((prev) => ({ ...prev, notes: text }))
+            initialDateType={formData.dateType}
+            onDateChange={handleDateChange}
+            onDateTypeChange={handleDateTypeChange}
+            expirationPeriodWeeks={formData.expirationPeriodWeeks}
+            onExpirationPeriodChange={(value) =>
+              setFormData((prev) => ({
+                ...prev,
+                expirationPeriodWeeks: value,
+              }))
             }
-            placeholder="Additional notes about this bean..."
-            multiline={true}
-            numberOfLines={3}
           />
 
           <TouchableOpacity

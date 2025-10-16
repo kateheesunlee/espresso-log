@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   View,
@@ -8,6 +8,8 @@ import {
   Platform,
   ViewStyle,
   TextStyle,
+  ScrollView,
+  Keyboard,
 } from "react-native";
 
 import { colors } from "../../themes/colors";
@@ -180,6 +182,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexShrink: 1,
     gap: MODAL_PADDING / 2,
+    overflow: "hidden",
   },
   headerContainer: {
     flexDirection: "row",
@@ -212,9 +215,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   message: {
-    fontSize: 16,
+    fontSize: 14,
     color: colors.textMedium,
-    textAlign: "center",
     lineHeight: 22,
   },
   buttonContainer: {

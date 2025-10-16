@@ -14,6 +14,7 @@ import { useStore } from "../store/useStore";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { Shot } from "@types";
 import { colors } from "../themes/colors";
+import { formatDateLong } from "../utils/formatDate";
 
 import SvgIcon from "../components/SvgIcon";
 import RatingSlider from "../components/inputs/sliders/RatingSlider";
@@ -119,17 +120,6 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   if (!shot) {
     return (
       <View style={styles.loadingContainer}>
@@ -158,7 +148,9 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
                 `${machine?.brand} ${machine?.model}` ||
                 "Unknown Machine"}
             </Text>
-            <Text style={styles.shotDate}>{formatDate(shot.createdAt)}</Text>
+            <Text style={styles.shotDate}>
+              {formatDateLong(shot.createdAt)}
+            </Text>
           </View>
           {shot.isFavorite && (
             <SvgIcon
@@ -433,10 +425,6 @@ const styles = StyleSheet.create({
   },
   ratingSection: {
     marginTop: 8,
-  },
-  overallRating: {
-    alignItems: "center",
-    marginBottom: 20,
   },
   notesText: {
     fontSize: 16,

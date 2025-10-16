@@ -82,7 +82,7 @@ class UniversalDatabase {
       createdAt: new Date().toISOString(),
     };
     data.users.push(newUser);
-    await await this.setData(data);
+    await this.setData(data);
   }
 
   async getUser(id: string): Promise<User | null> {
@@ -102,7 +102,7 @@ class UniversalDatabase {
       updatedAt: now,
     };
     data.machines.push(newMachine);
-    await await this.setData(data);
+    await this.setData(data);
   }
 
   async getMachines(userId: string): Promise<Machine[]> {
@@ -323,6 +323,20 @@ class UniversalDatabase {
   async getBean(id: string): Promise<Bean | null> {
     const data = this.getData();
     return data.beans.find((b: Bean) => b.id === id) || null;
+  }
+
+  async addBeanDateEntry(beanId: string, dateEntry: any): Promise<void> {
+    const data = this.getData();
+    const beanIndex = data.beans.findIndex((b: Bean) => b.id === beanId);
+
+    if (beanIndex !== -1) {
+      if (!data.beans[beanIndex].dates) {
+        data.beans[beanIndex].dates = [];
+      }
+      data.beans[beanIndex].dates.push(dateEntry);
+      data.beans[beanIndex].updatedAt = new Date().toISOString();
+      await this.setData(data);
+    }
   }
 }
 

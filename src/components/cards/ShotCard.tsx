@@ -15,21 +15,13 @@ import CoachingModal from "../modals/CoachingModal";
 import RatingSlider from "../inputs/sliders/RatingSlider";
 import RoastingIndicator from "../RoastingIndicator";
 import ConfirmationModal from "../modals/ConfirmationModal";
+import { formatDateTime } from "../../utils/formatDate";
 
 type ShotCardNavigationProp = StackNavigationProp<RootStackParamList>;
 
 interface ShotCardProps {
   shot: Shot;
 }
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
 
 const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
   const navigation = useNavigation<ShotCardNavigationProp>();
@@ -217,7 +209,7 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
       <BaseCard
         showAvatar={false}
         data={shot as any}
-        title={formatDate(shot.createdAt)}
+        title={formatDateTime(shot.createdAt)}
         subtitle={renderSubtitle()}
         subtitle2={subtitle2}
         details={[]}
@@ -226,8 +218,6 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
         onDelete={handleDelete}
         onPress={handleShotPress}
         showDeleteGesture={true}
-        isFavorite={shot.isFavorite}
-        editScreenName="NewShot"
         actionConfigs={[
           {
             icon: "add-notes",
@@ -283,11 +273,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.divider,
   },
-  extractionContainer: {
-    flexDirection: "column",
-    gap: 4,
-    alignItems: "flex-start",
-  },
   extractionClass: {
     fontSize: 14,
     fontWeight: "600",
@@ -295,11 +280,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 12,
-  },
-  extractionReason: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    fontStyle: "italic",
   },
   shotMetrics: {
     width: "100%",

@@ -1,0 +1,1 @@
+export const DEFAULT_EXPIRATION_PERIOD_WEEKS = 2;

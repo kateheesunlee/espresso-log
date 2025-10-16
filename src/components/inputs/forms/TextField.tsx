@@ -29,9 +29,10 @@ const TextField: React.FC<TextFieldProps> = ({
   autoCapitalize = "sentences",
   readOnly = false,
   style,
+  ...rest
 }) => {
   return (
-    <FormField label={label} required={required} subtitle={subtitle}>
+    <FormField label={label} required={required} subtitle={subtitle} {...rest}>
       <RNTextInput
         style={[
           inputStyles.textInput,

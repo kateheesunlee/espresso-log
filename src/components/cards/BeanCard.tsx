@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { View, StyleSheet } from "react-native";
+import { colors } from "../../themes/colors";
 
 import { Bean } from "@types";
 import { useStore } from "../../store/useStore";
@@ -8,6 +10,7 @@ import { RootStackParamList } from "../../navigation/AppNavigator";
 
 import BaseCard from "./BaseCard";
 import RoastingIndicator from "../RoastingIndicator";
+import BeanManager from "../BeanManager";
 
 export interface BeanCardProps {
   bean: Bean;
@@ -19,18 +22,12 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean }) => {
   const { deleteBean, toggleFavoriteBean } = useStore();
   const navigation = useNavigation<BeanCardNavigationProp>();
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
-
   const details: string[] = [];
   if (bean.origin) details.push(`Origin: ${bean.origin}`);
   if (bean.process) details.push(`Process: ${bean.process}`);
-  if (bean.roastDate) details.push(`Roasted: ${formatDate(bean.roastDate)}`);
+
+  const showBeanManager = bean.dates?.length > 0;
+
   if (bean.aromaTags && bean.aromaTags.length > 0) {
     details.push(`Aroma: ${bean.aromaTags.join(", ")}`);
   }
@@ -69,7 +66,7 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean }) => {
       onPress={handlePress}
       showDeleteGesture={true}
       showDate={false}
-      isFavorite={bean.isFavorite}
+      additionalContent={showBeanManager ? <BeanManager bean={bean} /> : null}
     />
   );
 };

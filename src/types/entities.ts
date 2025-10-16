@@ -23,6 +23,12 @@ export interface Machine {
   updatedAt: string;
 }
 
+export interface BeanDateEntry {
+  id: string;
+  date: string; // ISO string
+  type: "roasting" | "opening";
+}
+
 export interface Bean {
   id: string;
   userId: string;
@@ -30,9 +36,10 @@ export interface Bean {
   origin?: string;
   process?: string;
   roastLevel?: RoastLevel;
-  roastDate?: string;
+  roastDate?: string; // Deprecated. Keep for backward compatibility
+  dates: BeanDateEntry[]; // New array of date entries
+  expirationPeriodWeeks: number; // 1-4 weeks
   aromaTags?: string[]; // Allow custom tags beyond predefined AromaTag enum
-  notes?: string;
   imageUri?: string;
   isFavorite?: boolean;
   deleted?: boolean;
@@ -242,3 +249,104 @@ export const shotToShotFormData = (shot: Shot): ShotFormData => ({
   notes: shot.notes,
   isFavorite: shot.isFavorite,
 });
+
+// ============================================================================
+// Bean Date Management Utilities
+// ============================================================================
+
+/** Get the last date entry for a bean (final entry in the dates array) */
+export const getLastBeanDate = (bean: Bean): BeanDateEntry | null => {
+  if (!bean.dates || bean.dates.length === 0) {
+    return null;
+  }
+  // Return the last entry in the array (most recently added)
+  return bean.dates[bean.dates.length - 1];
+};
+
+/** Calculate freshness status based on latest date and expiration period */
+export const getBeanFreshnessStatus = (
+  bean: Bean
+): {
+  status: "fresh" | "still-okay" | "past-prime" | "expired";
+  daysRemaining: number;
+  progress: number; // 0-1 for slider
+} => {
+  const lastEntry = getLastBeanDate(bean);
+  if (!lastEntry || !bean.expirationPeriodWeeks) {
+    return { status: "fresh", daysRemaining: 0, progress: 0 };
+  }
+
+  // Use normalized date to avoid timezone issues
+  const normalizedDate = normalizeDateForStorage(lastEntry.date);
+  const [year, month, day] = normalizedDate.split("-").map(Number);
+  const dateEntry = new Date(year, month - 1, day);
+
+  const now = new Date();
+  const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const expirationDate = new Date(
+    dateEntry.getTime() + bean.expirationPeriodWeeks * 7 * 24 * 60 * 60 * 1000
+  );
+
+  const totalDays = bean.expirationPeriodWeeks * 7;
+  const daysSinceDate = Math.floor(
+    (nowDate.getTime() - dateEntry.getTime()) / (24 * 60 * 60 * 1000)
+  );
+  const daysRemaining = Math.max(
+    0,
+    Math.floor(
+      (expirationDate.getTime() - nowDate.getTime()) / (24 * 60 * 60 * 1000)
+    )
+  );
+  const progress = Math.min(1, daysSinceDate / totalDays);
+
+  let status: "fresh" | "still-okay" | "past-prime" | "expired";
+  if (daysRemaining === 0) {
+    status = "expired";
+  } else if (progress <= 0.25) {
+    status = "fresh";
+  } else if (progress <= 0.75) {
+    status = "still-okay";
+  } else {
+    status = "past-prime";
+  }
+
+  return { status, daysRemaining, progress };
+};
+
+/** Create a new bean date entry */
+export const createBeanDateEntry = (
+  date: string,
+  type: "roasting" | "opening"
+): BeanDateEntry => ({
+  id: `date-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+  date,
+  type,
+});
+
+/** Convert a Date object to a date-only string (YYYY-MM-DD) to avoid timezone issues */
+export const dateToDateOnlyString = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+/** Convert a date string to a consistent format for storage */
+export const normalizeDateForStorage = (dateInput: string | Date): string => {
+  let date: Date;
+
+  if (dateInput instanceof Date) {
+    date = dateInput;
+  } else if (dateInput.includes("T")) {
+    // It's already an ISO string
+    date = new Date(dateInput);
+  } else {
+    // It's a date-only string like "2025-10-01"
+    // Create a date object in local timezone to avoid UTC conversion issues
+    const [year, month, day] = dateInput.split("-").map(Number);
+    date = new Date(year, month - 1, day);
+  }
+
+  return dateToDateOnlyString(date);
+};
