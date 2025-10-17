@@ -41,7 +41,7 @@ const BeanFreshnessIndicator: React.FC<BeanFreshnessIndicatorProps> = ({
           label: "Past Prime",
           icon: "warning",
         };
-      case "expired":
+      case "too old":
         return {
           label: "Time to Toss",
           icon: "delete",
@@ -115,7 +115,7 @@ const BeanFreshnessIndicator: React.FC<BeanFreshnessIndicatorProps> = ({
             <Text
               style={[currentSizeStyles.daysText, { color: colors.primary }]}
             >
-              Expired
+              Too old
             </Text>
           )}
       </View>
