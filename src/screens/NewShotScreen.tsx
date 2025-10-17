@@ -52,13 +52,16 @@ type NewShotScreenRouteProp = RouteProp<RootStackParamList, "NewShot">;
 const initialFormData: Partial<ShotFormData> = {
   beanId: "",
   machineId: "",
+  // extraction parameters
+  grindSetting: "",
   dose_g: "",
   yield_g: "",
-  shotTime_s: "",
   ratio: "",
-  grindSetting: "",
+  // advanced parameters
+  shotTime_s: "",
   waterTemp_C: "",
   preinfusion_s: "",
+  // tasting notes
   rating: 3,
   acidity: 0,
   bitterness: 0,
@@ -295,13 +298,12 @@ const NewShotScreen: React.FC = () => {
       !formData.machineId ||
       !formData.dose_g ||
       !formData.yield_g ||
-      !formData.shotTime_s ||
       !formData.grindSetting
     ) {
       setErrorModal({
         visible: true,
         message:
-          "Please fill in all required fields (Bean, Machine, Dose, Yield, Shot Time, Grind Setting)",
+          "Please fill in all required fields (Bean, Machine, Dose, Yield, Grind Setting)",
       });
 
       return;
@@ -409,7 +411,7 @@ const NewShotScreen: React.FC = () => {
             "Create Machine"
           )}
 
-          <Text style={styles.sectionTitle}>Brew Parameters</Text>
+          <Text style={styles.sectionTitle}>Extraction Parameters</Text>
 
           <NumberInputField
             label="Grind Setting"
@@ -451,12 +453,14 @@ const NewShotScreen: React.FC = () => {
             onChangeText={() => {}}
           />
 
+          <Text style={styles.sectionTitle}>Advanced Parameters</Text>
+
           <NumberInputField
             label="Shot Time"
             value={formData.shotTime_s}
             onChangeText={(text) => handleInputChange("shotTime_s", text)}
             placeholder="30.0"
-            required={true}
+            required={false}
             unit="s"
             step={1}
             minValue={0}

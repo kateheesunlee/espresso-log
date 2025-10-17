@@ -292,11 +292,15 @@ describe("CoachingManager", () => {
       await coachingManager.getSuggestions(mockShotFormData, mockRoast);
 
       expect(mockGenerateInputHash).toHaveBeenCalledWith({
+        // extraction parameters
+        grind: 5.0,
         dose: 18.0,
         yield: 36.0,
-        time: 30.0,
         ratio: 2.0,
+        // advanced parameters
+        time: 30.0,
         temp: 93.0,
+        // roast and taste profile
         roast: "Medium",
         acidity: 0.5,
         bitterness: -0.3,

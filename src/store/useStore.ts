@@ -324,8 +324,20 @@ export const useStore = create<AppState>((set, get) => ({
 
       // Generate input hash for extraction snapshot
       const extractionInputHash = generateInputHash({
+        // extraction parameters
+        grindSetting: parseFloat(shotFormData.grindSetting),
+        dose_g: parseFloat(shotFormData.dose_g),
+        yield_g: parseFloat(shotFormData.yield_g),
         ratio: parseFloat(shotFormData.ratio),
-        shotTime_s: parseFloat(shotFormData.shotTime_s),
+        // advanced parameters
+        shotTime_s:
+          shotFormData.shotTime_s && shotFormData.shotTime_s.trim() !== ""
+            ? parseFloat(shotFormData.shotTime_s)
+            : undefined,
+        waterTemp_C: shotFormData.waterTemp_C
+          ? parseFloat(shotFormData.waterTemp_C)
+          : undefined,
+        // roast and taste profile
         roast: bean.roastLevel,
         balance: {
           acidity: shotFormData.acidity,
@@ -346,8 +358,20 @@ export const useStore = create<AppState>((set, get) => ({
           confidence: extractionSnapshot.confidence,
           reason: extractionSnapshot.reason,
           basedOn: {
+            // extraction parameters
+            grindSetting: parseFloat(shotFormData.grindSetting),
+            dose_g: parseFloat(shotFormData.dose_g),
+            yield_g: parseFloat(shotFormData.yield_g),
             ratio: parseFloat(shotFormData.ratio),
-            shotTime_s: parseFloat(shotFormData.shotTime_s),
+            // advanced parameters
+            shotTime_s:
+              shotFormData.shotTime_s && shotFormData.shotTime_s.trim() !== ""
+                ? parseFloat(shotFormData.shotTime_s)
+                : undefined,
+            waterTemp_C: shotFormData.waterTemp_C
+              ? parseFloat(shotFormData.waterTemp_C)
+              : undefined,
+            // roast and taste profile
             roast: bean.roastLevel,
             balance: {
               acidity: shotFormData.acidity,
@@ -416,11 +440,11 @@ export const useStore = create<AppState>((set, get) => ({
         machineId: shot.machineId,
         dose_g: shot.dose_g.toString(),
         yield_g: shot.yield_g.toString(),
-        shotTime_s: shot.shotTime_s.toString(),
+        shotTime_s: shot.shotTime_s?.toString() || "",
         ratio: shot.ratio.toString(),
         grindSetting: shot.grindSetting.toString(),
-        waterTemp_C: shot.waterTemp_C.toString(),
-        preinfusion_s: shot.preinfusion_s.toString(),
+        waterTemp_C: shot.waterTemp_C?.toString() || "",
+        preinfusion_s: shot.preinfusion_s?.toString() || "",
         rating: shot.rating,
         acidity: shot.acidity,
         bitterness: shot.bitterness,

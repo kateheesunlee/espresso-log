@@ -116,8 +116,15 @@ export interface ExtractionSnapshot extends ExtractionSummary {
   version: string; // "extract-2025.10.03"
   basedOn: {
     // Input values used for calculation (for reproducibility)
+    // extraction parameters
+    grindSetting: number;
+    dose_g: number;
+    yield_g: number;
     ratio: number;
+    // advanced parameters
     shotTime_s?: number;
+    waterTemp_C?: number;
+    // roast and taste profile
     roast: RoastLevel;
     balance: TasteBalance; // Use consolidated TasteBalance interface
   };
@@ -142,8 +149,8 @@ export interface ShotFormData {
   machineId: string;
   dose_g: string; // TextInput value
   yield_g: string; // TextInput value
-  shotTime_s: string; // TextInput value
   ratio: string; // TextInput value
+  shotTime_s: string; // TextInput value (empty string when not provided)
   grindSetting: string; // TextInput value
   waterTemp_C: string; // TextInput value
   preinfusion_s: string; // TextInput value
@@ -163,8 +170,8 @@ export interface Shot
     ShotFormData,
     | "dose_g"
     | "yield_g"
-    | "shotTime_s"
     | "ratio"
+    | "shotTime_s"
     | "grindSetting"
     | "waterTemp_C"
     | "preinfusion_s"
@@ -176,13 +183,13 @@ export interface Shot
   > {
   id: string;
   userId: string;
+  grindSetting: number;
   dose_g: number;
   yield_g: number;
-  shotTime_s: number;
   ratio: number;
-  grindSetting: number;
-  waterTemp_C: number;
-  preinfusion_s: number;
+  shotTime_s?: number; // Optional
+  waterTemp_C?: number; // Optional
+  preinfusion_s?: number; // Optional
   rating: number;
   acidity: number;
   bitterness: number;
@@ -212,7 +219,10 @@ export const shotFormDataToShot = (
   machineId: formData.machineId,
   dose_g: parseFloat(formData.dose_g),
   yield_g: parseFloat(formData.yield_g),
-  shotTime_s: parseFloat(formData.shotTime_s),
+  shotTime_s:
+    formData.shotTime_s && formData.shotTime_s.trim() !== ""
+      ? parseFloat(formData.shotTime_s)
+      : undefined,
   ratio: parseFloat(formData.ratio),
   grindSetting: parseFloat(formData.grindSetting),
   waterTemp_C: parseFloat(formData.waterTemp_C),
@@ -233,19 +243,22 @@ export const shotFormDataToShot = (
 export const shotToShotFormData = (shot: Shot): ShotFormData => ({
   beanId: shot.beanId,
   machineId: shot.machineId,
+  // extraction parameters
+  grindSetting: shot.grindSetting.toString(),
   dose_g: shot.dose_g.toString(),
   yield_g: shot.yield_g.toString(),
-  shotTime_s: shot.shotTime_s.toString(),
   ratio: shot.ratio.toString(),
-  grindSetting: shot.grindSetting.toString(),
-  waterTemp_C: shot.waterTemp_C.toString(),
-  preinfusion_s: shot.preinfusion_s.toString(),
-  rating: shot.rating,
+  // advanced parameters
+  shotTime_s: shot.shotTime_s?.toString() || "",
+  waterTemp_C: shot.waterTemp_C?.toString() || "",
+  preinfusion_s: shot.preinfusion_s?.toString() || "",
+  // tasting notes
   acidity: shot.acidity,
   bitterness: shot.bitterness,
   body: shot.body,
   aftertaste: shot.aftertaste,
   tastingTags: shot.tastingTags,
+  rating: shot.rating,
   notes: shot.notes,
   isFavorite: shot.isFavorite,
 });

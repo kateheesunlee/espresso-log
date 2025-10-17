@@ -103,10 +103,12 @@ Bean: ${bean?.name || "Unknown"}
 Machine: ${
       machine?.nickname || `${machine?.brand} ${machine?.model}` || "Unknown"
     }
+Grind: ${shot.grindSetting}
 Dose: ${shot.dose_g}g
 Yield: ${shot.yield_g}g
-Time: ${shot.shotTime_s}s
 Ratio: ${shot.ratio ? `1:${shot.ratio.toFixed(1)}` : "N/A"}
+Time: ${shot.shotTime_s ? `${shot.shotTime_s}s` : "N/A"}
+Temperature: ${shot.waterTemp_C ? `${shot.waterTemp_C}°C` : "N/A"}
 Rating: ${shot.rating ? `${shot.rating}/5` : "N/A"}
 ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
 
@@ -165,7 +167,7 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Brew Parameters</Text>
+          <Text style={styles.sectionTitle}>Extraction Parameters</Text>
           <View style={styles.metricsGrid}>
             <View style={styles.metricCard}>
               <SvgIcon name="dial" size={36} color={colors.textMedium} />
@@ -199,32 +201,38 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
                 </Text>
               </View>
             </View>
-            <View style={styles.metricCard}>
-              <SvgIcon name="timer" size={36} color={colors.textMedium} />
-              <View style={styles.metricTextContainer}>
-                <Text style={styles.metricLabel}>Time</Text>
-                <Text style={styles.metricValue}>{shot.shotTime_s}s</Text>
-              </View>
+          </View>
+        </View>
+
+        {(shot.shotTime_s || shot.waterTemp_C) && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Advanced Parameters</Text>
+            <View style={styles.metricsGrid}>
+              {shot.shotTime_s && (
+                <View style={styles.metricCard}>
+                  <SvgIcon name="timer" size={36} color={colors.textMedium} />
+                  <View style={styles.metricTextContainer}>
+                    <Text style={styles.metricLabel}>Time</Text>
+                    <Text style={styles.metricValue}>
+                      {shot.shotTime_s ? `${shot.shotTime_s}s` : "N/A"}
+                    </Text>
+                  </View>
+                </View>
+              )}
+              {shot.waterTemp_C && (
+                <View style={styles.metricCard}>
+                  <SvgIcon name="temp" size={36} color={colors.textMedium} />
+                  <View style={styles.metricTextContainer}>
+                    <Text style={styles.metricLabel}>Temperature</Text>
+                    <Text style={styles.metricValue}>
+                      {shot.waterTemp_C ? `${shot.waterTemp_C}°C` : "N/A"}
+                    </Text>
+                  </View>
+                </View>
+              )}
             </View>
           </View>
-
-          {(shot.waterTemp_C || shot.preinfusion_s) && (
-            <View style={styles.additionalParams}>
-              {shot.waterTemp_C && (
-                <View style={styles.paramRow}>
-                  <Text style={styles.paramLabel}>Water Temperature:</Text>
-                  <Text style={styles.paramValue}>{shot.waterTemp_C}°C</Text>
-                </View>
-              )}
-              {shot.preinfusion_s && (
-                <View style={styles.paramRow}>
-                  <Text style={styles.paramLabel}>Preinfusion:</Text>
-                  <Text style={styles.paramValue}>{shot.preinfusion_s}s</Text>
-                </View>
-              )}
-            </View>
-          )}
-        </View>
+        )}
 
         {shot.rating && (
           <View style={styles.section}>

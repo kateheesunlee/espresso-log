@@ -81,11 +81,20 @@ export class CoachingManager {
   ): string {
     // Create a hash of the key parameters that affect coaching
     const keyParams = {
+      // extraction parameters
+      grind: parseFloat(shotFormData.grindSetting),
       dose: parseFloat(shotFormData.dose_g),
       yield: parseFloat(shotFormData.yield_g),
-      time: parseFloat(shotFormData.shotTime_s),
       ratio: parseFloat(shotFormData.ratio),
-      temp: parseFloat(shotFormData.waterTemp_C),
+      // advanced parameters
+      time:
+        shotFormData.shotTime_s && shotFormData.shotTime_s.trim() !== ""
+          ? parseFloat(shotFormData.shotTime_s)
+          : undefined,
+      temp: shotFormData.waterTemp_C
+        ? parseFloat(shotFormData.waterTemp_C)
+        : undefined,
+      // roast and taste profile
       roast,
       acidity: shotFormData.acidity,
       bitterness: shotFormData.bitterness,

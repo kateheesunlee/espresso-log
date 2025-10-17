@@ -136,7 +136,9 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
           </View>
           <View style={styles.metric}>
             <SvgIcon name="timer" size={20} color={colors.textSecondary} />
-            <Text style={styles.metricValue}>{shot.shotTime_s}s</Text>
+            <Text style={styles.metricValue}>
+              {shot.shotTime_s ? `${shot.shotTime_s}s` : "N/A"}
+            </Text>
           </View>
         </View>
 

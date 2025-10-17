@@ -47,11 +47,14 @@ export class AIEngine {
       Analyze this espresso shot and provide 1-3 specific suggestions:
       
       Parameters:
+      - Grind Setting: ${shotFormData.grindSetting}
       - Dose: ${shotFormData.dose_g}g
       - Yield: ${shotFormData.yield_g}g
-      - Time: ${shotFormData.shotTime_s}s
       - Ratio: ${shotFormData.ratio}
-      - Temperature: ${shotFormData.waterTemp_C}°C
+      - Time: ${shotFormData.shotTime_s ? `${shotFormData.shotTime_s}s` : "N/A"}
+      - Temperature: ${
+        shotFormData.waterTemp_C ? `${shotFormData.waterTemp_C}°C` : "N/A"
+      }
       - Roast Level: ${roast}
       
       Taste Profile:
