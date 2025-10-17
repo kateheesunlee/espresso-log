@@ -59,11 +59,7 @@ const RoastingIndicator: React.FC<RoastingIndicatorProps> = ({
 
   return (
     <View style={getDotStylesBySize(size)}>
-      {compact ? (
-        ""
-      ) : (
-        <Text style={getTextStylesBySize(size)}>{roastLevel}</Text>
-      )}
+      {!compact && <Text style={getTextStylesBySize(size)}>{roastLevel}</Text>}
     </View>
   );
 };
