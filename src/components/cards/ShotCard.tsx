@@ -12,10 +12,10 @@ import { colors } from "../../themes/colors";
 import BaseCard, { ActionConfig } from "./BaseCard";
 import SvgIcon from "../SvgIcon";
 import CoachingModal from "../modals/CoachingModal";
-import RatingSlider from "../inputs/sliders/RatingSlider";
 import RoastingIndicator from "../RoastingIndicator";
 import ConfirmationModal from "../modals/ConfirmationModal";
 import { formatDateTime } from "../../utils/formatDate";
+import { formatTastingSummary } from "src/utils/formatTastingSummary";
 
 type ShotCardNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -142,35 +142,43 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
           </View>
         </View>
 
-        {/* Extraction Class */}
-        {shot.extractionSnapshot && (
+        {/* Shot Summary */}
+        <View style={styles.summaryContainer}>
           <Text
             style={[
               styles.extractionClass,
               {
                 backgroundColor: getExtractionColor(
-                  shot.extractionSnapshot.label
+                  shot.extractionSnapshot?.label ?? ""
                 ),
               },
             ]}
           >
-            {formatExtractionClass(shot.extractionSnapshot.label)}
+            {formatExtractionClass(shot.extractionSnapshot?.label ?? "")}
           </Text>
-        )}
 
-        {shot.rating && (
-          <View style={styles.ratingContainer}>
-            <Text style={styles.ratingLabel}>Overall Rating:</Text>
-            <RatingSlider
-              value={shot.rating}
-              onValueChange={() => {}} // No-op for readonly mode
-              readonly={true}
-              iconType="star"
-              size={24}
-              fullWidth={false}
-            />
-          </View>
-        )}
+          {shot.overallScore !== undefined && shot.overallScore !== null && (
+            <View style={styles.ratingContainer}>
+              <Text style={styles.ratingLabel}>Overall Score:</Text>
+              <View style={styles.scoreDisplay}>
+                <Text style={styles.scoreValue}>{shot.overallScore}</Text>
+                <Text style={styles.scoreMax}>/10</Text>
+              </View>
+            </View>
+          )}
+        </View>
+
+        {/* Tasting Summary */}
+        <View style={styles.summaryContainer}>
+          <Text style={styles.tastingSummaryText}>
+            {formatTastingSummary({
+              acidity: shot.acidity,
+              bitterness: shot.bitterness,
+              body: shot.body,
+              aftertaste: shot.aftertaste,
+            })}
+          </Text>
+        </View>
       </View>
     );
   };
@@ -265,6 +273,20 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: colors.textDark,
   },
+  scoreDisplay: {
+    flexDirection: "row",
+    alignItems: "baseline",
+  },
+  scoreValue: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colors.primary,
+  },
+  scoreMax: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.textMedium,
+  },
   additionalContent: {
     flexDirection: "column",
     alignItems: "flex-start",
@@ -297,6 +319,22 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: colors.textDark,
     marginTop: 8,
+  },
+  summaryContainer: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  summaryLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.textDark,
+  },
+  tastingSummaryText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.textSecondary,
   },
 });
 

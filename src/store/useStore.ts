@@ -445,7 +445,7 @@ export const useStore = create<AppState>((set, get) => ({
         grindSetting: shot.grindSetting.toString(),
         waterTemp_C: shot.waterTemp_C?.toString() || "",
         preinfusion_s: shot.preinfusion_s?.toString() || "",
-        rating: shot.rating,
+        overallScore: shot.overallScore,
         acidity: shot.acidity,
         bitterness: shot.bitterness,
         body: shot.body,

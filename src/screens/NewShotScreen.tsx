@@ -32,7 +32,6 @@ import PickerField from "../components/inputs/forms/PickerField";
 import SvgIcon from "../components/SvgIcon";
 import SuccessModal from "../components/modals/SuccessModal";
 import ErrorModal from "../components/modals/ErrorModal";
-import RatingSlider from "../components/inputs/sliders/RatingSlider";
 import {
   TextField,
   NumberInputField,
@@ -42,6 +41,7 @@ import {
 } from "../components/inputs";
 import { inputStyles } from "../components/inputs/styles";
 import TastingNotes from "../components/TastingNotes";
+import { calculateOverallScore } from "../utils/calculateOverallScore";
 
 type NewShotScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -62,11 +62,11 @@ const initialFormData: Partial<ShotFormData> = {
   waterTemp_C: "",
   preinfusion_s: "",
   // tasting notes
-  rating: 3,
   acidity: 0,
   bitterness: 0,
   body: 0,
   aftertaste: 0,
+  overallScore: 10,
   tastingTags: [],
   notes: "",
   isFavorite: false,
@@ -99,6 +99,26 @@ const NewShotScreen: React.FC = () => {
     visible: boolean;
     message: string;
   }>({ visible: false, message: "" });
+
+  const [currentScore, setCurrentScore] = useState<number>(10);
+
+  // Update score whenever tasting notes change
+  useEffect(() => {
+    const score = calculateOverallScore(
+      formData.acidity,
+      formData.bitterness,
+      formData.body,
+      formData.aftertaste
+    );
+    setCurrentScore(score);
+    // Update formData with the calculated score
+    setFormData((prev) => ({ ...prev, overallScore: score }));
+  }, [
+    formData.acidity,
+    formData.bitterness,
+    formData.body,
+    formData.aftertaste,
+  ]);
 
   useEffect(() => {
     // If duplicating from another shot, load its data
@@ -486,19 +506,26 @@ const NewShotScreen: React.FC = () => {
           />
 
           <Text style={styles.sectionTitle}>Tasting Notes</Text>
+          <Text style={styles.sectionSubTitle}>
+            Move the sliders to describe how your shot tastes. 0 means your
+            ideal taste.
+          </Text>
 
           <TastingNotes
             formData={formData}
             setFormData={(formData) => setFormData(formData as ShotFormData)}
           />
 
-          <FormField label="Overall Rating">
-            <RatingSlider
-              value={formData.rating}
-              onValueChange={(value) => handleInputChange("rating", value)}
-              iconType="star"
-            />
-          </FormField>
+          <View style={styles.scoreContainer}>
+            <Text style={styles.scoreLabel}>Overall Tasting Score</Text>
+            <View style={styles.scoreDisplay}>
+              <Text style={styles.scoreValue}>{currentScore}</Text>
+              <Text style={styles.scoreMax}>/10</Text>
+            </View>
+            <Text style={styles.scoreDescription}>
+              Score based on taste balance (closer to 0 = higher score)
+            </Text>
+          </View>
 
           <TagChipsField
             label="Additional Tasting Tags"
@@ -594,6 +621,12 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginBottom: 16,
   },
+  sectionSubTitle: {
+    fontSize: 14,
+    color: colors.textMedium,
+    marginTop: -8,
+    marginBottom: 16,
+  },
   checkboxContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -603,6 +636,40 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontSize: 16,
     color: colors.textDark,
+  },
+  scoreContainer: {
+    backgroundColor: colors.hover,
+    borderRadius: 12,
+    padding: 16,
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  scoreLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.textDark,
+    marginBottom: 8,
+  },
+  scoreDisplay: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    marginBottom: 8,
+  },
+  scoreValue: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: colors.primary,
+  },
+  scoreMax: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: colors.textMedium,
+  },
+  scoreDescription: {
+    fontSize: 12,
+    color: colors.textLight,
+    textAlign: "center",
+    opacity: 0.8,
   },
   saveButton: {
     backgroundColor: colors.primary,

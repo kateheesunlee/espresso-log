@@ -57,7 +57,7 @@ export type ConfidenceLevel = "low" | "med" | "high";
 /** Taste balance values for rating sliders */
 export type BalanceVal = -1 | -0.5 | 0 | 0.5 | 1;
 
-/** Taste balance interface for shot rating */
+/** Taste balance interface for shot scoring */
 export interface TasteBalance {
   acidity?: number;
   bitterness?: number;
@@ -154,11 +154,11 @@ export interface ShotFormData {
   grindSetting: string; // TextInput value
   waterTemp_C: string; // TextInput value
   preinfusion_s: string; // TextInput value
-  rating: number; // Slider value
   acidity: number; // Slider value
   bitterness: number; // Slider value
   body: number; // Slider value
   aftertaste: number; // Slider value
+  overallScore: number; // Auto-calculated score (0-10)
   tastingTags: TastingTag[];
   notes: string;
   isFavorite: boolean;
@@ -175,11 +175,11 @@ export interface Shot
     | "grindSetting"
     | "waterTemp_C"
     | "preinfusion_s"
-    | "rating"
     | "acidity"
     | "bitterness"
     | "body"
     | "aftertaste"
+    | "overallScore"
   > {
   id: string;
   userId: string;
@@ -190,11 +190,11 @@ export interface Shot
   shotTime_s?: number; // Optional
   waterTemp_C?: number; // Optional
   preinfusion_s?: number; // Optional
-  rating: number;
   acidity: number;
   bitterness: number;
   body: number;
   aftertaste: number;
+  overallScore: number; // Auto-calculated score based on tasting notes (0-10)
   // Analysis snapshots
   extractionSnapshot?: ExtractionSnapshot;
   coachingSnapshot?: CoachingSnapshot;
@@ -227,11 +227,11 @@ export const shotFormDataToShot = (
   grindSetting: parseFloat(formData.grindSetting),
   waterTemp_C: parseFloat(formData.waterTemp_C),
   preinfusion_s: parseFloat(formData.preinfusion_s),
-  rating: formData.rating,
   acidity: formData.acidity,
   bitterness: formData.bitterness,
   body: formData.body,
   aftertaste: formData.aftertaste,
+  overallScore: formData.overallScore,
   tastingTags: formData.tastingTags,
   notes: formData.notes,
   isFavorite: formData.isFavorite,
@@ -257,8 +257,8 @@ export const shotToShotFormData = (shot: Shot): ShotFormData => ({
   bitterness: shot.bitterness,
   body: shot.body,
   aftertaste: shot.aftertaste,
+  overallScore: shot.overallScore,
   tastingTags: shot.tastingTags,
-  rating: shot.rating,
   notes: shot.notes,
   isFavorite: shot.isFavorite,
 });

@@ -17,7 +17,6 @@ import { colors } from "../themes/colors";
 import { formatDateLong } from "../utils/formatDate";
 
 import SvgIcon from "../components/SvgIcon";
-import RatingSlider from "../components/inputs/sliders/RatingSlider";
 import ConfirmationModal from "../components/modals/ConfirmationModal";
 import ErrorModal from "../components/modals/ErrorModal";
 import { FormField } from "../components/inputs";
@@ -109,7 +108,11 @@ Yield: ${shot.yield_g}g
 Ratio: ${shot.ratio ? `1:${shot.ratio.toFixed(1)}` : "N/A"}
 Time: ${shot.shotTime_s ? `${shot.shotTime_s}s` : "N/A"}
 Temperature: ${shot.waterTemp_C ? `${shot.waterTemp_C}°C` : "N/A"}
-Rating: ${shot.rating ? `${shot.rating}/5` : "N/A"}
+Overall Score: ${
+      shot.overallScore !== undefined && shot.overallScore !== null
+        ? `${shot.overallScore}/10`
+        : "N/A"
+    }
 ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
 
     try {
@@ -234,7 +237,7 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
           </View>
         )}
 
-        {shot.rating && (
+        {shot.overallScore !== undefined && shot.overallScore !== null && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tasting Notes</Text>
             <View style={styles.ratingSection}>
@@ -248,13 +251,11 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
                 readOnly={true}
               />
 
-              <FormField label="Overall Rating">
-                <RatingSlider
-                  value={shot.rating}
-                  onValueChange={() => {}} // No-op since it's disabled
-                  readonly={true}
-                  iconType="star"
-                />
+              <FormField label="Overall Score">
+                <View style={styles.scoreContainer}>
+                  <Text style={styles.scoreValue}>{shot.overallScore}/10</Text>
+                  <Text style={styles.scoreLabel}>Tasting Score</Text>
+                </View>
               </FormField>
             </View>
           </View>
@@ -433,6 +434,21 @@ const styles = StyleSheet.create({
   },
   ratingSection: {
     marginTop: 8,
+  },
+  scoreContainer: {
+    alignItems: "center",
+    paddingVertical: 16,
+  },
+  scoreValue: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: colors.primary,
+    marginBottom: 4,
+  },
+  scoreLabel: {
+    fontSize: 14,
+    color: colors.textMedium,
+    opacity: 0.8,
   },
   notesText: {
     fontSize: 16,

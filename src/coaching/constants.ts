@@ -13,11 +13,11 @@ export const THRESHOLDS = {
  * Light roasts are more sensitive to extraction issues, dark roasts are more forgiving
  */
 export const ROAST_THRESHOLDS = {
-  Light: { imbalanceThreshold: 0.4 }, // More sensitive
-  "Medium Light": { imbalanceThreshold: 0.45 }, // Slightly sensitive
-  Medium: { imbalanceThreshold: 0.5 }, // Standard
-  "Medium Dark": { imbalanceThreshold: 0.55 }, // More tolerant
-  Dark: { imbalanceThreshold: 0.6 }, // Most tolerant
+  Light: { imbalanceThreshold: 0.28 }, // More sensitive
+  "Medium Light": { imbalanceThreshold: 0.3 }, // Slightly sensitive
+  Medium: { imbalanceThreshold: 0.33 }, // Standard
+  "Medium Dark": { imbalanceThreshold: 0.36 }, // More tolerant
+  Dark: { imbalanceThreshold: 0.4 }, // Most tolerant
 } as const;
 
 /** Default adjustment amounts for each parameter */

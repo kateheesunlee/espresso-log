@@ -31,7 +31,7 @@ describe("CoachingManager", () => {
     grindSetting: "5.0",
     waterTemp_C: "93.0",
     preinfusion_s: "5.0",
-    rating: 4,
+    overallScore: 4.5, // Auto-calculated score (0-10)
     acidity: 0.5,
     bitterness: -0.3,
     body: 0.2,
