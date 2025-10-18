@@ -93,6 +93,10 @@ export default function AppNavigator() {
           headerTintColor: colors.white,
           headerTitleStyle: {
             fontWeight: "bold",
+            fontSize: 17,
+          },
+          headerBackTitleStyle: {
+            fontSize: 17,
           },
         }}
       >
@@ -110,9 +114,8 @@ export default function AppNavigator() {
           name="NewShot"
           component={NewShotScreen}
           options={({ route }) => ({
-            title: route.params?.duplicateFrom
-              ? "Edit Duplicated Shot"
-              : "New Shot",
+            title: route.params?.duplicateFrom ? "Edit Shot" : "New Shot",
+            headerBackTitle: route.params?.duplicateFrom ? "Details" : "Shots",
           })}
         />
         <Stack.Screen
