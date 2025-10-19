@@ -1,6 +1,5 @@
 import { TASTE_BALANCE_QUALITY_INDICATORS_BY_LABEL } from "@types";
 
-const MAX_ITEMS = 3;
 const EPS = 0.08; // near-zero cutoff
 const BAND_THRESHOLDS = {
   slight: 0.25,
@@ -112,16 +111,12 @@ export function formatTastingSummary({
     const list = groups[b];
     if (!list || list.length === 0) continue;
 
-    // Remove duplicates and limit to MAX_ITEMS
-    const uniq = Array.from(new Set(list)).slice(0, MAX_ITEMS);
+    // Remove duplicates
+    const uniq = Array.from(new Set(list));
 
     // Format the phrase
     const phrase =
-      uniq.length > 0
-        ? `${adverbByBand[b]} ${uniq.join(", ")}${
-            list.length > MAX_ITEMS ? ", ..." : ""
-          }`
-        : "";
+      uniq.length > 0 ? `${adverbByBand[b]} ${uniq.join(", ")}` : "";
 
     if (phrase) parts.push(phrase);
   }

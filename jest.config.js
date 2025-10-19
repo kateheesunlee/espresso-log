@@ -22,5 +22,7 @@ module.exports = {
   ],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
+    "^@types$": "<rootDir>/src/types",
+    "^@types/(.*)$": "<rootDir>/src/types/$1",
   },
 };
