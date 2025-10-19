@@ -1,15 +1,15 @@
 import { useState } from 'react';
 
 import { Bean } from '@types';
-import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { useStore } from '../../store/useStore';
-import { formatDate } from '../../utils/formatDate';
 import { colors } from '../../themes/colors';
+import { formatDate } from '../../utils/formatDate';
 
-import BeanFreshnessIndicator from './BeanFreshnessIndicator';
 import BeanDateModal from '../modals/BeanDateModal';
 import SvgIcon from '../SvgIcon';
+import BeanFreshnessIndicator from './BeanFreshnessIndicator';
 
 const BeanManager = ({ bean }: { bean: Bean }) => {
   const [showDateModal, setShowDateModal] = useState(false);
@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     gap: 16,
+    marginTop: 8,
     width: '100%',
   },
   date: {
