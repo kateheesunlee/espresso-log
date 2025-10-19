@@ -202,14 +202,12 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
     }` ||
     "Unknown Machine" + (machine?.deleted ? " (deleted)" : "");
 
-  // const showCoachingButton =
-  //   bean &&
-  //   (shot.acidity !== undefined ||
-  //     shot.bitterness !== undefined ||
-  //     shot.body !== undefined ||
-  //     shot.aftertaste !== undefined);
-
-  const showCoachingButton = false; // Disabled for v1
+  const showCoachingButton =
+    bean &&
+    (shot.acidity !== undefined ||
+      shot.bitterness !== undefined ||
+      shot.body !== undefined ||
+      shot.aftertaste !== undefined);
 
   const coachingButtonConfig: ActionConfig = {
     icon: "magic_hat",
