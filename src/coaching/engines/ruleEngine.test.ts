@@ -2,6 +2,19 @@
 import { ruleCoachShot } from "./ruleEngine";
 import { ShotFormData, ExtractionSummary } from "@types";
 
+/**
+ * Tests for the rule-based coaching engine.
+ *
+ * Note: Roast-specific imbalance thresholds (ROAST_THRESHOLDS) are now more sensitive:
+ * - Light: 0.1 (most sensitive to imbalances)
+ * - Medium Light: 0.15
+ * - Medium: 0.2 (standard)
+ * - Medium Dark: 0.25
+ * - Dark: 0.3 (most tolerant)
+ *
+ * These thresholds determine when coaching suggestions are triggered based on taste imbalances.
+ */
+
 describe("ruleEngine", () => {
   // Global extraction objects for different scenarios
   const overExtraction: ExtractionSummary = {
@@ -54,7 +67,7 @@ describe("ruleEngine", () => {
     grindSetting: "1",
     ratio: "2",
     preinfusion_s: "0",
-    rating: 0,
+    overallScore: 8,
     tastingTags: [],
     notes: "",
     isFavorite: false,
@@ -212,7 +225,7 @@ describe("ruleEngine", () => {
   describe("Roast-Specific Thresholds", () => {
     it("should trigger suggestions at lower threshold for Light roast", () => {
       const shot = createBaseShot({
-        bitterness: 0.45, // Between 0.4 and 0.5
+        bitterness: 0.12, // Just above Light roast threshold (0.1)
       });
 
       const lightExtraction: ExtractionSummary = {
@@ -225,14 +238,14 @@ describe("ruleEngine", () => {
       const lightSuggestions = ruleCoachShot(shot, lightExtraction, "Light");
       const mediumSuggestions = ruleCoachShot(shot, lightExtraction, "Medium");
 
-      // Light roast should trigger (threshold 0.4), medium shouldn't (threshold 0.5)
+      // Light roast should trigger (threshold 0.1), medium shouldn't (threshold 0.2)
       expect(lightSuggestions.length).toBeGreaterThan(0);
       expect(mediumSuggestions.length).toBe(0);
     });
 
     it("should be more tolerant for Dark roast", () => {
       const shot = createBaseShot({
-        bitterness: 0.55, // Between 0.5 and 0.6
+        bitterness: 0.25, // Between Medium (0.2) and Dark (0.3) thresholds
       });
 
       const darkExtraction: ExtractionSummary = {
@@ -245,7 +258,7 @@ describe("ruleEngine", () => {
       const darkSuggestions = ruleCoachShot(shot, darkExtraction, "Dark");
       const mediumSuggestions = ruleCoachShot(shot, darkExtraction, "Medium");
 
-      // Medium should trigger (threshold 0.5), dark shouldn't (threshold 0.6)
+      // Medium should trigger (threshold 0.2), dark shouldn't (threshold 0.3)
       expect(darkSuggestions.length).toBe(0);
       expect(mediumSuggestions.length).toBeGreaterThan(0);
     });
@@ -379,8 +392,8 @@ describe("ruleEngine", () => {
 
     it("should return no suggestions for slightly unbalanced shot below threshold", () => {
       const shot = createBaseShot({
-        bitterness: 0.3, // Below 0.5 threshold
-        acidity: -0.2,
+        bitterness: 0.15, // Below Medium roast threshold (0.2)
+        acidity: -0.1,
       });
 
       const suggestions = ruleCoachShot(shot, slightlyOverExtraction, "Medium");
@@ -392,7 +405,7 @@ describe("ruleEngine", () => {
   describe("Confidence Levels", () => {
     it("should assign low confidence for weak signals", () => {
       const shot = createBaseShot({
-        bitterness: 0.6, // Just above threshold
+        bitterness: 0.25, // Just above Medium roast threshold (0.2)
       });
 
       const suggestions = ruleCoachShot(shot, slightlyOverExtraction, "Medium");

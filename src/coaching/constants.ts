@@ -40,10 +40,10 @@ export const MAX_DELTAS = {
 
 /** Extraction classification bands and deadband */
 export const EXTRACTION_BANDS = {
-  under: -0.6,
-  slightlyUnder: -0.2,
-  slightlyOver: 0.2,
-  over: 0.6,
+  under: -0.45,
+  slightlyUnder: -0.1,
+  slightlyOver: 0.1,
+  over: 0.45,
 } as const;
 
 export const DEAD_BAND = 0.05; // hysteresis to reduce label flicker
