@@ -5,7 +5,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   owner: "kateheesunlee",
   name: "Espresso Log",
   slug: "espressolog",
-  version: "1.0.0",
+  version: "1.0.2",
   orientation: "portrait",
   icon: "./assets/ios-light.png",
   userInterfaceStyle: "light",
