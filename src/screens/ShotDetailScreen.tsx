@@ -1,6 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import React, { useEffect, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   ScrollView,
   Share,
@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native';
 
-import { Shot } from '@types';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { useStore } from '../store/useStore';
 import { colors } from '../themes/colors';
@@ -34,7 +33,9 @@ const ShotDetailScreen: React.FC = () => {
   const route = useRoute<ShotDetailScreenRouteProp>();
   const { shots, beans, machines, toggleFavoriteShot, deleteShot } = useStore();
 
-  const [shot, setShot] = useState<Shot | null>(null);
+  const shot = useMemo(() => {
+    return shots.find(s => s.id === route.params.shotId);
+  }, [shots, route.params.shotId]);
   const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
   const [oneMoreModalVisible, setOneMoreModalVisible] = useState(false);
 
@@ -43,17 +44,13 @@ const ShotDetailScreen: React.FC = () => {
     message: string;
   }>({ visible: false, message: '' });
 
-  useEffect(() => {
-    const foundShot = shots.find(s => s.id === route.params.shotId);
-    setShot(foundShot || null);
-  }, [shots, route.params.shotId]);
-
   const handleToggleFavorite = async () => {
     if (!shot) return;
 
     try {
       await toggleFavoriteShot(shot.id);
     } catch (error) {
+      console.error(error);
       setErrorModal({
         visible: true,
         message: 'Failed to update favorite shot',
@@ -68,7 +65,8 @@ const ShotDetailScreen: React.FC = () => {
 
   const handleOneMoreConfirm = () => {
     setOneMoreModalVisible(false);
-    navigation.navigate('NewShot', { duplicateFrom: shot!.id });
+    if (!shot) return;
+    navigation.navigate('NewShot', { duplicateFrom: shot.id });
   };
 
   const handleDelete = () => {
@@ -82,6 +80,7 @@ const ShotDetailScreen: React.FC = () => {
       await deleteShot(shot.id);
       navigation.goBack();
     } catch (error) {
+      console.error(error);
       setErrorModal({ visible: true, message: 'Failed to delete shot' });
     }
     setDeleteConfirmation(false);
@@ -121,6 +120,7 @@ ${shot.notes ? `Notes: ${shot.notes}` : ''}`;
         title: 'Espresso Shot Details',
       });
     } catch (error) {
+      console.error(error);
       setErrorModal({ visible: true, message: 'Failed to share shot details' });
     }
   };
@@ -145,7 +145,10 @@ ${shot.notes ? `Notes: ${shot.notes}` : ''}`;
               <Text style={styles.shotTitle}>
                 {bean?.name || 'Unknown Bean'}
               </Text>
-              <RoastingIndicator roastLevel={bean?.roastLevel!} size='md' />
+              <RoastingIndicator
+                roastLevel={bean?.roastLevel || 'Medium'}
+                size='md'
+              />
             </View>
 
             <Text style={styles.shotSubtitle}>
@@ -253,8 +256,10 @@ ${shot.notes ? `Notes: ${shot.notes}` : ''}`;
 
               <FormField label='Overall Score'>
                 <View style={styles.scoreContainer}>
-                  <Text style={styles.scoreValue}>{shot.overallScore}/10</Text>
-                  <Text style={styles.scoreLabel}>Tasting Score</Text>
+                  <Text style={styles.scoreValue}>
+                    {shot.overallScore}
+                    <Text style={styles.scoreBase}>/10</Text>
+                  </Text>
                 </View>
               </FormField>
             </View>
@@ -366,12 +371,6 @@ const styles = StyleSheet.create({
   actions: {
     padding: 20,
   },
-  additionalParams: {
-    borderTopColor: colors.borderLight,
-    borderTopWidth: 1,
-    marginTop: 16,
-    paddingTop: 16,
-  },
   header: {
     alignItems: 'flex-start',
     backgroundColor: colors.white,
@@ -427,31 +426,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
   },
-  paramLabel: {
-    color: colors.textMedium,
-    fontSize: 16,
-  },
-  paramRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  paramValue: {
-    color: colors.textDark,
-    fontSize: 16,
-    fontWeight: '600',
-  },
   ratingSection: {
     marginTop: 8,
+  },
+  scoreBase: {
+    alignItems: 'baseline',
+    color: colors.textSecondary,
+    flexDirection: 'row',
+    fontSize: 14,
   },
   scoreContainer: {
     alignItems: 'center',
     paddingVertical: 16,
-  },
-  scoreLabel: {
-    color: colors.textMedium,
-    fontSize: 14,
-    opacity: 0.8,
   },
   scoreValue: {
     color: colors.primary,
@@ -484,13 +470,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 4,
+    marginRight: 8,
   },
   shotTitleContainer: {
     alignItems: 'center',
     flexDirection: 'row',
   },
   tagChip: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.white,
     borderColor: colors.primary,
     borderRadius: 16,
     borderWidth: 1,
