@@ -1,36 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Platform,
-  KeyboardAvoidingView,
+  View,
 } from 'react-native';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
 
-import { useStore } from '../store/useStore';
-import { RootStackParamList } from '../navigation/AppNavigator';
 import {
-  RoastLevel,
   AROMA_TAGS,
-  normalizeDateForStorage,
   createBeanDateEntry,
   getLastBeanDate,
+  normalizeDateForStorage,
+  RoastLevel,
 } from '@types';
+import { RootStackParamList } from '../navigation/AppNavigator';
+import { useStore } from '../store/useStore';
 import { colors } from '../themes/colors';
 import { showImagePickerOptions } from '../utils/imageUtils';
 
-import SvgIcon from '../components/SvgIcon';
 import Avatar from '../components/Avatar';
-import RoastingSlider from '../components/inputs/sliders/RoastingSlider';
-import SuccessModal from '../components/modals/SuccessModal';
-import ErrorModal from '../components/modals/ErrorModal';
-import { TextField, TagChipsField, FormField } from '../components/inputs';
 import BeanFreshnessForm from '../components/BeanManager/BeanFreshnessForm';
 import { DEFAULT_EXPIRATION_PERIOD_WEEKS } from '../components/BeanManager/constants';
+import { FormField, TagChipsField, TextField } from '../components/inputs';
+import RoastingSlider from '../components/inputs/sliders/RoastingSlider';
+import ErrorModal from '../components/modals/ErrorModal';
+import SuccessModal from '../components/modals/SuccessModal';
+import SvgIcon from '../components/SvgIcon';
 
 type NewBeanScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -69,7 +69,6 @@ const NewBeanScreen: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [editingBeanId, setEditingBeanId] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const [successModal, setSuccessModal] = useState<{
     visible: boolean;
@@ -84,7 +83,7 @@ const NewBeanScreen: React.FC = () => {
   useEffect(() => {
     // If editing an existing bean, load its data
     if (route.params?.beanId) {
-      const bean = beans.find(b => b.id === route.params!.beanId!);
+      const bean = beans.find(b => b.id === route.params.beanId);
       if (bean) {
         setEditingBeanId(bean.id);
         // Get the last date entry from the bean's dates array
@@ -104,12 +103,6 @@ const NewBeanScreen: React.FC = () => {
             bean.expirationPeriodWeeks || DEFAULT_EXPIRATION_PERIOD_WEEKS,
           imageUri: bean.imageUri || '',
         });
-
-        // Set the selected date if there's a date
-        if (lastDate) {
-          const date = new Date(lastDate);
-          setSelectedDate(date);
-        }
       }
     }
   }, [route.params?.beanId, beans]);
@@ -120,7 +113,6 @@ const NewBeanScreen: React.FC = () => {
   };
 
   const handleDateChange = (date: Date) => {
-    setSelectedDate(date);
     const normalizedDate = normalizeDateForStorage(date);
     setFormData(prev => ({ ...prev, roastDate: normalizedDate }));
   };
@@ -171,13 +163,11 @@ const NewBeanScreen: React.FC = () => {
         }
       } else {
         // When creating a new bean, create initial date entry if provided
-        if (formData.roastDate) {
-          const dateEntry = createBeanDateEntry(
-            formData.roastDate,
-            formData.dateType
-          );
-          dates.push(dateEntry);
-        }
+        const dateEntry = createBeanDateEntry(
+          formData.roastDate || new Date().toISOString(),
+          formData.dateType
+        );
+        dates.push(dateEntry);
       }
 
       const beanData = {
@@ -200,6 +190,7 @@ const NewBeanScreen: React.FC = () => {
         setSuccessModal({ visible: true, isUpdate: false });
       }
     } catch (error) {
+      console.error(error);
       setErrorModal({ visible: true, message: 'Failed to save bean' });
     } finally {
       setIsLoading(false);
@@ -301,9 +292,7 @@ const NewBeanScreen: React.FC = () => {
 
           <BeanFreshnessForm
             initialDate={
-              editingBeanId && formData.roastDate
-                ? new Date(formData.roastDate)
-                : new Date()
+              formData.roastDate ? new Date(formData.roastDate) : new Date()
             }
             initialDateType={formData.dateType}
             onDateChange={handleDateChange}
