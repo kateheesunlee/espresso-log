@@ -1,8 +1,8 @@
-import React from "react";
-import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import React from 'react';
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
-import { colors } from "../themes/colors";
-import SvgIcon, { IconName } from "./SvgIcon";
+import { colors } from '../themes/colors';
+import SvgIcon, { IconName } from './SvgIcon';
 
 interface AvatarProps {
   imageUri?: string;
@@ -50,20 +50,20 @@ const Avatar: React.FC<AvatarProps> = ({
 
 const styles = StyleSheet.create({
   container: {
+    alignItems: 'center',
     backgroundColor: colors.bgLight,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
     borderColor: colors.borderLight,
-    overflow: "hidden",
-  },
-  image: {
-    resizeMode: "cover",
+    borderWidth: 2,
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
   fallbackContainer: {
+    alignItems: 'center',
     backgroundColor: colors.hover,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+  },
+  image: {
+    resizeMode: 'cover',
   },
 });
 

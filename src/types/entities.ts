@@ -1,4 +1,4 @@
-import { RoastLevel, TastingTag, AromaTag } from "./enums";
+import { RoastLevel, TastingTag, AromaTag } from './enums';
 
 // ============================================================================
 // Core Entity Types
@@ -26,7 +26,7 @@ export interface Machine {
 export interface BeanDateEntry {
   id: string;
   date: string; // ISO string
-  type: "roasting" | "opening";
+  type: 'roasting' | 'opening';
 }
 
 export interface Bean {
@@ -52,7 +52,7 @@ export interface Bean {
 // ============================================================================
 
 /** Confidence levels used across coaching and extraction systems */
-export type ConfidenceLevel = "low" | "med" | "high";
+export type ConfidenceLevel = 'low' | 'med' | 'high';
 
 /** Taste balance values for rating sliders */
 export type BalanceVal = -1 | -0.5 | 0 | 0.5 | 1;
@@ -71,12 +71,12 @@ export interface TasteBalance {
 
 /** Fields that can be adjusted for shot optimization */
 export type CoachField =
-  | "grindStep"
-  | "dose_g"
-  | "ratio"
-  | "shotTime_s"
-  | "waterTemp_C"
-  | "preinfusion_s";
+  | 'grindStep'
+  | 'dose_g'
+  | 'ratio'
+  | 'shotTime_s'
+  | 'waterTemp_C'
+  | 'preinfusion_s';
 
 /** Coaching suggestion from rule engine or AI */
 export interface Suggestion {
@@ -86,7 +86,7 @@ export interface Suggestion {
   reason: string;
   priority: number;
   confidence: ConfidenceLevel;
-  source: "rule" | "ai";
+  source: 'rule' | 'ai';
 }
 
 // Note: ShotInput removed - use individual parameters for better clarity
@@ -97,11 +97,11 @@ export interface Suggestion {
 
 /** Classification of extraction quality */
 export type ExtractionClass =
-  | "under"
-  | "slightly-under"
-  | "balanced"
-  | "slightly-over"
-  | "over";
+  | 'under'
+  | 'slightly-under'
+  | 'balanced'
+  | 'slightly-over'
+  | 'over';
 
 /** Summary of extraction analysis */
 export interface ExtractionSummary {
@@ -168,18 +168,18 @@ export interface ShotFormData {
 export interface Shot
   extends Omit<
     ShotFormData,
-    | "dose_g"
-    | "yield_g"
-    | "ratio"
-    | "shotTime_s"
-    | "grindSetting"
-    | "waterTemp_C"
-    | "preinfusion_s"
-    | "acidity"
-    | "bitterness"
-    | "body"
-    | "aftertaste"
-    | "overallScore"
+    | 'dose_g'
+    | 'yield_g'
+    | 'ratio'
+    | 'shotTime_s'
+    | 'grindSetting'
+    | 'waterTemp_C'
+    | 'preinfusion_s'
+    | 'acidity'
+    | 'bitterness'
+    | 'body'
+    | 'aftertaste'
+    | 'overallScore'
   > {
   id: string;
   userId: string;
@@ -212,15 +212,15 @@ export const shotFormDataToShot = (
   formData: ShotFormData,
   id?: string,
   userId?: string
-): Omit<Shot, "extractionSnapshot" | "coachingSnapshot"> => ({
+): Omit<Shot, 'extractionSnapshot' | 'coachingSnapshot'> => ({
   id: id || `shot-${Date.now()}`,
-  userId: userId || "default-user",
+  userId: userId || 'default-user',
   beanId: formData.beanId,
   machineId: formData.machineId,
   dose_g: parseFloat(formData.dose_g),
   yield_g: parseFloat(formData.yield_g),
   shotTime_s:
-    formData.shotTime_s && formData.shotTime_s.trim() !== ""
+    formData.shotTime_s && formData.shotTime_s.trim() !== ''
       ? parseFloat(formData.shotTime_s)
       : undefined,
   ratio: parseFloat(formData.ratio),
@@ -249,9 +249,9 @@ export const shotToShotFormData = (shot: Shot): ShotFormData => ({
   yield_g: shot.yield_g.toString(),
   ratio: shot.ratio.toString(),
   // advanced parameters
-  shotTime_s: shot.shotTime_s?.toString() || "",
-  waterTemp_C: shot.waterTemp_C?.toString() || "",
-  preinfusion_s: shot.preinfusion_s?.toString() || "",
+  shotTime_s: shot.shotTime_s?.toString() || '',
+  waterTemp_C: shot.waterTemp_C?.toString() || '',
+  preinfusion_s: shot.preinfusion_s?.toString() || '',
   // tasting notes
   acidity: shot.acidity,
   bitterness: shot.bitterness,
@@ -280,18 +280,18 @@ export const getLastBeanDate = (bean: Bean): BeanDateEntry | null => {
 export const getBeanFreshnessStatus = (
   bean: Bean
 ): {
-  status: "fresh" | "still-okay" | "past-prime" | "too old";
+  status: 'fresh' | 'still-okay' | 'past-prime' | 'too old';
   daysRemaining: number;
   progress: number; // 0-1 for slider
 } => {
   const lastEntry = getLastBeanDate(bean);
   if (!lastEntry || !bean.expirationPeriodWeeks) {
-    return { status: "fresh", daysRemaining: 0, progress: 0 };
+    return { status: 'fresh', daysRemaining: 0, progress: 0 };
   }
 
   // Use normalized date to avoid timezone issues
   const normalizedDate = normalizeDateForStorage(lastEntry.date);
-  const [year, month, day] = normalizedDate.split("-").map(Number);
+  const [year, month, day] = normalizedDate.split('-').map(Number);
   const dateEntry = new Date(year, month - 1, day);
 
   const now = new Date();
@@ -313,15 +313,15 @@ export const getBeanFreshnessStatus = (
   );
   const progress = Math.min(1, daysSinceDate / totalDays);
 
-  let status: "fresh" | "still-okay" | "past-prime" | "too old";
+  let status: 'fresh' | 'still-okay' | 'past-prime' | 'too old';
   if (daysRemaining === 0) {
-    status = "too old";
+    status = 'too old';
   } else if (progress <= 0.25) {
-    status = "fresh";
+    status = 'fresh';
   } else if (progress <= 0.75) {
-    status = "still-okay";
+    status = 'still-okay';
   } else {
-    status = "past-prime";
+    status = 'past-prime';
   }
 
   return { status, daysRemaining, progress };
@@ -330,7 +330,7 @@ export const getBeanFreshnessStatus = (
 /** Create a new bean date entry */
 export const createBeanDateEntry = (
   date: string,
-  type: "roasting" | "opening"
+  type: 'roasting' | 'opening'
 ): BeanDateEntry => ({
   id: `date-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
   date,
@@ -340,8 +340,8 @@ export const createBeanDateEntry = (
 /** Convert a Date object to a date-only string (YYYY-MM-DD) to avoid timezone issues */
 export const dateToDateOnlyString = (date: Date): string => {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 };
 
@@ -351,13 +351,13 @@ export const normalizeDateForStorage = (dateInput: string | Date): string => {
 
   if (dateInput instanceof Date) {
     date = dateInput;
-  } else if (dateInput.includes("T")) {
+  } else if (dateInput.includes('T')) {
     // It's already an ISO string
     date = new Date(dateInput);
   } else {
     // It's a date-only string like "2025-10-01"
     // Create a date object in local timezone to avoid UTC conversion issues
-    const [year, month, day] = dateInput.split("-").map(Number);
+    const [year, month, day] = dateInput.split('-').map(Number);
     date = new Date(year, month - 1, day);
   }
 

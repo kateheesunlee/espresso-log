@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,60 +7,60 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from "react-native";
+} from 'react-native';
 import {
   useNavigation,
   useRoute,
   RouteProp,
   useFocusEffect,
-} from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import * as Haptics from "expo-haptics";
+} from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import * as Haptics from 'expo-haptics';
 
-import { useStore } from "../store/useStore";
-import { RootStackParamList } from "../navigation/AppNavigator";
+import { useStore } from '../store/useStore';
+import { RootStackParamList } from '../navigation/AppNavigator';
 import {
   TastingTag,
   TASTING_TAGS,
   ShotFormData,
   shotToShotFormData,
   shotFormDataToShot,
-} from "@types";
-import { colors } from "../themes/colors";
+} from '@types';
+import { colors } from '../themes/colors';
 
-import PickerField from "../components/inputs/forms/PickerField";
-import SvgIcon from "../components/SvgIcon";
-import SuccessModal from "../components/modals/SuccessModal";
-import ErrorModal from "../components/modals/ErrorModal";
+import PickerField from '../components/inputs/forms/PickerField';
+import SvgIcon from '../components/SvgIcon';
+import SuccessModal from '../components/modals/SuccessModal';
+import ErrorModal from '../components/modals/ErrorModal';
 import {
   TextField,
   NumberInputField,
   WaterTempField,
   TagChipsField,
   FormField,
-} from "../components/inputs";
-import { inputStyles } from "../components/inputs/styles";
-import TastingNotes from "../components/TastingNotes";
-import { calculateOverallScore } from "../utils/calculateOverallScore";
+} from '../components/inputs';
+import { inputStyles } from '../components/inputs/styles';
+import TastingNotes from '../components/TastingNotes';
+import { calculateOverallScore } from '../utils/calculateOverallScore';
 
 type NewShotScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "NewShot"
+  'NewShot'
 >;
-type NewShotScreenRouteProp = RouteProp<RootStackParamList, "NewShot">;
+type NewShotScreenRouteProp = RouteProp<RootStackParamList, 'NewShot'>;
 
 const initialFormData: Partial<ShotFormData> = {
-  beanId: "",
-  machineId: "",
+  beanId: '',
+  machineId: '',
   // extraction parameters
-  grindSetting: "",
-  dose_g: "",
-  yield_g: "",
-  ratio: "",
+  grindSetting: '',
+  dose_g: '',
+  yield_g: '',
+  ratio: '',
   // advanced parameters
-  shotTime_s: "",
-  waterTemp_C: "",
-  preinfusion_s: "",
+  shotTime_s: '',
+  waterTemp_C: '',
+  preinfusion_s: '',
   // tasting notes
   acidity: 0,
   bitterness: 0,
@@ -68,7 +68,7 @@ const initialFormData: Partial<ShotFormData> = {
   aftertaste: 0,
   overallScore: 10,
   tastingTags: [],
-  notes: "",
+  notes: '',
   isFavorite: false,
 };
 
@@ -98,7 +98,7 @@ const NewShotScreen: React.FC = () => {
   const [errorModal, setErrorModal] = useState<{
     visible: boolean;
     message: string;
-  }>({ visible: false, message: "" });
+  }>({ visible: false, message: '' });
 
   const [currentScore, setCurrentScore] = useState<number>(10);
 
@@ -111,8 +111,13 @@ const NewShotScreen: React.FC = () => {
       formData.aftertaste
     );
     setCurrentScore(score);
-    // Update formData with the calculated score
-    setFormData((prev) => ({ ...prev, overallScore: score }));
+    // Update formData with the calculated score only if it's different
+    setFormData(prev => {
+      if (prev.overallScore !== score) {
+        return { ...prev, overallScore: score };
+      }
+      return prev;
+    });
   }, [
     formData.acidity,
     formData.bitterness,
@@ -146,11 +151,11 @@ const NewShotScreen: React.FC = () => {
     React.useCallback(() => {
       // If we have pending selections, set them when we return
       if (pendingBeanSelection) {
-        setFormData((prev) => ({ ...prev, beanId: pendingBeanSelection }));
+        setFormData(prev => ({ ...prev, beanId: pendingBeanSelection }));
         setPendingBeanSelection(null);
       }
       if (pendingMachineSelection) {
-        setFormData((prev) => ({
+        setFormData(prev => ({
           ...prev,
           machineId: pendingMachineSelection,
         }));
@@ -172,9 +177,9 @@ const NewShotScreen: React.FC = () => {
         // If we don't have a bean selected, or if the latest bean is newer than our current selection
         if (
           !formData.beanId ||
-          (latestBean && !beans.find((bean) => bean.id === formData.beanId))
+          (latestBean && !beans.find(bean => bean.id === formData.beanId))
         ) {
-          setFormData((prev) => ({ ...prev, beanId: latestBean.id }));
+          setFormData(prev => ({ ...prev, beanId: latestBean.id }));
         }
       }
 
@@ -189,24 +194,24 @@ const NewShotScreen: React.FC = () => {
         if (
           !formData.machineId ||
           (latestMachine &&
-            !machines.find((machine) => machine.id === formData.machineId))
+            !machines.find(machine => machine.id === formData.machineId))
         ) {
-          setFormData((prev) => ({ ...prev, machineId: latestMachine.id }));
+          setFormData(prev => ({ ...prev, machineId: latestMachine.id }));
         }
       }
-    }, [beans, machines, formData.beanId, formData.machineId])
+    }, [beans, machines]) // Removed formData.beanId and formData.machineId from dependencies
   );
 
   const loadShotData = async (shotId: string) => {
     try {
-      const shot = shots.find((s) => s.id === shotId);
+      const shot = shots.find(s => s.id === shotId);
       if (shot) {
         // Don't set editingShotId - we want to create a new shot, not edit the existing one
         const formData = shotToShotFormData(shot);
         setFormData(formData);
       }
     } catch (error) {
-      console.error("Failed to load shot data:", error);
+      console.error('Failed to load shot data:', error);
     }
   };
 
@@ -217,7 +222,7 @@ const NewShotScreen: React.FC = () => {
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )[0];
-      setFormData((prev) => ({ ...prev, beanId: latestBean.id }));
+      setFormData(prev => ({ ...prev, beanId: latestBean.id }));
     }
 
     // Set the latest machine (most recently created)
@@ -226,14 +231,14 @@ const NewShotScreen: React.FC = () => {
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )[0];
-      setFormData((prev) => ({ ...prev, machineId: latestMachine.id }));
+      setFormData(prev => ({ ...prev, machineId: latestMachine.id }));
     }
   };
 
   const setSelectedFilters = () => {
     // Set the selected bean from filters
     if (route.params?.selectedBeanId) {
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
         beanId: route.params!.selectedBeanId!,
       }));
@@ -243,12 +248,12 @@ const NewShotScreen: React.FC = () => {
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )[0];
-      setFormData((prev) => ({ ...prev, beanId: latestBean.id }));
+      setFormData(prev => ({ ...prev, beanId: latestBean.id }));
     }
 
     // Set the selected machine from filters
     if (route.params?.selectedMachineId) {
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
         machineId: route.params!.selectedMachineId!,
       }));
@@ -258,52 +263,51 @@ const NewShotScreen: React.FC = () => {
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )[0];
-      setFormData((prev) => ({ ...prev, machineId: latestMachine.id }));
+      setFormData(prev => ({ ...prev, machineId: latestMachine.id }));
     }
   };
 
   const handleCreateBean = () => {
     // Navigate to NewBean screen - auto-selection will handle the rest
-    navigation.navigate("NewBean", { returnTo: "NewShot" });
+    navigation.navigate('NewBean', { returnTo: 'NewShot' });
   };
 
   const handleCreateMachine = () => {
     // Navigate to NewMachine screen - auto-selection will handle the rest
-    navigation.navigate("NewMachine", { returnTo: "NewShot" });
+    navigation.navigate('NewMachine', { returnTo: 'NewShot' });
   };
 
   const handleTastingTagsChange = (tags: string[]) => {
-    // Convert strings to TastingTag[], filtering out invalid tags
-    const validTastingTags = tags.filter((tag): tag is TastingTag => {
-      return TASTING_TAGS.includes(tag as TastingTag);
-    });
-    handleInputChange("tastingTags", validTastingTags);
+    // Allow both predefined TastingTag values and custom tags
+    // Convert strings to TastingTag[] for type compatibility
+    const validTastingTags = tags.map(tag => tag as TastingTag);
+    handleInputChange('tastingTags', validTastingTags);
   };
 
   const handleInputChange = (
     field: keyof ShotFormData,
     value: string | boolean | number | TastingTag[]
   ) => {
-    setFormData((prev) => {
+    setFormData(prev => {
       const newData = {
         ...prev,
         [field]: value,
       };
 
       // Auto-calculate ratio when dose or yield changes
-      if (field === "dose_g" || field === "yield_g") {
+      if (field === 'dose_g' || field === 'yield_g') {
         const dose = parseFloat(
-          field === "dose_g" ? (value as string) : prev.dose_g
+          field === 'dose_g' ? (value as string) : prev.dose_g
         );
         const yieldAmount = parseFloat(
-          field === "yield_g" ? (value as string) : prev.yield_g
+          field === 'yield_g' ? (value as string) : prev.yield_g
         );
 
         if (dose > 0 && yieldAmount > 0) {
           const ratio = yieldAmount / dose;
           newData.ratio = ratio.toFixed(1);
         } else {
-          newData.ratio = "";
+          newData.ratio = '';
         }
       }
 
@@ -323,7 +327,7 @@ const NewShotScreen: React.FC = () => {
       setErrorModal({
         visible: true,
         message:
-          "Please fill in all required fields (Bean, Machine, Dose, Yield, Grind Setting)",
+          'Please fill in all required fields (Bean, Machine, Dose, Yield, Grind Setting)',
       });
 
       return;
@@ -335,7 +339,7 @@ const NewShotScreen: React.FC = () => {
 
       if (editingShotId) {
         // Update existing shot (duplicated shot)
-        const existingShot = shots.find((s) => s.id === editingShotId);
+        const existingShot = shots.find(s => s.id === editingShotId);
         if (existingShot) {
           const updateData = {
             ...existingShot,
@@ -351,7 +355,7 @@ const NewShotScreen: React.FC = () => {
         setSuccessModal({ visible: true, isUpdate: false });
       }
     } catch (error) {
-      setErrorModal({ visible: true, message: "Failed to save shot" });
+      setErrorModal({ visible: true, message: 'Failed to save shot' });
     } finally {
       setIsLoading(false);
     }
@@ -359,7 +363,7 @@ const NewShotScreen: React.FC = () => {
 
   const handleSuccessModalClose = () => {
     setSuccessModal({ visible: false, isUpdate: false });
-    navigation.navigate("Shots");
+    navigation.navigate('Shots');
   };
 
   const renderPicker = (
@@ -385,19 +389,19 @@ const NewShotScreen: React.FC = () => {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "position" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      behavior={Platform.OS === 'ios' ? 'position' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
     >
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps='handled'
         showsVerticalScrollIndicator={false}
         bounces={false}
       >
         <View style={styles.form}>
           {route.params?.duplicateFrom && (
             <View style={styles.duplicateNotice}>
-              <SvgIcon name="copy" size={20} />
+              <SvgIcon name='copy' size={20} />
               <Text style={styles.duplicateNoticeText}>
                 This form is pre-filled with data from a previous shot. Modify
                 the parameters as needed before saving.
@@ -407,68 +411,68 @@ const NewShotScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>Basic Information</Text>
 
           {renderPicker(
-            "Bean",
+            'Bean',
             formData.beanId,
-            beans.map((b) => ({ id: b.id, name: b.name })),
-            (value) => handleInputChange("beanId", value),
+            beans.map(b => ({ id: b.id, name: b.name })),
+            value => handleInputChange('beanId', value),
             true,
             handleCreateBean,
-            "Create Bean"
+            'Create Bean'
           )}
 
           {renderPicker(
-            "Machine",
+            'Machine',
             formData.machineId,
-            machines.map((m) => ({
+            machines.map(m => ({
               id: m.id,
               name:
                 m.nickname ||
-                `${m.brand} ${m.model}${m.grinder ? ` + ${m.grinder}` : ""}`,
+                `${m.brand} ${m.model}${m.grinder ? ` + ${m.grinder}` : ''}`,
             })),
-            (value) => handleInputChange("machineId", value),
+            value => handleInputChange('machineId', value),
             true,
             handleCreateMachine,
-            "Create Machine"
+            'Create Machine'
           )}
 
           <Text style={styles.sectionTitle}>Extraction Parameters</Text>
 
           <NumberInputField
-            label="Grind Setting"
+            label='Grind Setting'
             value={formData.grindSetting}
-            onChangeText={(text) => handleInputChange("grindSetting", text)}
-            placeholder="10"
+            onChangeText={text => handleInputChange('grindSetting', text)}
+            placeholder='10'
             required={true}
             step={1}
             minValue={0}
           />
 
           <NumberInputField
-            label="Dose"
+            label='Dose'
             value={formData.dose_g}
-            onChangeText={(text) => handleInputChange("dose_g", text)}
-            placeholder="18.0"
+            onChangeText={text => handleInputChange('dose_g', text)}
+            placeholder='18.0'
             required={true}
-            unit="g"
+            unit='g'
             step={0.1}
             minValue={0}
           />
 
           <NumberInputField
-            label="Yield"
+            label='Yield'
             value={formData.yield_g}
-            onChangeText={(text) => handleInputChange("yield_g", text)}
-            placeholder="36.0"
+            onChangeText={text => handleInputChange('yield_g', text)}
+            placeholder='36.0'
             required={true}
-            unit="g"
+            unit='g'
             step={0.1}
             minValue={0}
           />
 
           <TextField
-            label="Ratio (auto-calculated)"
+            label='Ratio (auto-calculated)'
             value={formData.ratio}
-            placeholder="Auto-calculated from dose/yield"
+            placeholder='Auto-calculated from dose/yield'
             readOnly={true}
             onChangeText={() => {}}
           />
@@ -476,31 +480,31 @@ const NewShotScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>Advanced Parameters</Text>
 
           <NumberInputField
-            label="Shot Time"
+            label='Shot Time'
             value={formData.shotTime_s}
-            onChangeText={(text) => handleInputChange("shotTime_s", text)}
-            placeholder="30.0"
+            onChangeText={text => handleInputChange('shotTime_s', text)}
+            placeholder='30.0'
             required={false}
-            unit="s"
+            unit='s'
             step={1}
             minValue={0}
           />
 
           <WaterTempField
-            label="Water Temperature"
+            label='Water Temperature'
             value={formData.waterTemp_C}
-            onChangeText={(text) => handleInputChange("waterTemp_C", text)}
-            placeholder="93.0"
+            onChangeText={text => handleInputChange('waterTemp_C', text)}
+            placeholder='93.0'
             step={0.1}
             minValue={0}
           />
 
           <NumberInputField
-            label="Preinfusion Time"
+            label='Preinfusion Time'
             value={formData.preinfusion_s}
-            onChangeText={(text) => handleInputChange("preinfusion_s", text)}
-            placeholder="5.0"
-            unit="s"
+            onChangeText={text => handleInputChange('preinfusion_s', text)}
+            placeholder='5.0'
+            unit='s'
             step={1}
             minValue={0}
           />
@@ -513,7 +517,7 @@ const NewShotScreen: React.FC = () => {
 
           <TastingNotes
             formData={formData}
-            setFormData={(formData) => setFormData(formData as ShotFormData)}
+            setFormData={formData => setFormData(formData as ShotFormData)}
           />
 
           <View style={styles.scoreContainer}>
@@ -528,19 +532,19 @@ const NewShotScreen: React.FC = () => {
           </View>
 
           <TagChipsField
-            label="Additional Tasting Tags"
+            label='Additional Tasting Tags'
             value={formData.tastingTags}
             onChange={handleTastingTagsChange}
             suggestions={[...TASTING_TAGS]}
             allowCustom={true}
-            subtitle="Add descriptive tags to complement your tasting notes above"
+            subtitle='Add descriptive tags to complement your tasting notes above'
           />
 
           <TextField
-            label="Notes"
+            label='Notes'
             value={formData.notes}
-            onChangeText={(text) => handleInputChange("notes", text)}
-            placeholder="Additional tasting notes..."
+            onChangeText={text => handleInputChange('notes', text)}
+            placeholder='Additional tasting notes...'
             multiline={true}
             numberOfLines={4}
           />
@@ -549,12 +553,12 @@ const NewShotScreen: React.FC = () => {
             <TouchableOpacity
               style={styles.checkboxContainer}
               onPress={() => {
-                handleInputChange("isFavorite", !formData.isFavorite);
+                handleInputChange('isFavorite', !formData.isFavorite);
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               }}
             >
               <SvgIcon
-                name={formData.isFavorite ? "heart_filled" : "heart"}
+                name={formData.isFavorite ? 'heart_filled' : 'heart'}
                 size={28}
                 useContentColor={true}
               />
@@ -568,7 +572,7 @@ const NewShotScreen: React.FC = () => {
             disabled={isLoading}
           >
             <Text style={styles.saveButtonText}>
-              {isLoading ? "Saving..." : "Save Shot"}
+              {isLoading ? 'Saving...' : 'Save Shot'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -576,116 +580,116 @@ const NewShotScreen: React.FC = () => {
 
       <SuccessModal
         visible={successModal.visible}
-        title={successModal.isUpdate ? "Shot Updated!" : "Shot Saved!"}
+        title={successModal.isUpdate ? 'Shot Updated!' : 'Shot Saved!'}
         message={
           successModal.isUpdate
-            ? "Your shot has been updated successfully!"
-            : "Your shot has been saved successfully!"
+            ? 'Your shot has been updated successfully!'
+            : 'Your shot has been saved successfully!'
         }
-        primaryButtonText="View Shots"
+        primaryButtonText='View Shots'
         onPrimaryPress={handleSuccessModalClose}
-        icon="coffee"
+        icon='coffee'
       />
 
       <ErrorModal
         visible={errorModal.visible}
         message={errorModal.message}
-        onButtonPress={() => setErrorModal({ visible: false, message: "" })}
+        onButtonPress={() => setErrorModal({ visible: false, message: '' })}
       />
     </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  form: {
-    padding: 16,
-  },
-  duplicateNotice: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.warningBackground,
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
-  },
-  duplicateNoticeText: {
-    marginLeft: 8,
-    fontSize: 14,
-    color: colors.primary,
-    flex: 1,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: colors.textDark,
-    marginTop: 24,
-    marginBottom: 16,
-  },
-  sectionSubTitle: {
-    fontSize: 14,
-    color: colors.textMedium,
-    marginTop: -8,
-    marginBottom: 16,
-  },
   checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    alignItems: 'center',
+    flexDirection: 'row',
     paddingVertical: 8,
   },
   checkboxLabel: {
+    color: colors.textDark,
+    fontSize: 16,
     marginLeft: 8,
-    fontSize: 16,
-    color: colors.textDark,
-  },
-  scoreContainer: {
-    backgroundColor: colors.hover,
-    borderRadius: 12,
-    padding: 16,
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  scoreLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 8,
-  },
-  scoreDisplay: {
-    flexDirection: "row",
-    alignItems: "baseline",
-    marginBottom: 8,
-  },
-  scoreValue: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: colors.primary,
-  },
-  scoreMax: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: colors.textMedium,
-  },
-  scoreDescription: {
-    fontSize: 12,
-    color: colors.textLight,
-    textAlign: "center",
-    opacity: 0.8,
-  },
-  saveButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    padding: 16,
-    alignItems: "center",
-    marginTop: 24,
-    marginBottom: 32,
   },
   disabledButton: {
     backgroundColor: colors.disabled,
   },
+  duplicateNotice: {
+    alignItems: 'center',
+    backgroundColor: colors.warningBackground,
+    borderRadius: 8,
+    flexDirection: 'row',
+    marginBottom: 16,
+    padding: 12,
+  },
+  duplicateNoticeText: {
+    color: colors.primary,
+    flex: 1,
+    fontSize: 14,
+    marginLeft: 8,
+  },
+  form: {
+    padding: 16,
+  },
+  saveButton: {
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    marginBottom: 32,
+    marginTop: 24,
+    padding: 16,
+  },
   saveButtonText: {
     color: colors.white,
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
+  },
+  scoreContainer: {
+    alignItems: 'center',
+    backgroundColor: colors.hover,
+    borderRadius: 12,
+    marginBottom: 16,
+    padding: 16,
+  },
+  scoreDescription: {
+    color: colors.textLight,
+    fontSize: 12,
+    opacity: 0.8,
+    textAlign: 'center',
+  },
+  scoreDisplay: {
+    alignItems: 'baseline',
+    flexDirection: 'row',
+    marginBottom: 8,
+  },
+  scoreLabel: {
+    color: colors.textDark,
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  scoreMax: {
+    color: colors.textMedium,
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  scoreValue: {
+    color: colors.primary,
+    fontSize: 32,
+    fontWeight: 'bold',
+  },
+  sectionSubTitle: {
+    color: colors.textMedium,
+    fontSize: 14,
+    marginBottom: 16,
+    marginTop: -8,
+  },
+  sectionTitle: {
+    color: colors.textDark,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    marginTop: 24,
   },
 });
 

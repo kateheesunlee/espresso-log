@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,10 @@ import {
   TextInput,
   StyleSheet,
   FlatList,
-} from "react-native";
-import * as Haptics from "expo-haptics";
+} from 'react-native';
+import * as Haptics from 'expo-haptics';
 
-import { colors } from "../themes/colors";
+import { colors } from '../themes/colors';
 
 type Props = {
   value: string[]; // Selected tags
@@ -26,7 +26,7 @@ export default function TagChips({
   allowCustom = true,
   recent = [],
 }: Props) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const selected = new Set(value);
 
   const pool = useMemo(() => {
@@ -34,7 +34,7 @@ export default function TagChips({
     // Remove duplicates & move already selected items to the end
     const seen = new Set<string>();
     const uniq = base.filter(
-      (t) => (t = t.trim().toLowerCase()) && !seen.has(t) && seen.add(t)
+      t => (t = t.trim().toLowerCase()) && !seen.has(t) && seen.add(t)
     );
     return uniq.sort(
       (a, b) => (selected.has(a) ? 1 : 0) - (selected.has(b) ? 1 : 0)
@@ -49,7 +49,7 @@ export default function TagChips({
       // Light haptic feedback when toggling chips
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-      if (selected.has(tag)) onChange(value.filter((v) => v !== tag));
+      if (selected.has(tag)) onChange(value.filter(v => v !== tag));
       else onChange([...value, tag]);
     },
     [selected, onChange, value]
@@ -60,7 +60,7 @@ export default function TagChips({
       <TouchableOpacity
         onPress={() => toggle(item)}
         style={[styles.chip, selected.has(item) && styles.chipSelected]}
-        accessibilityRole="button"
+        accessibilityRole='button'
         accessibilityLabel={`tag ${item}`}
         accessibilityState={{ selected: selected.has(item) }}
       >
@@ -93,12 +93,12 @@ export default function TagChips({
     // Light haptic feedback when adding custom tag
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    setQuery("");
+    setQuery('');
     if (!value.includes(tag)) onChange([...value, tag]);
   };
 
   const filtered = pool
-    .filter((t) => t.includes(query.trim().toLowerCase()))
+    .filter(t => t.includes(query.trim().toLowerCase()))
     .slice(0, 20);
 
   return (
@@ -106,7 +106,7 @@ export default function TagChips({
       {/* Recommended chips */}
       <FlatList
         data={filtered}
-        keyExtractor={(t) => t}
+        keyExtractor={t => t}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ gap: 8 }}
@@ -125,9 +125,9 @@ export default function TagChips({
           <TextInput
             value={query}
             onChangeText={setQuery}
-            placeholder="Add a tag (e.g., clean, chocolate)"
+            placeholder='Add a tag (e.g., clean, chocolate)'
             style={styles.input}
-            returnKeyType="done"
+            returnKeyType='done'
             onSubmitEditing={addCustom}
           />
           <TouchableOpacity onPress={addCustom} style={styles.addBtn}>
@@ -139,7 +139,7 @@ export default function TagChips({
       {/* Selected tags (for editing) */}
       {value.length > 0 && (
         <View style={styles.selectedWrap}>
-          {value.map((t) => (
+          {value.map(t => (
             <TagChipComponent
               key={t}
               tag={t}
@@ -175,41 +175,41 @@ const TagChipComponent = React.memo(
 );
 
 const styles = StyleSheet.create({
-  container: {},
+  addBtn: {
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+  },
+  addBtnText: { color: colors.white, fontWeight: '700' },
   chip: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    backgroundColor: colors.white,
+    borderColor: colors.borderLight,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: colors.borderLight,
-    backgroundColor: colors.white,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   chipSelected: {
     backgroundColor: colors.primaryLight,
-    borderColor: "transparent",
+    borderColor: 'transparent',
   },
-  chipText: { color: colors.textDark, fontWeight: "600" },
+  chipText: { color: colors.textDark, fontWeight: '600' },
   chipTextSelected: { color: colors.textDark },
-  inputRow: { flexDirection: "row", marginTop: 12, gap: 8 },
+  container: {},
   input: {
-    flex: 1,
-    borderWidth: 1,
+    backgroundColor: colors.white,
     borderColor: colors.borderLight,
     borderRadius: 8,
+    borderWidth: 1,
+    flex: 1,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: colors.white,
   },
-  addBtn: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: 14,
-    borderRadius: 8,
-    justifyContent: "center",
-  },
-  addBtnText: { color: colors.white, fontWeight: "700" },
+  inputRow: { flexDirection: 'row', gap: 8, marginTop: 12 },
   selectedWrap: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 8,
     marginTop: 12,
   },

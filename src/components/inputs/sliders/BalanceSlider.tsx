@@ -1,10 +1,10 @@
-import React, { useRef } from "react";
-import { View, Text, StyleSheet, Animated } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import * as Haptics from "expo-haptics";
+import React, { useRef } from 'react';
+import { View, Text, StyleSheet, Animated } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import * as Haptics from 'expo-haptics';
 
-import { colors } from "../../../themes/colors";
-import SvgIcon from "../../SvgIcon";
+import { colors } from '../../../themes/colors';
+import SvgIcon from '../../SvgIcon';
 
 interface BalanceSliderProps {
   /** Current value between MIN_VALUE and MAX_VALUE */
@@ -32,7 +32,7 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
   value,
   onValueChange,
   readOnly = false,
-  qualityIndicators = ["Too weak", "Balanced", "Too strong"],
+  qualityIndicators = ['Too weak', 'Balanced', 'Too strong'],
 }) => {
   const translateX = useRef(new Animated.Value(0)).current;
   const scale = useRef(new Animated.Value(1)).current;
@@ -49,11 +49,11 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
   const getIconName = (val: number) => {
     const distance = (Math.abs(val) / MAX_VALUE) * 100;
     if (distance <= 10) {
-      return "heart_filled";
+      return 'heart_filled';
     } else if (distance <= 70) {
-      return "heart_broken_filled";
+      return 'heart_broken_filled';
     } else {
-      return "heart_broken_2_filled";
+      return 'heart_broken_2_filled';
     }
   };
 
@@ -129,7 +129,7 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
 
   const panGesture = Gesture.Pan()
     .enabled(!readOnly)
-    .onUpdate((event) => {
+    .onUpdate(event => {
       const newPosition = lastOffset.current + event.translationX;
       translateX.setValue(newPosition);
 
@@ -159,7 +159,7 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
         ...ANIMATION_CONFIG,
       }).start();
     })
-    .onEnd((event) => {
+    .onEnd(event => {
       const newPosition = Math.max(
         -HANDLE_SIZE / 2,
         Math.min(
@@ -216,7 +216,7 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
     <View style={styles.sliderContainer}>
       <View
         style={styles.trackContainer}
-        onLayout={(event) => {
+        onLayout={event => {
           const { width } = event.nativeEvent.layout;
           sliderWidth.current = width;
           // Initialize position and track highlight when we get the width
@@ -271,11 +271,11 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
               qualityIndicators.length === 3 && {
                 flex: index === 1 ? 0 : 1,
                 textAlign:
-                  index === 0 ? "left" : index === 1 ? "center" : "right",
+                  index === 0 ? 'left' : index === 1 ? 'center' : 'right',
               },
               qualityIndicators.length === 2 && {
                 flex: 1,
-                textAlign: index === 0 ? "left" : "right",
+                textAlign: index === 0 ? 'left' : 'right',
               },
             ]}
           >
@@ -288,55 +288,55 @@ const BalanceSlider: React.FC<BalanceSliderProps> = ({
 };
 
 const styles = StyleSheet.create({
+  activeHandle: {
+    // Shadow styles can be added here if needed
+  },
+  handle: {
+    alignItems: 'center',
+    height: HANDLE_SIZE,
+    justifyContent: 'center',
+    position: 'absolute',
+    width: HANDLE_SIZE,
+  },
+  qualityIndicator: {
+    color: colors.textMedium,
+    fontSize: 12,
+  },
+  qualityIndicators: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 2,
+    paddingHorizontal: 6,
+  },
   sliderContainer: {
     marginBottom: 8,
     paddingHorizontal: HANDLE_SIZE / 2,
   },
-  trackContainer: {
-    position: "relative",
-    height: 40,
-    justifyContent: "center",
-  },
   track: {
-    height: TRACK_HEIGHT,
     backgroundColor: colors.borderLight,
     borderRadius: TRACK_HEIGHT / 2,
-    width: "100%",
+    height: TRACK_HEIGHT,
+    width: '100%',
   },
-  trackReadOnly: {
-    backgroundColor: colors.hover,
-    opacity: 0.7,
+  trackContainer: {
+    height: 40,
+    justifyContent: 'center',
+    position: 'relative',
   },
   trackHighlight: {
-    position: "absolute",
-    height: TRACK_HEIGHT,
     backgroundColor: colors.primary,
     borderRadius: TRACK_HEIGHT / 2,
+    height: TRACK_HEIGHT,
+    position: 'absolute',
   },
   trackHighlightReadOnly: {
     backgroundColor: colors.disabled,
     opacity: 0.5,
   },
-  qualityIndicators: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 2,
-    paddingHorizontal: 6,
-    alignItems: "center",
-  },
-  qualityIndicator: {
-    fontSize: 12,
-    color: colors.textMedium,
-  },
-  handle: {
-    position: "absolute",
-    width: HANDLE_SIZE,
-    height: HANDLE_SIZE,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  activeHandle: {
-    // Shadow styles can be added here if needed
+  trackReadOnly: {
+    backgroundColor: colors.hover,
+    opacity: 0.7,
   },
 });
 

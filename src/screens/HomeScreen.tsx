@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-import { useStore } from "../store/useStore";
-import { RootStackParamList } from "../navigation/AppNavigator";
-import { Shot } from "@types";
-import { colors } from "../themes/colors";
+import { useStore } from '../store/useStore';
+import { RootStackParamList } from '../navigation/AppNavigator';
+import { Shot } from '@types';
+import { colors } from '../themes/colors';
 
-import SvgIcon from "../components/SvgIcon";
-import PickerField from "../components/inputs/forms/PickerField";
-import ScrollableListView from "../components/ScrollableListView";
-import EmptyEntity from "../components/EmptyEntity";
-import EmptyEntityWithPrerequisites from "../components/EmptyEntityWithPrerequisites";
-import ShotCard from "../components/cards/ShotCard";
+import SvgIcon from '../components/SvgIcon';
+import PickerField from '../components/inputs/forms/PickerField';
+import ScrollableListView from '../components/ScrollableListView';
+import EmptyEntity from '../components/EmptyEntity';
+import EmptyEntityWithPrerequisites from '../components/EmptyEntityWithPrerequisites';
+import ShotCard from '../components/cards/ShotCard';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -22,8 +22,8 @@ const HomeScreen: React.FC = () => {
   const { shots, beans, machines, isLoading, loadShots } = useStore();
 
   // Filter state
-  const [selectedBeanId, setSelectedBeanId] = useState<string>("");
-  const [selectedMachineId, setSelectedMachineId] = useState<string>("");
+  const [selectedBeanId, setSelectedBeanId] = useState<string>('');
+  const [selectedMachineId, setSelectedMachineId] = useState<string>('');
   const [hasUserInteracted, setHasUserInteracted] = useState<boolean>(false);
 
   useEffect(() => {
@@ -50,28 +50,21 @@ const HomeScreen: React.FC = () => {
         setSelectedMachineId(lastShot.machineId);
       }
     }
-  }, [
-    shots,
-    beans,
-    machines,
-    selectedBeanId,
-    selectedMachineId,
-    hasUserInteracted,
-  ]);
+  }, [shots, beans, machines, hasUserInteracted]); // Removed selectedBeanId and selectedMachineId from dependencies
 
   // Clear filters when selected bean or machine is deleted
   useEffect(() => {
-    if (selectedBeanId && !beans.find((bean) => bean.id === selectedBeanId)) {
-      setSelectedBeanId("");
+    if (selectedBeanId && !beans.find(bean => bean.id === selectedBeanId)) {
+      setSelectedBeanId('');
     }
   }, [beans, selectedBeanId]);
 
   useEffect(() => {
     if (
       selectedMachineId &&
-      !machines.find((machine) => machine.id === selectedMachineId)
+      !machines.find(machine => machine.id === selectedMachineId)
     ) {
-      setSelectedMachineId("");
+      setSelectedMachineId('');
     }
   }, [machines, selectedMachineId]);
 
@@ -87,7 +80,7 @@ const HomeScreen: React.FC = () => {
   };
 
   // Filter shots based on selected filters
-  const filteredShots = shots.filter((shot) => {
+  const filteredShots = shots.filter(shot => {
     const beanMatch = !selectedBeanId || shot.beanId === selectedBeanId;
     const machineMatch =
       !selectedMachineId || shot.machineId === selectedMachineId;
@@ -95,7 +88,7 @@ const HomeScreen: React.FC = () => {
   });
 
   const handleNewShot = () => {
-    navigation.navigate("NewShot", {
+    navigation.navigate('NewShot', {
       selectedBeanId: selectedBeanId || undefined,
       selectedMachineId: selectedMachineId || undefined,
     });
@@ -104,17 +97,17 @@ const HomeScreen: React.FC = () => {
   const renderShot = ({ item }: { item: Shot }) => <ShotCard shot={item} />;
 
   // Prepare picker options
-  const beanOptions = beans.map((bean) => ({
+  const beanOptions = beans.map(bean => ({
     id: bean.id,
     name: bean.name,
   }));
 
-  const machineOptions = machines.map((machine) => ({
+  const machineOptions = machines.map(machine => ({
     id: machine.id,
     name:
       machine.nickname ||
       `${machine.brand} ${machine.model}${
-        machine.grinder ? ` + ${machine.grinder}` : ""
+        machine.grinder ? ` + ${machine.grinder}` : ''
       }`,
   }));
 
@@ -135,7 +128,7 @@ const HomeScreen: React.FC = () => {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>My Shots</Text>
         <TouchableOpacity style={styles.newShotButton} onPress={handleNewShot}>
-          <SvgIcon name="plus" size={24} color={colors.white} />
+          <SvgIcon name='plus' size={24} color={colors.white} />
         </TouchableOpacity>
       </View>
 
@@ -144,22 +137,22 @@ const HomeScreen: React.FC = () => {
         <View style={styles.filtersContainer}>
           {showBeanFilter && (
             <PickerField
-              label="Bean"
+              label='Bean'
               value={selectedBeanId}
               options={beanOptions}
               onValueChange={handleBeanChange}
-              placeholder="All beans"
+              placeholder='All beans'
               compact={true}
               showClearButton={true}
             />
           )}
           {showMachineFilter && (
             <PickerField
-              label="Machine"
+              label='Machine'
               value={selectedMachineId}
               options={machineOptions}
               onValueChange={handleMachineChange}
-              placeholder="All machines"
+              placeholder='All machines'
               compact={true}
               showClearButton={true}
             />
@@ -170,26 +163,26 @@ const HomeScreen: React.FC = () => {
       <ScrollableListView
         data={filteredShots}
         renderItem={renderShot}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
         emptyComponent={
           shots.length === 0 ? (
             <EmptyEntityWithPrerequisites
-              icon="coffee"
-              title="No shots yet"
-              subtitle="Log your first espresso shot and begin your extraction journey."
-              primaryButtonText="Record Your First Shot"
+              icon='coffee'
+              title='No shots yet'
+              subtitle='Log your first espresso shot and begin your extraction journey.'
+              primaryButtonText='Record Your First Shot'
               onPrimaryPress={handleNewShot}
               hasBeans={beans.length > 0}
               hasMachines={machines.length > 0}
-              onAddBean={() => (navigation as any).navigate("NewBean")}
-              onAddMachine={() => (navigation as any).navigate("NewMachine")}
+              onAddBean={() => (navigation as any).navigate('NewBean')}
+              onAddMachine={() => (navigation as any).navigate('NewMachine')}
             />
           ) : (
             <EmptyEntity
-              icon="coffee"
-              title="No shots match filters"
-              subtitle="Try adjusting your filter selections to see more shots."
+              icon='coffee'
+              title='No shots match filters'
+              subtitle='Try adjusting your filter selections to see more shots.'
             />
           )
         }
@@ -200,46 +193,46 @@ const HomeScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: colors.bgLight,
-  },
-  loadingContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    fontSize: 16,
-    color: colors.textMedium,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: colors.textDark,
-  },
-  newShotButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 15,
-    width: 30,
-    height: 30,
-    justifyContent: "center",
-    alignItems: "center",
   },
   filtersContainer: {
     backgroundColor: colors.white,
+    borderBottomColor: colors.borderLight,
+    borderBottomWidth: 1,
     paddingHorizontal: 16,
     paddingTop: 16,
-    borderBottomWidth: 1,
+  },
+  header: {
+    alignItems: 'center',
+    backgroundColor: colors.white,
     borderBottomColor: colors.borderLight,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 16,
+  },
+  headerTitle: {
+    color: colors.textDark,
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  loadingText: {
+    color: colors.textMedium,
+    fontSize: 16,
+  },
+  newShotButton: {
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: 15,
+    height: 30,
+    justifyContent: 'center',
+    width: 30,
   },
 });
 

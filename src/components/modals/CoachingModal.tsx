@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
-import { Shot, Suggestion } from "@types";
-import { colors } from "../../themes/colors";
+import { Shot, Suggestion } from '@types';
+import { colors } from '../../themes/colors';
 
-import BaseModal, { ButtonConfig } from "./BaseModal";
+import BaseModal, { ButtonConfig } from './BaseModal';
 
 interface CoachingModalProps {
   visible: boolean;
@@ -18,46 +18,46 @@ const CoachingModal: React.FC<CoachingModalProps> = ({
 }) => {
   const suggestions = shot?.coachingSnapshot?.suggestions ?? [];
 
-  const getConfidenceColor = (confidence: "low" | "med" | "high") => {
+  const getConfidenceColor = (confidence: 'low' | 'med' | 'high') => {
     switch (confidence) {
-      case "high":
+      case 'high':
         return colors.success;
-      case "med":
+      case 'med':
         return colors.warning;
-      case "low":
+      case 'low':
         return colors.textLight;
       default:
         return colors.textLight;
     }
   };
 
-  const getConfidenceText = (confidence: "low" | "med" | "high") => {
+  const getConfidenceText = (confidence: 'low' | 'med' | 'high') => {
     switch (confidence) {
-      case "high":
-        return "High Confidence";
-      case "med":
-        return "Medium Confidence";
-      case "low":
-        return "Low Confidence";
+      case 'high':
+        return 'High Confidence';
+      case 'med':
+        return 'Medium Confidence';
+      case 'low':
+        return 'Low Confidence';
       default:
-        return "Unknown";
+        return 'Unknown';
     }
   };
 
   const getFieldDisplayName = (field: string) => {
     switch (field) {
-      case "grindStep":
-        return "Grind Setting";
-      case "dose_g":
-        return "Dose";
-      case "ratio":
-        return "Ratio";
-      case "shotTime_s":
-        return "Shot Time";
-      case "waterTemp_C":
-        return "Water Temperature";
-      case "preinfusion_s":
-        return "Preinfusion Time";
+      case 'grindStep':
+        return 'Grind Setting';
+      case 'dose_g':
+        return 'Dose';
+      case 'ratio':
+        return 'Ratio';
+      case 'shotTime_s':
+        return 'Shot Time';
+      case 'waterTemp_C':
+        return 'Water Temperature';
+      case 'preinfusion_s':
+        return 'Preinfusion Time';
       default:
         return field;
     }
@@ -65,41 +65,41 @@ const CoachingModal: React.FC<CoachingModalProps> = ({
 
   const getFieldUnit = (field: string, delta?: number) => {
     switch (field) {
-      case "grindStep":
+      case 'grindStep':
         if (delta === 1 || delta === -1) {
-          return " step";
+          return ' step';
         }
-        return " steps";
-      case "dose_g":
-        return "g";
-      case "ratio":
-        return "";
-      case "shotTime_s":
-        return "s";
-      case "waterTemp_C":
-        return "°C";
-      case "preinfusion_s":
-        return "s";
+        return ' steps';
+      case 'dose_g':
+        return 'g';
+      case 'ratio':
+        return '';
+      case 'shotTime_s':
+        return 's';
+      case 'waterTemp_C':
+        return '°C';
+      case 'preinfusion_s':
+        return 's';
       default:
-        return "";
+        return '';
     }
   };
 
   const formatSuggestionValue = (suggestion: Suggestion) => {
     const unit = getFieldUnit(suggestion.field, suggestion.delta || 0);
     if (suggestion.target !== undefined) {
-      if (suggestion.field === "ratio") {
+      if (suggestion.field === 'ratio') {
         return `1:${suggestion.target.toFixed(1)}`;
       }
       return `${suggestion.target}${unit}`;
     } else if (suggestion.delta !== undefined) {
-      const sign = suggestion.delta > 0 ? "+" : "";
-      if (suggestion.field === "ratio") {
+      const sign = suggestion.delta > 0 ? '+' : '';
+      if (suggestion.field === 'ratio') {
         return `${sign}${suggestion.delta.toFixed(1)}`;
       }
       return `${sign}${suggestion.delta}${unit}`;
     }
-    return "";
+    return '';
   };
 
   const renderSuggestion = (suggestion: Suggestion, index: number) => (
@@ -132,9 +132,9 @@ const CoachingModal: React.FC<CoachingModalProps> = ({
 
   const buttonConfigs: ButtonConfig[] = [
     {
-      text: "Got it!",
+      text: 'Got it!',
       onPress: onClose,
-      variant: "primary",
+      variant: 'primary',
     },
   ];
 
@@ -142,9 +142,9 @@ const CoachingModal: React.FC<CoachingModalProps> = ({
     <BaseModal
       visible={visible}
       onRequestClose={onClose}
-      animationType="fade"
-      headerTitle="Espresso Coaching"
-      headerIcon="magic_hat"
+      animationType='fade'
+      headerTitle='Espresso Coaching'
+      headerIcon='magic_hat'
       modalStyle={styles.modalContainer}
       buttonConfigs={buttonConfigs}
     >
@@ -177,34 +177,81 @@ const CoachingModal: React.FC<CoachingModalProps> = ({
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
-    width: "100%",
-    maxHeight: "85%",
-    flexDirection: "column",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-  },
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: colors.textDark,
-    marginLeft: 8,
-  },
   closeButton: {
     padding: 4,
   },
+  confidenceBadge: {
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  confidenceText: {
+    color: colors.white,
+    fontSize: 12,
+    fontWeight: '600',
+  },
   content: {
     flexShrink: 1,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  emptySubtitle: {
+    color: colors.textMedium,
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  emptyTitle: {
+    color: colors.textDark,
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  fieldContainer: {
+    flex: 1,
+    marginRight: 12,
+  },
+  fieldName: {
+    color: colors.textDark,
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  header: {
+    alignItems: 'center',
+    borderBottomColor: colors.borderLight,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 20,
+  },
+  loadingState: {
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  loadingSubtitle: {
+    color: colors.textMedium,
+    fontSize: 14,
+    lineHeight: 20,
+    textAlign: 'center',
+  },
+  loadingTitle: {
+    color: colors.textDark,
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  modalContainer: {
+    flexDirection: 'column',
+    maxHeight: '85%',
+    width: '100%',
+  },
+  reasonText: {
+    color: colors.textMedium,
+    fontSize: 14,
+    lineHeight: 20,
   },
   scrollContent: {
     maxHeight: 600, // Set a reasonable max height for scrolling
@@ -213,91 +260,44 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   subtitle: {
-    fontSize: 16,
     color: colors.textMedium,
-    marginBottom: 16,
+    fontSize: 16,
     lineHeight: 22,
+    marginBottom: 16,
   },
   suggestionCard: {
     backgroundColor: colors.bgLight,
     borderRadius: 12,
-    padding: 16,
     marginBottom: 12,
+    padding: 16,
   },
   suggestionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 8,
   },
-  fieldContainer: {
-    flex: 1,
-    marginRight: 12,
-  },
-  fieldName: {
-    fontSize: 16,
-    fontWeight: "600",
+  title: {
     color: colors.textDark,
-    marginBottom: 4,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  titleContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   valueContainer: {
+    alignSelf: 'flex-start',
     backgroundColor: colors.primaryLight,
+    borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
-    alignSelf: "flex-start",
   },
   valueText: {
-    fontSize: 14,
-    fontWeight: "bold",
     color: colors.primary,
-  },
-  confidenceBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  confidenceText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: colors.white,
-  },
-  reasonText: {
     fontSize: 14,
-    color: colors.textMedium,
-    lineHeight: 20,
-  },
-  loadingState: {
-    alignItems: "center",
-    paddingVertical: 40,
-  },
-  loadingTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 8,
-  },
-  loadingSubtitle: {
-    fontSize: 14,
-    color: colors.textMedium,
-    textAlign: "center",
-    lineHeight: 20,
-  },
-  emptyState: {
-    alignItems: "center",
-    paddingVertical: 40,
-  },
-  emptyTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 8,
-  },
-  emptySubtitle: {
-    fontSize: 14,
-    color: colors.textMedium,
-    textAlign: "center",
-    lineHeight: 20,
+    fontWeight: 'bold',
   },
 });
 

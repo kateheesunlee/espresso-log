@@ -1,18 +1,18 @@
-import { CoachingService } from "./CoachingService";
-import { ruleCoachShot } from "../engines/ruleEngine";
-import { classifyExtraction } from "../extraction";
-import { AIEngine } from "./AIEngine";
+import { CoachingService } from './CoachingService';
+import { ruleCoachShot } from '../engines/ruleEngine';
+import { classifyExtraction } from '../extraction';
+import { AIEngine } from './AIEngine';
 import {
   ShotFormData,
   RoastLevel,
   ExtractionSummary,
   Suggestion,
-} from "@types";
+} from '@types';
 
 // Mock dependencies
-jest.mock("../engines/ruleEngine");
-jest.mock("../extraction");
-jest.mock("./AIEngine");
+jest.mock('../engines/ruleEngine');
+jest.mock('../extraction');
+jest.mock('./AIEngine');
 
 const mockRuleCoachShot = ruleCoachShot as jest.MockedFunction<
   typeof ruleCoachShot
@@ -22,47 +22,47 @@ const mockClassifyExtraction = classifyExtraction as jest.MockedFunction<
 >;
 const MockAIEngine = AIEngine as jest.MockedClass<typeof AIEngine>;
 
-describe("CoachingService", () => {
+describe('CoachingService', () => {
   let coachingService: CoachingService;
 
   const mockShotFormData: ShotFormData = {
-    beanId: "bean-1",
-    machineId: "machine-1",
-    dose_g: "18.0",
-    yield_g: "36.0",
-    shotTime_s: "30.0",
-    ratio: "2.0",
-    grindSetting: "5.0",
-    waterTemp_C: "93.0",
-    preinfusion_s: "5.0",
+    beanId: 'bean-1',
+    machineId: 'machine-1',
+    dose_g: '18.0',
+    yield_g: '36.0',
+    shotTime_s: '30.0',
+    ratio: '2.0',
+    grindSetting: '5.0',
+    waterTemp_C: '93.0',
+    preinfusion_s: '5.0',
     overallScore: 8,
     acidity: 0.5,
     bitterness: -0.3,
     body: 0.2,
     aftertaste: 0.1,
-    tastingTags: ["balanced", "sweet"],
-    notes: "Great shot!",
+    tastingTags: ['balanced', 'sweet'],
+    notes: 'Great shot!',
     isFavorite: false,
   };
 
-  const mockRoast: RoastLevel = "Medium";
+  const mockRoast: RoastLevel = 'Medium';
 
   const mockExtraction: ExtractionSummary = {
     score: 0.2,
-    label: "balanced",
-    confidence: "med",
-    reason: "Well-balanced extraction",
+    label: 'balanced',
+    confidence: 'med',
+    reason: 'Well-balanced extraction',
   };
 
   const mockSuggestions: Suggestion[] = [
     {
-      field: "dose_g",
+      field: 'dose_g',
       delta: 0.5,
       target: 18.5,
-      reason: "Slightly increase dose for better body",
+      reason: 'Slightly increase dose for better body',
       priority: 2,
-      confidence: "med",
-      source: "rule",
+      confidence: 'med',
+      source: 'rule',
     },
   ];
 
@@ -72,12 +72,12 @@ describe("CoachingService", () => {
     mockRuleCoachShot.mockReturnValue(mockSuggestions);
   });
 
-  describe("Rule Mode", () => {
+  describe('Rule Mode', () => {
     beforeEach(() => {
-      coachingService = new CoachingService("rule");
+      coachingService = new CoachingService('rule');
     });
 
-    it("should return rule-based suggestions", async () => {
+    it('should return rule-based suggestions', async () => {
       const result = await coachingService.getSuggestions(
         mockShotFormData,
         mockRoast
@@ -91,7 +91,7 @@ describe("CoachingService", () => {
       expect(result).toEqual(mockSuggestions);
     });
 
-    it("should calculate extraction if not provided", async () => {
+    it('should calculate extraction if not provided', async () => {
       await coachingService.getSuggestions(mockShotFormData, mockRoast);
 
       expect(mockClassifyExtraction).toHaveBeenCalledWith(
@@ -105,12 +105,12 @@ describe("CoachingService", () => {
       );
     });
 
-    it("should use provided extraction without recalculating", async () => {
+    it('should use provided extraction without recalculating', async () => {
       const customExtraction: ExtractionSummary = {
         score: 0.5,
-        label: "over",
-        confidence: "high",
-        reason: "Over-extracted",
+        label: 'over',
+        confidence: 'high',
+        reason: 'Over-extracted',
       };
 
       await coachingService.getSuggestions(
@@ -127,13 +127,13 @@ describe("CoachingService", () => {
       );
     });
 
-    it("should handle different roast levels", async () => {
+    it('should handle different roast levels', async () => {
       const roastLevels: RoastLevel[] = [
-        "Light",
-        "Medium Light",
-        "Medium",
-        "Medium Dark",
-        "Dark",
+        'Light',
+        'Medium Light',
+        'Medium',
+        'Medium Dark',
+        'Dark',
       ];
 
       for (const roast of roastLevels) {
@@ -147,7 +147,7 @@ describe("CoachingService", () => {
     });
   });
 
-  describe("AI Mode", () => {
+  describe('AI Mode', () => {
     let mockAIEngine: jest.Mocked<AIEngine>;
 
     beforeEach(() => {
@@ -156,10 +156,10 @@ describe("CoachingService", () => {
       } as any;
       MockAIEngine.mockImplementation(() => mockAIEngine);
 
-      coachingService = new CoachingService("ai", "test-api-key");
+      coachingService = new CoachingService('ai', 'test-api-key');
     });
 
-    it("should return AI suggestions when AI engine is available", async () => {
+    it('should return AI suggestions when AI engine is available', async () => {
       const result = await coachingService.getSuggestions(
         mockShotFormData,
         mockRoast
@@ -173,9 +173,9 @@ describe("CoachingService", () => {
       expect(result).toEqual(mockSuggestions);
     });
 
-    it("should fallback to rule engine when AI engine fails", async () => {
+    it('should fallback to rule engine when AI engine fails', async () => {
       mockAIEngine.generateSuggestions.mockRejectedValue(
-        new Error("AI API failed")
+        new Error('AI API failed')
       );
 
       const result = await coachingService.getSuggestions(
@@ -191,11 +191,11 @@ describe("CoachingService", () => {
       expect(result).toEqual(mockSuggestions);
     });
 
-    it("should initialize AI engine with API key", () => {
-      expect(MockAIEngine).toHaveBeenCalledWith("test-api-key");
+    it('should initialize AI engine with API key', () => {
+      expect(MockAIEngine).toHaveBeenCalledWith('test-api-key');
     });
 
-    it("should calculate extraction for AI mode", async () => {
+    it('should calculate extraction for AI mode', async () => {
       await coachingService.getSuggestions(mockShotFormData, mockRoast);
 
       expect(mockClassifyExtraction).toHaveBeenCalledWith(
@@ -210,29 +210,29 @@ describe("CoachingService", () => {
     });
   });
 
-  describe("Hybrid Mode", () => {
+  describe('Hybrid Mode', () => {
     let mockAIEngine: jest.Mocked<AIEngine>;
 
     beforeEach(() => {
       mockAIEngine = {
         generateSuggestions: jest.fn().mockResolvedValue([
           {
-            field: "waterTemp_C",
+            field: 'waterTemp_C',
             delta: -2,
             target: 91,
-            reason: "Lower temperature for better acidity",
+            reason: 'Lower temperature for better acidity',
             priority: 1,
-            confidence: "high",
-            source: "ai",
+            confidence: 'high',
+            source: 'ai',
           },
         ]),
       } as any;
       MockAIEngine.mockImplementation(() => mockAIEngine);
 
-      coachingService = new CoachingService("hybrid", "test-api-key");
+      coachingService = new CoachingService('hybrid', 'test-api-key');
     });
 
-    it("should combine rule and AI suggestions", async () => {
+    it('should combine rule and AI suggestions', async () => {
       const result = await coachingService.getSuggestions(
         mockShotFormData,
         mockRoast
@@ -241,20 +241,20 @@ describe("CoachingService", () => {
       expect(mockRuleCoachShot).toHaveBeenCalled();
       expect(mockAIEngine.generateSuggestions).toHaveBeenCalled();
       expect(result).toHaveLength(2); // Rule suggestion + AI suggestion
-      expect(result[0].source).toBe("rule");
-      expect(result[1].source).toBe("ai");
+      expect(result[0].source).toBe('rule');
+      expect(result[1].source).toBe('ai');
     });
 
-    it("should handle conflicting suggestions correctly", async () => {
+    it('should handle conflicting suggestions correctly', async () => {
       // Create conflicting suggestions (same field, opposite directions)
       const conflictingAISuggestion: Suggestion = {
-        field: "dose_g",
+        field: 'dose_g',
         delta: -0.5, // Opposite direction from rule suggestion
         target: 17.5,
-        reason: "Decrease dose for better extraction",
+        reason: 'Decrease dose for better extraction',
         priority: 1,
-        confidence: "high",
-        source: "ai",
+        confidence: 'high',
+        source: 'ai',
       };
 
       mockAIEngine.generateSuggestions.mockResolvedValue([
@@ -268,12 +268,12 @@ describe("CoachingService", () => {
 
       // Should only include rule suggestion (conflicting AI suggestion should be filtered out)
       expect(result).toHaveLength(1);
-      expect(result[0].source).toBe("rule");
+      expect(result[0].source).toBe('rule');
     });
 
-    it("should fallback to rule-only when AI fails", async () => {
+    it('should fallback to rule-only when AI fails', async () => {
       mockAIEngine.generateSuggestions.mockRejectedValue(
-        new Error("AI failed")
+        new Error('AI failed')
       );
 
       const result = await coachingService.getSuggestions(
@@ -285,15 +285,15 @@ describe("CoachingService", () => {
       expect(result).toEqual(mockSuggestions);
     });
 
-    it("should sort suggestions by priority", async () => {
+    it('should sort suggestions by priority', async () => {
       const lowPriorityAISuggestion: Suggestion = {
-        field: "preinfusion_s",
+        field: 'preinfusion_s',
         delta: 1,
         target: 6,
-        reason: "Slight increase in preinfusion",
+        reason: 'Slight increase in preinfusion',
         priority: 3, // Lower priority than rule suggestion
-        confidence: "low",
-        source: "ai",
+        confidence: 'low',
+        source: 'ai',
       };
 
       mockAIEngine.generateSuggestions.mockResolvedValue([
@@ -309,34 +309,34 @@ describe("CoachingService", () => {
       expect(result[0].priority).toBeGreaterThanOrEqual(result[1].priority);
     });
 
-    it("should limit to 3 suggestions maximum", async () => {
+    it('should limit to 3 suggestions maximum', async () => {
       const manyAISuggestions: Suggestion[] = [
         {
-          field: "waterTemp_C",
+          field: 'waterTemp_C',
           delta: -2,
           target: 91,
-          reason: "Lower temperature",
+          reason: 'Lower temperature',
           priority: 1,
-          confidence: "high",
-          source: "ai",
+          confidence: 'high',
+          source: 'ai',
         },
         {
-          field: "preinfusion_s",
+          field: 'preinfusion_s',
           delta: 1,
           target: 6,
-          reason: "Increase preinfusion",
+          reason: 'Increase preinfusion',
           priority: 2,
-          confidence: "med",
-          source: "ai",
+          confidence: 'med',
+          source: 'ai',
         },
         {
-          field: "ratio",
+          field: 'ratio',
           delta: 0.1,
           target: 2.1,
-          reason: "Slight ratio adjustment",
+          reason: 'Slight ratio adjustment',
           priority: 3,
-          confidence: "low",
-          source: "ai",
+          confidence: 'low',
+          source: 'ai',
         },
       ];
 
@@ -351,38 +351,38 @@ describe("CoachingService", () => {
     });
   });
 
-  describe("Error Handling", () => {
+  describe('Error Handling', () => {
     beforeEach(() => {
-      coachingService = new CoachingService("rule");
+      coachingService = new CoachingService('rule');
     });
 
-    it("should handle rule engine errors gracefully", async () => {
+    it('should handle rule engine errors gracefully', async () => {
       mockRuleCoachShot.mockImplementation(() => {
-        throw new Error("Rule engine failed");
+        throw new Error('Rule engine failed');
       });
 
       await expect(
         coachingService.getSuggestions(mockShotFormData, mockRoast)
-      ).rejects.toThrow("Rule engine failed");
+      ).rejects.toThrow('Rule engine failed');
     });
 
-    it("should handle extraction calculation errors", async () => {
+    it('should handle extraction calculation errors', async () => {
       mockClassifyExtraction.mockImplementation(() => {
-        throw new Error("Extraction calculation failed");
+        throw new Error('Extraction calculation failed');
       });
 
       await expect(
         coachingService.getSuggestions(mockShotFormData, mockRoast)
-      ).rejects.toThrow("Extraction calculation failed");
+      ).rejects.toThrow('Extraction calculation failed');
     });
   });
 
-  describe("Edge Cases", () => {
+  describe('Edge Cases', () => {
     beforeEach(() => {
-      coachingService = new CoachingService("rule");
+      coachingService = new CoachingService('rule');
     });
 
-    it("should handle empty suggestions", async () => {
+    it('should handle empty suggestions', async () => {
       mockRuleCoachShot.mockReturnValue([]);
 
       const result = await coachingService.getSuggestions(
@@ -393,12 +393,12 @@ describe("CoachingService", () => {
       expect(result).toEqual([]);
     });
 
-    it("should handle undefined extraction gracefully", async () => {
+    it('should handle undefined extraction gracefully', async () => {
       mockClassifyExtraction.mockReturnValue({
         score: 0,
-        label: "balanced",
-        confidence: "low",
-        reason: "No extraction data",
+        label: 'balanced',
+        confidence: 'low',
+        reason: 'No extraction data',
       });
 
       const result = await coachingService.getSuggestions(
@@ -409,14 +409,14 @@ describe("CoachingService", () => {
       expect(result).toEqual(mockSuggestions);
     });
 
-    it("should handle extreme shot parameters", async () => {
+    it('should handle extreme shot parameters', async () => {
       const extremeShotData: ShotFormData = {
         ...mockShotFormData,
-        dose_g: "50.0", // Very high dose
-        yield_g: "10.0", // Very low yield
-        shotTime_s: "60.0", // Very long time
-        ratio: "0.2", // Very low ratio
-        waterTemp_C: "100.0", // Very high temp
+        dose_g: '50.0', // Very high dose
+        yield_g: '10.0', // Very low yield
+        shotTime_s: '60.0', // Very long time
+        ratio: '0.2', // Very low ratio
+        waterTemp_C: '100.0', // Very high temp
       };
 
       const result = await coachingService.getSuggestions(
@@ -429,25 +429,25 @@ describe("CoachingService", () => {
     });
   });
 
-  describe("Constructor Validation", () => {
-    it("should initialize with default rule mode", () => {
+  describe('Constructor Validation', () => {
+    it('should initialize with default rule mode', () => {
       const service = new CoachingService();
       expect(service).toBeInstanceOf(CoachingService);
     });
 
-    it("should initialize AI engine for AI mode", () => {
-      new CoachingService("ai", "api-key");
-      expect(MockAIEngine).toHaveBeenCalledWith("api-key");
+    it('should initialize AI engine for AI mode', () => {
+      new CoachingService('ai', 'api-key');
+      expect(MockAIEngine).toHaveBeenCalledWith('api-key');
     });
 
-    it("should initialize AI engine for hybrid mode", () => {
-      new CoachingService("hybrid", "api-key");
-      expect(MockAIEngine).toHaveBeenCalledWith("api-key");
+    it('should initialize AI engine for hybrid mode', () => {
+      new CoachingService('hybrid', 'api-key');
+      expect(MockAIEngine).toHaveBeenCalledWith('api-key');
     });
 
-    it("should handle empty API key gracefully", () => {
-      expect(() => new CoachingService("ai", "")).not.toThrow();
-      expect(MockAIEngine).toHaveBeenCalledWith("");
+    it('should handle empty API key gracefully', () => {
+      expect(() => new CoachingService('ai', '')).not.toThrow();
+      expect(MockAIEngine).toHaveBeenCalledWith('');
     });
   });
 });

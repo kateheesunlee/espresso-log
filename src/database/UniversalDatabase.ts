@@ -1,9 +1,9 @@
-import { Platform } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { User, Machine, Bean, Shot, STORAGE_KEY } from "@types";
+import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { User, Machine, Bean, Shot, STORAGE_KEY } from '@types';
 
 class UniversalDatabase {
-  private isWeb = Platform.OS === "web";
+  private isWeb = Platform.OS === 'web';
   private storageKey = STORAGE_KEY;
   private db: any = null;
 
@@ -38,7 +38,7 @@ class UniversalDatabase {
           await AsyncStorage.setItem(this.storageKey, JSON.stringify(this.db));
         }
       } catch (error) {
-        console.error("Failed to initialize AsyncStorage:", error);
+        console.error('Failed to initialize AsyncStorage:', error);
         // Fallback to in-memory storage
         this.db = {
           users: [],
@@ -69,13 +69,13 @@ class UniversalDatabase {
       try {
         await AsyncStorage.setItem(this.storageKey, JSON.stringify(data));
       } catch (error) {
-        console.error("Failed to save data to AsyncStorage:", error);
+        console.error('Failed to save data to AsyncStorage:', error);
       }
     }
   }
 
   // User operations
-  async createUser(user: Omit<User, "createdAt">): Promise<void> {
+  async createUser(user: Omit<User, 'createdAt'>): Promise<void> {
     const data = this.getData();
     const newUser = {
       ...user,
@@ -92,7 +92,7 @@ class UniversalDatabase {
 
   // Machine operations
   async createMachine(
-    machine: Omit<Machine, "createdAt" | "updatedAt">
+    machine: Omit<Machine, 'createdAt' | 'updatedAt'>
   ): Promise<void> {
     const data = this.getData();
     const now = new Date().toISOString();
@@ -148,7 +148,7 @@ class UniversalDatabase {
   }
 
   // Bean operations
-  async createBean(bean: Omit<Bean, "createdAt" | "updatedAt">): Promise<void> {
+  async createBean(bean: Omit<Bean, 'createdAt' | 'updatedAt'>): Promise<void> {
     const data = this.getData();
     const now = new Date().toISOString();
     const newBean = {
@@ -203,7 +203,7 @@ class UniversalDatabase {
   }
 
   // Shot operations
-  async createShot(shot: Omit<Shot, "createdAt" | "updatedAt">): Promise<void> {
+  async createShot(shot: Omit<Shot, 'createdAt' | 'updatedAt'>): Promise<void> {
     const data = this.getData();
     const now = new Date().toISOString();
     const newShot = {

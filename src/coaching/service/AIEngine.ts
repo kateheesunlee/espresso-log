@@ -4,7 +4,7 @@ import {
   ExtractionSummary,
   RoastLevel,
   Suggestion,
-} from "@types";
+} from '@types';
 
 export class AIEngine {
   constructor(private apiKey: string) {}
@@ -33,7 +33,7 @@ export class AIEngine {
       // Placeholder for now
       return [];
     } catch (error) {
-      console.error("AI coaching failed:", error);
+      console.error('AI coaching failed:', error);
       return []; // Fallback to empty suggestions
     }
   }
@@ -51,9 +51,9 @@ export class AIEngine {
       - Dose: ${shotFormData.dose_g}g
       - Yield: ${shotFormData.yield_g}g
       - Ratio: ${shotFormData.ratio}
-      - Time: ${shotFormData.shotTime_s ? `${shotFormData.shotTime_s}s` : "N/A"}
+      - Time: ${shotFormData.shotTime_s ? `${shotFormData.shotTime_s}s` : 'N/A'}
       - Temperature: ${
-        shotFormData.waterTemp_C ? `${shotFormData.waterTemp_C}°C` : "N/A"
+        shotFormData.waterTemp_C ? `${shotFormData.waterTemp_C}°C` : 'N/A'
       }
       - Roast Level: ${roast}
       

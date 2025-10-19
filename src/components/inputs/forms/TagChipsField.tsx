@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 
-import FormField, { FormFieldProps } from "../FormField";
-import TagChips from "../../TagChips";
+import FormField, { FormFieldProps } from '../FormField';
+import TagChips from '../../TagChips';
 
-interface TagChipsFieldProps extends Omit<FormFieldProps, "children"> {
+interface TagChipsFieldProps extends Omit<FormFieldProps, 'children'> {
   value: string[];
   onChange: (tags: string[]) => void;
   suggestions?: string[];

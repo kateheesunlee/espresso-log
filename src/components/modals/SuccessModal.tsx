@@ -1,7 +1,7 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React from 'react';
+import { StyleSheet } from 'react-native';
 
-import BaseModal, { ButtonConfig, IconConfig } from "./BaseModal";
+import BaseModal, { ButtonConfig, IconConfig } from './BaseModal';
 
 interface SuccessModalProps {
   visible: boolean;
@@ -11,7 +11,7 @@ interface SuccessModalProps {
   secondaryButtonText?: string;
   onPrimaryPress: () => void;
   onSecondaryPress?: () => void;
-  icon?: "coffee" | "bean" | "coffeemaker" | "star" | "add-notes";
+  icon?: 'coffee' | 'bean' | 'coffeemaker' | 'star' | 'add-notes';
 }
 
 const SuccessModal: React.FC<SuccessModalProps> = ({
@@ -19,10 +19,10 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
   title,
   message,
   primaryButtonText,
-  secondaryButtonText = "Cancel",
+  secondaryButtonText = 'Cancel',
   onPrimaryPress,
   onSecondaryPress,
-  icon = "star",
+  icon = 'star',
 }) => {
   const iconConfig: IconConfig = {
     name: icon,
@@ -34,21 +34,21 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
     buttonConfigs.push({
       text: secondaryButtonText,
       onPress: onSecondaryPress,
-      variant: "secondary",
+      variant: 'secondary',
     });
   }
 
   buttonConfigs.push({
     text: primaryButtonText,
     onPress: onPrimaryPress,
-    variant: "primary",
+    variant: 'primary',
   });
 
   return (
     <BaseModal
       visible={visible}
       onRequestClose={onSecondaryPress || (() => {})}
-      animationType="fade"
+      animationType='fade'
       iconConfig={iconConfig}
       title={title}
       message={message}
@@ -60,9 +60,9 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 
 const styles = StyleSheet.create({
   modalContainer: {
-    width: "85%",
+    alignItems: 'center',
     maxWidth: 350,
-    alignItems: "center",
+    width: '85%',
   },
 });
 

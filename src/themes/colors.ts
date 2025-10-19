@@ -1,4 +1,4 @@
-import colorPalette from "./colorPalette.json";
+import colorPalette from './colorPalette.json';
 
 // Export colors from the palette with TypeScript types
 export const colors = {
@@ -33,29 +33,29 @@ export const colors = {
   roastingDark_Light: colorPalette.roastingDark_Light,
 
   // Additional commonly used colors
-  white: "#ffffff",
-  black: "#000000",
-  transparent: "transparent",
+  white: '#ffffff',
+  black: '#000000',
+  transparent: 'transparent',
 
   // Semantic color mappings for common UI patterns
   background: colorPalette.bgLight,
-  surface: "#ffffff",
+  surface: '#ffffff',
   text: colorPalette.textDark,
   textSecondary: colorPalette.textMedium,
   textTertiary: colorPalette.textLight,
   border: colorPalette.borderLight,
-  divider: "#f0f0f0",
-  disabled: "#ccc",
+  divider: '#f0f0f0',
+  disabled: '#ccc',
   disabledText: colorPalette.textLight,
 
   // Status colors
-  successBackground: "#d5f4e6",
-  errorBackground: "#ffeaea",
-  warningBackground: "#fff8dc",
+  successBackground: '#d5f4e6',
+  errorBackground: '#ffeaea',
+  warningBackground: '#fff8dc',
 
   // Interactive states
-  pressed: "#f0f0f0",
-  hover: "#f8f8f8",
+  pressed: '#f0f0f0',
+  hover: '#f8f8f8',
 } as const;
 
 export type ColorKey = keyof typeof colors;

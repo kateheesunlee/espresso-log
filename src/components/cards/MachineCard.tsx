@@ -1,12 +1,12 @@
-import React from "react";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 
-import { Machine } from "@types";
-import { useStore } from "../../store/useStore";
-import { RootStackParamList } from "../../navigation/AppNavigator";
+import { Machine } from '@types';
+import { useStore } from '../../store/useStore';
+import { RootStackParamList } from '../../navigation/AppNavigator';
 
-import BaseCard from "./BaseCard";
+import BaseCard from './BaseCard';
 
 export interface MachineCardProps {
   machine: Machine;
@@ -20,11 +20,11 @@ const MachineCard: React.FC<MachineCardProps> = ({ machine }) => {
 
   const title = machine.nickname || machine.brand;
   const subtitle = `${machine.model}${
-    machine.grinder ? ` + ${machine.grinder}` : ""
+    machine.grinder ? ` + ${machine.grinder}` : ''
   }`;
 
   const handlePress = () => {
-    (navigation as any).navigate("NewMachine", { machineId: machine.id });
+    (navigation as any).navigate('NewMachine', { machineId: machine.id });
   };
 
   const handleDelete = async () => {
@@ -37,7 +37,7 @@ const MachineCard: React.FC<MachineCardProps> = ({ machine }) => {
       data={machine as any}
       title={title}
       subtitle={subtitle}
-      fallbackIcon="coffeemaker"
+      fallbackIcon='coffeemaker'
       onDelete={handleDelete}
       onPress={handlePress}
       showDeleteGesture={true}

@@ -1,12 +1,12 @@
-import React from "react";
-import { ScrollView, FlatList, Platform, View, StyleSheet } from "react-native";
+import React from 'react';
+import { ScrollView, FlatList, Platform, View, StyleSheet } from 'react-native';
 
 const defaultStyles = StyleSheet.create({
-  scrollContainer: {
-    flex: 1,
-  },
   listContainer: {
     padding: 16,
+  },
+  scrollContainer: {
+    flex: 1,
   },
 });
 
@@ -34,7 +34,7 @@ const ScrollableListView = <T,>({
     return emptyComponent;
   }
 
-  if (Platform.OS === "web") {
+  if (Platform.OS === 'web') {
     return (
       <ScrollView
         style={[defaultStyles.scrollContainer, style]}
@@ -44,7 +44,7 @@ const ScrollableListView = <T,>({
         ]}
         showsVerticalScrollIndicator={showsVerticalScrollIndicator}
       >
-        {data.map((item) => (
+        {data.map(item => (
           <View key={keyExtractor(item)}>{renderItem({ item })}</View>
         ))}
       </ScrollView>

@@ -1,16 +1,16 @@
-import React from "react";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { View, StyleSheet } from "react-native";
-import { colors } from "../../themes/colors";
+import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { View, StyleSheet } from 'react-native';
+import { colors } from '../../themes/colors';
 
-import { Bean } from "@types";
-import { useStore } from "../../store/useStore";
-import { RootStackParamList } from "../../navigation/AppNavigator";
+import { Bean } from '@types';
+import { useStore } from '../../store/useStore';
+import { RootStackParamList } from '../../navigation/AppNavigator';
 
-import BaseCard from "./BaseCard";
-import RoastingIndicator from "../RoastingIndicator";
-import BeanManager from "../BeanManager";
+import BaseCard from './BaseCard';
+import RoastingIndicator from '../RoastingIndicator';
+import BeanManager from '../BeanManager';
 
 export interface BeanCardProps {
   bean: Bean;
@@ -29,11 +29,11 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean }) => {
   const showBeanManager = bean.dates?.length > 0;
 
   if (bean.aromaTags && bean.aromaTags.length > 0) {
-    details.push(`Aroma: ${bean.aromaTags.join(", ")}`);
+    details.push(`Aroma: ${bean.aromaTags.join(', ')}`);
   }
 
   const handlePress = () => {
-    (navigation as any).navigate("NewBean", { beanId: bean.id });
+    (navigation as any).navigate('NewBean', { beanId: bean.id });
   };
 
   const handleDelete = async () => {
@@ -45,7 +45,7 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean }) => {
   };
 
   const subtitle = () => {
-    return <RoastingIndicator roastLevel={bean.roastLevel!} size="md" />;
+    return <RoastingIndicator roastLevel={bean.roastLevel!} size='md' />;
   };
 
   return (
@@ -55,11 +55,11 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean }) => {
       title={bean.name}
       subtitle={subtitle()}
       details={details}
-      fallbackIcon="bean"
+      fallbackIcon='bean'
       onDelete={handleDelete}
       actionConfigs={[
         {
-          icon: bean.isFavorite ? "heart_filled" : "heart",
+          icon: bean.isFavorite ? 'heart_filled' : 'heart',
           onPress: handleToggleFavorite,
         },
       ]}

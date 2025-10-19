@@ -1,23 +1,23 @@
-import React from "react";
-import { View, StyleSheet, ViewStyle, Text, TextStyle } from "react-native";
+import React from 'react';
+import { View, StyleSheet, ViewStyle, Text, TextStyle } from 'react-native';
 
-import { RoastLevel } from "@types";
-import { colors } from "../themes/colors";
+import { RoastLevel } from '@types';
+import { colors } from '../themes/colors';
 
 interface RoastingIndicatorProps {
   roastLevel: RoastLevel;
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
   style?: ViewStyle;
   marginLeft?: number;
   compact?: boolean;
 }
 
 const roastingColorMap = {
-  ["Light"]: colors.roastingLight,
-  ["Medium Light"]: colors.roastingMediumLight,
-  ["Medium"]: colors.roastingMedium,
-  ["Medium Dark"]: colors.roastingMediumDark,
-  ["Dark"]: colors.roastingDark,
+  ['Light']: colors.roastingLight,
+  ['Medium Light']: colors.roastingMediumLight,
+  ['Medium']: colors.roastingMedium,
+  ['Medium Dark']: colors.roastingMediumDark,
+  ['Dark']: colors.roastingDark,
 };
 
 const sizeMap = {
@@ -34,23 +34,23 @@ const textSizeMap = {
 
 const RoastingIndicator: React.FC<RoastingIndicatorProps> = ({
   roastLevel,
-  size = "md",
+  size = 'md',
   compact = false,
 }) => {
   const color = roastingColorMap[roastLevel];
 
-  const getDotStylesBySize = (size: "sm" | "md" | "lg") => {
+  const getDotStylesBySize = (size: 'sm' | 'md' | 'lg') => {
     return {
       width: compact ? sizeMap[size] : undefined,
       height: compact ? sizeMap[size] : undefined,
       paddingVertical: compact ? 0 : 4,
       paddingHorizontal: compact ? 0 : 8,
-      borderRadius: compact ? "50%" : 16,
+      borderRadius: compact ? '50%' : 16,
       backgroundColor: color,
     };
   };
 
-  const getTextStylesBySize = (size: "sm" | "md" | "lg") => {
+  const getTextStylesBySize = (size: 'sm' | 'md' | 'lg') => {
     return {
       fontSize: textSizeMap[size],
       color: colors.white,

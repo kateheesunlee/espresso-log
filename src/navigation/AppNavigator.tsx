@@ -1,16 +1,16 @@
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
-import HomeScreen from "../screens/HomeScreen";
-import NewShotScreen from "../screens/NewShotScreen";
-import ShotDetailScreen from "../screens/ShotDetailScreen";
-import BeansScreen from "../screens/BeansScreen";
-import MachinesScreen from "../screens/MachinesScreen";
-import NewBeanScreen from "../screens/NewBeanScreen";
-import NewMachineScreen from "../screens/NewMachineScreen";
-import SvgIcon from "../components/SvgIcon";
-import { colors } from "../themes/colors";
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import HomeScreen from '../screens/HomeScreen';
+import NewShotScreen from '../screens/NewShotScreen';
+import ShotDetailScreen from '../screens/ShotDetailScreen';
+import BeansScreen from '../screens/BeansScreen';
+import MachinesScreen from '../screens/MachinesScreen';
+import NewBeanScreen from '../screens/NewBeanScreen';
+import NewMachineScreen from '../screens/NewMachineScreen';
+import SvgIcon from '../components/SvgIcon';
+import { colors } from '../themes/colors';
 
 export type RootStackParamList = {
   Shots: undefined;
@@ -40,14 +40,14 @@ function ShotsTabs() {
         tabBarIcon: ({ focused, size }) => {
           let iconName: string;
 
-          if (route.name === "Home") {
-            iconName = focused ? "coffee_filled" : "coffee";
-          } else if (route.name === "Beans") {
-            iconName = focused ? "bean_filled" : "bean";
-          } else if (route.name === "Machines") {
-            iconName = focused ? "coffeemaker_filled" : "coffeemaker";
+          if (route.name === 'Home') {
+            iconName = focused ? 'coffee_filled' : 'coffee';
+          } else if (route.name === 'Beans') {
+            iconName = focused ? 'bean_filled' : 'bean';
+          } else if (route.name === 'Machines') {
+            iconName = focused ? 'coffeemaker_filled' : 'coffeemaker';
           } else {
-            iconName = "note_filled";
+            iconName = 'note_filled';
           }
 
           return <SvgIcon name={iconName as any} size={size} />;
@@ -59,24 +59,24 @@ function ShotsTabs() {
         },
         headerTintColor: colors.white,
         headerTitleStyle: {
-          fontWeight: "bold",
+          fontWeight: 'bold',
         },
       })}
     >
       <Tab.Screen
-        name="Home"
+        name='Home'
         component={HomeScreen}
-        options={{ title: "Shots" }}
+        options={{ title: 'Shots' }}
       />
       <Tab.Screen
-        name="Beans"
+        name='Beans'
         component={BeansScreen}
-        options={{ title: "Beans" }}
+        options={{ title: 'Beans' }}
       />
       <Tab.Screen
-        name="Machines"
+        name='Machines'
         component={MachinesScreen}
-        options={{ title: "Machines" }}
+        options={{ title: 'Machines' }}
       />
     </Tab.Navigator>
   );
@@ -92,7 +92,7 @@ export default function AppNavigator() {
           },
           headerTintColor: colors.white,
           headerTitleStyle: {
-            fontWeight: "bold",
+            fontWeight: 'bold',
             fontSize: 17,
           },
           headerBackTitleStyle: {
@@ -101,37 +101,37 @@ export default function AppNavigator() {
         }}
       >
         <Stack.Screen
-          name="Shots"
+          name='Shots'
           component={ShotsTabs}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="ShotDetail"
+          name='ShotDetail'
           component={ShotDetailScreen}
-          options={{ title: "Shot Details" }}
+          options={{ title: 'Shot Details' }}
         />
         <Stack.Screen
-          name="NewShot"
+          name='NewShot'
           component={NewShotScreen}
           options={({ route }) => ({
-            title: route.params?.duplicateFrom ? "Edit Shot" : "New Shot",
-            headerBackTitle: route.params?.duplicateFrom ? "Details" : "Shots",
+            title: route.params?.duplicateFrom ? 'Edit Shot' : 'New Shot',
+            headerBackTitle: route.params?.duplicateFrom ? 'Details' : 'Shots',
           })}
         />
         <Stack.Screen
-          name="NewBean"
+          name='NewBean'
           component={NewBeanScreen}
           options={({ route }) => ({
-            title: route.params?.beanId ? "Edit Bean" : "New Bean",
-            headerBackTitle: "Beans",
+            title: route.params?.beanId ? 'Edit Bean' : 'New Bean',
+            headerBackTitle: 'Beans',
           })}
         />
         <Stack.Screen
-          name="NewMachine"
+          name='NewMachine'
           component={NewMachineScreen}
           options={({ route }) => ({
-            title: route.params?.machineId ? "Edit Machine" : "New Machine",
-            headerBackTitle: "Machines",
+            title: route.params?.machineId ? 'Edit Machine' : 'New Machine',
+            headerBackTitle: 'Machines',
           })}
         />
       </Stack.Navigator>

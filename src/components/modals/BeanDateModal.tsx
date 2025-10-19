@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { ScrollView } from "react-native";
-import { Bean, createBeanDateEntry, normalizeDateForStorage } from "@types";
+import React, { useState } from 'react';
+import { ScrollView } from 'react-native';
+import { Bean, createBeanDateEntry, normalizeDateForStorage } from '@types';
 
-import BaseModal, { ButtonConfig } from "./BaseModal";
-import BeanFreshnessForm from "../BeanManager/BeanFreshnessForm";
-import { DEFAULT_EXPIRATION_PERIOD_WEEKS } from "../BeanManager/constants";
+import BaseModal, { ButtonConfig } from './BaseModal';
+import BeanFreshnessForm from '../BeanManager/BeanFreshnessForm';
+import { DEFAULT_EXPIRATION_PERIOD_WEEKS } from '../BeanManager/constants';
 
 export interface BeanDateModalProps {
   visible: boolean;
@@ -20,7 +20,7 @@ const BeanDateModal: React.FC<BeanDateModalProps> = ({
   onCancel,
 }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [dateType, setDateType] = useState<"roasting" | "opening">("roasting");
+  const [dateType, setDateType] = useState<'roasting' | 'opening'>('roasting');
   const [expirationPeriodWeeks, setExpirationPeriodWeeks] = useState(
     bean.expirationPeriodWeeks || 2
   );
@@ -41,7 +41,7 @@ const BeanDateModal: React.FC<BeanDateModalProps> = ({
     onSave(updatedBean);
     // Reset form
     setSelectedDate(new Date());
-    setDateType("roasting");
+    setDateType('roasting');
     setExpirationPeriodWeeks(
       bean.expirationPeriodWeeks || DEFAULT_EXPIRATION_PERIOD_WEEKS
     );
@@ -49,25 +49,25 @@ const BeanDateModal: React.FC<BeanDateModalProps> = ({
 
   const buttonConfigs: ButtonConfig[] = [
     {
-      text: "Cancel",
+      text: 'Cancel',
       onPress: onCancel,
     },
     {
-      text: "Add Date",
+      text: 'Add Date',
       onPress: handleSave,
     },
   ];
 
   return (
     <BaseModal
-      title="New bean bag"
+      title='New bean bag'
       message="Did you buy a new bag? Add your bean's roasting or opening date to track its freshness."
       visible={visible}
       buttonConfigs={buttonConfigs}
     >
       <BeanFreshnessForm
         initialDate={new Date()}
-        initialDateType="roasting"
+        initialDateType='roasting'
         onDateChange={setSelectedDate}
         onDateTypeChange={setDateType}
         expirationPeriodWeeks={expirationPeriodWeeks}

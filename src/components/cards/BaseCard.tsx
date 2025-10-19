@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -6,16 +6,16 @@ import {
   StyleSheet,
   Animated,
   Platform,
-} from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import * as Haptics from "expo-haptics";
-import { colors } from "../../themes/colors";
-import { formatDateTime } from "../../utils/formatDate";
+} from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import * as Haptics from 'expo-haptics';
+import { colors } from '../../themes/colors';
+import { formatDateTime } from '../../utils/formatDate';
 
-import SvgIcon, { IconName } from "../SvgIcon";
-import Avatar from "../Avatar";
-import ConfirmationModal from "../modals/ConfirmationModal";
-import ErrorModal from "../modals/ErrorModal";
+import SvgIcon, { IconName } from '../SvgIcon';
+import Avatar from '../Avatar';
+import ConfirmationModal from '../modals/ConfirmationModal';
+import ErrorModal from '../modals/ErrorModal';
 
 export interface CardData {
   id: string;
@@ -72,7 +72,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
   const [errorModal, setErrorModal] = useState<{
     visible: boolean;
     message: string;
-  }>({ visible: false, message: "" });
+  }>({ visible: false, message: '' });
 
   // Cleanup animation on unmount
   React.useEffect(() => {
@@ -85,7 +85,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
     setShowDeleteButton(false);
     Animated.spring(translateX.current, {
       toValue: CLOSED,
-      useNativeDriver: Platform.OS !== "web",
+      useNativeDriver: Platform.OS !== 'web',
       tension: 100,
       friction: 8,
     }).start();
@@ -95,7 +95,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
     setShowDeleteButton(true);
     Animated.spring(translateX.current, {
       toValue: OPEN,
-      useNativeDriver: Platform.OS !== "web",
+      useNativeDriver: Platform.OS !== 'web',
       tension: 100,
       friction: 8,
     }).start();
@@ -105,7 +105,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
     .minDistance(5)
     .activeOffsetX([-10, 10])
     .failOffsetY([-10, 10]) // If the user swipes up or down, the gesture will fail
-    .onUpdate((e) => {
+    .onUpdate(e => {
       if (e.translationX < 0) {
         showDeleteButtonAnimation();
       } else if (e.translationX > 0 && showDeleteButton) {
@@ -130,7 +130,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
     } catch (error) {
       setErrorModal({
         visible: true,
-        message: "Failed to delete item",
+        message: 'Failed to delete item',
       });
     }
     setDeleteConfirmation(false);
@@ -224,7 +224,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
               hideDeleteButtonAnimation();
             }}
           >
-            <SvgIcon name="delete" size={24} color={colors.white} />
+            <SvgIcon name='delete' size={24} color={colors.white} />
             <Text style={styles.deleteButtonText}>Delete</Text>
           </TouchableOpacity>
         </View>
@@ -248,10 +248,10 @@ const BaseCard: React.FC<BaseCardProps> = ({
       {/* Modals */}
       <ConfirmationModal
         visible={deleteConfirmation}
-        title="Delete Item"
-        message="Are you sure you want to delete this item? This action cannot be undone."
-        confirmText="Delete"
-        cancelText="Cancel"
+        title='Delete Item'
+        message='Are you sure you want to delete this item? This action cannot be undone.'
+        confirmText='Delete'
+        cancelText='Cancel'
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
         destructive={true}
@@ -260,42 +260,25 @@ const BaseCard: React.FC<BaseCardProps> = ({
       <ErrorModal
         visible={errorModal.visible}
         message={errorModal.message}
-        onButtonPress={() => setErrorModal({ visible: false, message: "" })}
+        onButtonPress={() => setErrorModal({ visible: false, message: '' })}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  swipeContainer: {
-    position: "relative",
-    marginBottom: 12,
+  actionButton: {
+    marginLeft: 4,
+    padding: 8,
   },
-  deleteButtonContainer: {
-    position: "absolute",
-    right: 0,
-    top: 0,
-    bottom: 0,
-    width: 80,
-    backgroundColor: colors.error,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  deleteButton: {
-    justifyContent: "center",
-    alignItems: "center",
-    flex: 1,
-  },
-  deleteButtonText: {
-    color: colors.white,
-    fontSize: 12,
-    fontWeight: "600",
-    marginTop: 4,
+  actionsContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   card: {
     backgroundColor: colors.white,
     borderRadius: 12,
+    elevation: 5,
     shadowColor: colors.black,
     shadowOffset: {
       width: 0,
@@ -303,14 +286,47 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
-    elevation: 5,
   },
   cardContent: {
     padding: 16,
   },
   cardLayout: {
-    flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+  },
+  date: {
+    color: colors.textLight,
+    fontSize: 12,
+  },
+  deleteButton: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  deleteButtonContainer: {
+    alignItems: 'center',
+    backgroundColor: colors.error,
+    borderRadius: 12,
+    bottom: 0,
+    justifyContent: 'center',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    width: 80,
+  },
+  deleteButtonText: {
+    color: colors.white,
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  detail: {
+    color: colors.textMedium,
+    fontSize: 12,
+    marginBottom: 4,
+  },
+  detailsContainer: {
+    marginBottom: 0,
   },
   imageContainer: {
     marginRight: 16,
@@ -318,42 +334,26 @@ const styles = StyleSheet.create({
   infoContainer: {
     flex: 1,
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 8,
-  },
   subtitle: {
-    fontSize: 14,
     color: colors.primary,
-    fontWeight: "500",
+    fontSize: 14,
+    fontWeight: '500',
     marginBottom: 6,
   },
   subtitle2: {
-    fontSize: 14,
     color: colors.textMedium,
+    fontSize: 14,
     marginBottom: 6,
   },
-  detailsContainer: {
-    marginBottom: 0,
+  swipeContainer: {
+    marginBottom: 12,
+    position: 'relative',
   },
-  detail: {
-    fontSize: 12,
-    color: colors.textMedium,
-    marginBottom: 4,
-  },
-  date: {
-    fontSize: 12,
-    color: colors.textLight,
-  },
-  actionsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  actionButton: {
-    padding: 8,
-    marginLeft: 4,
+  title: {
+    color: colors.textDark,
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 8,
   },
 });
 

@@ -2,11 +2,11 @@ import {
   TASTE_BALANCE_LABELS,
   TasteBalanceLabel,
   TASTE_BALANCE_QUALITY_INDICATORS_BY_LABEL,
-} from "@types";
-import { formatBalance } from "../utils/formatTastingSummary";
+} from '@types';
+import { formatBalance } from '../utils/formatTastingSummary';
 
-import FormField from "./inputs/FormField";
-import BalanceSlider from "./inputs/sliders/BalanceSlider";
+import FormField from './inputs/FormField';
+import BalanceSlider from './inputs/sliders/BalanceSlider';
 
 interface TastingNotesFormData {
   acidity: number;
@@ -27,7 +27,7 @@ const TastingNotes = ({
   readOnly = false,
 }: TastingNotesProps) => {
   const keyByLabel = (label: TasteBalanceLabel): keyof TastingNotesFormData => {
-    return label.toLowerCase().replace(" ", "_") as keyof TastingNotesFormData;
+    return label.toLowerCase().replace(' ', '_') as keyof TastingNotesFormData;
   };
 
   const handleValueChange = (label: TasteBalanceLabel, value: number) => {
@@ -43,7 +43,7 @@ const TastingNotes = ({
 
   return (
     <>
-      {TASTE_BALANCE_LABELS.map((label) => (
+      {TASTE_BALANCE_LABELS.map(label => (
         <FormField
           key={label}
           label={`${label}: ${formData[keyByLabel(label)]}`}
@@ -51,7 +51,7 @@ const TastingNotes = ({
         >
           <BalanceSlider
             value={formData[keyByLabel(label)]}
-            onValueChange={(value) => handleValueChange(label, value)}
+            onValueChange={value => handleValueChange(label, value)}
             qualityIndicators={TASTE_BALANCE_QUALITY_INDICATORS_BY_LABEL[label]}
             readOnly={readOnly}
           />

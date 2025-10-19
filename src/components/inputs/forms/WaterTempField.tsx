@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { TouchableOpacity, Text } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from 'react';
+import { TouchableOpacity, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-import { inputStyles } from "../styles";
-import NumberInputField from "./NumberInputField";
+import { inputStyles } from '../styles';
+import NumberInputField from './NumberInputField';
 
 interface WaterTempFieldProps {
   label: string;
@@ -20,16 +20,16 @@ interface WaterTempFieldProps {
 
 // Conversion functions
 const celsiusToFahrenheit = (celsius: string): string => {
-  if (celsius === "") {
-    return "";
+  if (celsius === '') {
+    return '';
   }
   const number = parseFloat(celsius);
   return ((number * 9) / 5 + 32).toFixed(1).toString();
 };
 
 const fahrenheitToCelsius = (fahrenheit: string): string => {
-  if (fahrenheit === "") {
-    return "";
+  if (fahrenheit === '') {
+    return '';
   }
   const number = parseFloat(fahrenheit);
   return (((number - 32) * 5) / 9).toFixed(1).toString();
@@ -51,7 +51,7 @@ const WaterTempField: React.FC<WaterTempFieldProps> = ({
   );
 
   const handleToggle = () => {
-    setIsCelsius((prev) => !prev);
+    setIsCelsius(prev => !prev);
   };
 
   const onCelsiusChange = (userInput: string) => {
@@ -70,9 +70,9 @@ const WaterTempField: React.FC<WaterTempFieldProps> = ({
 
   const toggleComponent = (
     <TouchableOpacity style={inputStyles.unitToggle} onPress={handleToggle}>
-      <Text style={inputStyles.unitToggleText}>{isCelsius ? "°C" : "°F"}</Text>
+      <Text style={inputStyles.unitToggleText}>{isCelsius ? '°C' : '°F'}</Text>
       <Ionicons
-        name="swap-horizontal"
+        name='swap-horizontal'
         size={16}
         color={inputStyles.unitToggleText.color}
       />
@@ -82,10 +82,10 @@ const WaterTempField: React.FC<WaterTempFieldProps> = ({
   return isCelsius ? (
     <NumberInputField
       label={label}
-      unit="°C"
+      unit='°C'
       value={celsiusValue}
       onChangeText={onCelsiusChange}
-      placeholder={"93.0"}
+      placeholder={'93.0'}
       required={required}
       subtitle={subtitle}
       style={style}
@@ -96,10 +96,10 @@ const WaterTempField: React.FC<WaterTempFieldProps> = ({
   ) : (
     <NumberInputField
       label={label}
-      unit="°F"
+      unit='°F'
       value={fahrenheitValue}
       onChangeText={onFahrenheitChange}
-      placeholder={"199.4"}
+      placeholder={'199.4'}
       required={required}
       subtitle={subtitle}
       style={style}

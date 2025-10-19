@@ -1,13 +1,13 @@
-import { CoachingManager } from "./CoachingManager";
-import { CoachingService } from "./CoachingService";
-import { ruleCoachShot } from "../engines/ruleEngine";
-import { classifyExtraction } from "../extraction";
-import { ShotFormData, RoastLevel, Suggestion } from "@types";
+import { CoachingManager } from './CoachingManager';
+import { CoachingService } from './CoachingService';
+import { ruleCoachShot } from '../engines/ruleEngine';
+import { classifyExtraction } from '../extraction';
+import { ShotFormData, RoastLevel, Suggestion } from '@types';
 
 // Mock dependencies
-jest.mock("../engines/ruleEngine");
-jest.mock("../extraction");
-jest.mock("./CoachingService");
+jest.mock('../engines/ruleEngine');
+jest.mock('../extraction');
+jest.mock('./CoachingService');
 
 const mockRuleCoachShot = ruleCoachShot as jest.MockedFunction<
   typeof ruleCoachShot
@@ -19,31 +19,31 @@ const MockCoachingService = CoachingService as jest.MockedClass<
   typeof CoachingService
 >;
 
-describe("Coaching Integration Tests", () => {
+describe('Coaching Integration Tests', () => {
   let coachingManager: CoachingManager;
   let mockCoachingService: jest.Mocked<CoachingService>;
 
   const mockShotFormData: ShotFormData = {
-    beanId: "bean-1",
-    machineId: "machine-1",
-    dose_g: "18.0",
-    yield_g: "36.0",
-    shotTime_s: "30.0",
-    ratio: "2.0",
-    grindSetting: "5.0",
-    waterTemp_C: "93.0",
-    preinfusion_s: "5.0",
+    beanId: 'bean-1',
+    machineId: 'machine-1',
+    dose_g: '18.0',
+    yield_g: '36.0',
+    shotTime_s: '30.0',
+    ratio: '2.0',
+    grindSetting: '5.0',
+    waterTemp_C: '93.0',
+    preinfusion_s: '5.0',
     overallScore: 8,
     acidity: 0.5,
     bitterness: -0.3,
     body: 0.2,
     aftertaste: 0.1,
-    tastingTags: ["balanced", "sweet"],
-    notes: "Great shot!",
+    tastingTags: ['balanced', 'sweet'],
+    notes: 'Great shot!',
     isFavorite: false,
   };
 
-  const mockRoast: RoastLevel = "Medium";
+  const mockRoast: RoastLevel = 'Medium';
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -57,23 +57,23 @@ describe("Coaching Integration Tests", () => {
     MockCoachingService.mockImplementation(() => mockCoachingService);
   });
 
-  describe("Basic Integration", () => {
-    it("should integrate CoachingManager with CoachingService", async () => {
+  describe('Basic Integration', () => {
+    it('should integrate CoachingManager with CoachingService', async () => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: false,
         maxCacheAge: 1000,
       });
 
       const mockSuggestions: Suggestion[] = [
         {
-          field: "dose_g",
+          field: 'dose_g',
           delta: 0.5,
           target: 18.5,
-          reason: "Increase dose for better body",
+          reason: 'Increase dose for better body',
           priority: 2,
-          confidence: "med",
-          source: "rule",
+          confidence: 'med',
+          source: 'rule',
         },
       ];
 
@@ -84,44 +84,44 @@ describe("Coaching Integration Tests", () => {
         mockRoast
       );
 
-      expect(MockCoachingService).toHaveBeenCalledWith("rule", undefined);
+      expect(MockCoachingService).toHaveBeenCalledWith('rule', undefined);
       expect(mockCoachingService.getSuggestions).toHaveBeenCalledWith(
         mockShotFormData,
         mockRoast
       );
       expect(result.suggestions).toEqual(mockSuggestions);
-      expect(result.version).toBe("coach-rule-v4");
+      expect(result.version).toBe('coach-rule-v4');
     });
 
-    it("should handle different coaching modes", async () => {
+    it('should handle different coaching modes', async () => {
       const mockSuggestions: Suggestion[] = [];
 
       // Test AI mode
       const aiManager = new CoachingManager({
-        mode: "ai",
-        aiApiKey: "test-key",
+        mode: 'ai',
+        aiApiKey: 'test-key',
         enableCaching: false,
         maxCacheAge: 1000,
       });
 
-      expect(MockCoachingService).toHaveBeenCalledWith("ai", "test-key");
+      expect(MockCoachingService).toHaveBeenCalledWith('ai', 'test-key');
 
       // Test hybrid mode
       const hybridManager = new CoachingManager({
-        mode: "hybrid",
-        aiApiKey: "test-key",
+        mode: 'hybrid',
+        aiApiKey: 'test-key',
         enableCaching: false,
         maxCacheAge: 1000,
       });
 
-      expect(MockCoachingService).toHaveBeenCalledWith("hybrid", "test-key");
+      expect(MockCoachingService).toHaveBeenCalledWith('hybrid', 'test-key');
     });
   });
 
-  describe("Real-world Integration", () => {
+  describe('Real-world Integration', () => {
     beforeEach(() => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: false,
         maxCacheAge: 1000,
       });
@@ -129,25 +129,25 @@ describe("Coaching Integration Tests", () => {
       // Mock realistic responses
       mockClassifyExtraction.mockReturnValue({
         score: 0.1,
-        label: "balanced",
-        confidence: "high",
-        reason: "Good extraction parameters",
+        label: 'balanced',
+        confidence: 'high',
+        reason: 'Good extraction parameters',
       });
 
       mockRuleCoachShot.mockReturnValue([
         {
-          field: "dose_g",
+          field: 'dose_g',
           delta: 0.3,
           target: 18.3,
-          reason: "Slight increase for better body",
+          reason: 'Slight increase for better body',
           priority: 2,
-          confidence: "med",
-          source: "rule",
+          confidence: 'med',
+          source: 'rule',
         },
       ]);
     });
 
-    it("should complete full coaching flow with real functions", async () => {
+    it('should complete full coaching flow with real functions', async () => {
       // Mock the coaching service to use the real underlying functions
       mockCoachingService.getSuggestions.mockImplementation(
         async (shotData, roast) => {
@@ -162,17 +162,17 @@ describe("Coaching Integration Tests", () => {
       );
 
       expect(result).toMatchObject({
-        version: "coach-rule-v4",
+        version: 'coach-rule-v4',
         suggestions: expect.any(Array),
         inputHash: expect.any(String),
         computedAt: expect.any(String),
       });
 
       expect(result.suggestions).toHaveLength(1);
-      expect(result.suggestions[0].field).toBe("dose_g");
+      expect(result.suggestions[0].field).toBe('dose_g');
     });
 
-    it("should handle typical shot creation workflow", async () => {
+    it('should handle typical shot creation workflow', async () => {
       mockCoachingService.getSuggestions.mockImplementation(
         async (shotData, roast) => {
           const extraction = classifyExtraction(shotData, roast);
@@ -181,67 +181,67 @@ describe("Coaching Integration Tests", () => {
       );
 
       const typicalShot: ShotFormData = {
-        beanId: "bean-123",
-        machineId: "machine-456",
-        dose_g: "18.0",
-        yield_g: "36.0",
-        shotTime_s: "28.0",
-        ratio: "2.0",
-        grindSetting: "4.5",
-        waterTemp_C: "93.0",
-        preinfusion_s: "5.0",
+        beanId: 'bean-123',
+        machineId: 'machine-456',
+        dose_g: '18.0',
+        yield_g: '36.0',
+        shotTime_s: '28.0',
+        ratio: '2.0',
+        grindSetting: '4.5',
+        waterTemp_C: '93.0',
+        preinfusion_s: '5.0',
         overallScore: 8,
         acidity: 0.2,
         bitterness: -0.1,
         body: 0.3,
         aftertaste: 0.1,
-        tastingTags: ["balanced", "sweet", "clean"],
-        notes: "Perfect morning shot",
+        tastingTags: ['balanced', 'sweet', 'clean'],
+        notes: 'Perfect morning shot',
         isFavorite: false,
       };
 
       const result = await coachingManager.getSuggestions(
         typicalShot,
-        "Medium"
+        'Medium'
       );
 
       expect(result.suggestions).toHaveLength(1);
-      expect(result.suggestions[0].field).toBe("dose_g");
+      expect(result.suggestions[0].field).toBe('dose_g');
       expect(result.suggestions[0].delta).toBe(0.3);
       expect(result.suggestions[0].target).toBe(18.3);
     });
   });
 
-  describe("Error Handling Integration", () => {
+  describe('Error Handling Integration', () => {
     beforeEach(() => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: false,
         maxCacheAge: 1000,
       });
     });
 
-    it("should handle coaching service errors", async () => {
+    it('should handle coaching service errors', async () => {
       mockCoachingService.getSuggestions.mockRejectedValue(
-        new Error("Service temporarily unavailable")
+        new Error('Service temporarily unavailable')
       );
 
       await expect(
         coachingManager.getSuggestions(mockShotFormData, mockRoast)
-      ).rejects.toThrow("Service temporarily unavailable");
+      ).rejects.toThrow('Service temporarily unavailable');
     });
   });
 
-  describe("Performance Integration", () => {
+  describe('Performance Integration', () => {
     beforeEach(() => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: false,
         maxCacheAge: 1000,
       });
     });
 
-    it("should handle multiple requests efficiently", async () => {
+    it('should handle multiple requests efficiently', async () => {
       const mockSuggestions: Suggestion[] = [];
       mockCoachingService.getSuggestions.mockResolvedValue(mockSuggestions);
 

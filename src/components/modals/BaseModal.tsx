@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   View,
@@ -10,10 +10,10 @@ import {
   TextStyle,
   ScrollView,
   Keyboard,
-} from "react-native";
+} from 'react-native';
 
-import { colors } from "../../themes/colors";
-import SvgIcon, { IconName } from "../SvgIcon";
+import { colors } from '../../themes/colors';
+import SvgIcon, { IconName } from '../SvgIcon';
 
 export interface IconConfig {
   name: IconName;
@@ -24,7 +24,7 @@ export interface IconConfig {
 export interface ButtonConfig {
   text: string;
   onPress: () => void;
-  variant?: "primary" | "secondary" | "destructive";
+  variant?: 'primary' | 'secondary' | 'destructive';
   style?: ViewStyle;
   textStyle?: TextStyle;
 }
@@ -32,7 +32,7 @@ export interface ButtonConfig {
 export interface BaseModalProps {
   visible: boolean;
   onRequestClose?: () => void;
-  animationType?: "none" | "slide" | "fade";
+  animationType?: 'none' | 'slide' | 'fade';
   iconConfig?: IconConfig;
   headerTitle?: string;
   headerIcon?: IconName;
@@ -47,7 +47,7 @@ export interface BaseModalProps {
 const BaseModal: React.FC<BaseModalProps> = ({
   visible,
   onRequestClose,
-  animationType = "fade",
+  animationType = 'fade',
   iconConfig,
   headerTitle,
   headerIcon,
@@ -75,9 +75,9 @@ const BaseModal: React.FC<BaseModalProps> = ({
   const renderButton = (buttonConfig: ButtonConfig, index: number) => {
     const getButtonStyle = () => {
       switch (buttonConfig.variant) {
-        case "secondary":
+        case 'secondary':
           return [styles.button, styles.secondaryButton, buttonConfig.style];
-        case "destructive":
+        case 'destructive':
           return [styles.button, styles.destructiveButton, buttonConfig.style];
         default:
           return [styles.button, styles.primaryButton, buttonConfig.style];
@@ -86,9 +86,9 @@ const BaseModal: React.FC<BaseModalProps> = ({
 
     const getTextStyle = () => {
       switch (buttonConfig.variant) {
-        case "secondary":
+        case 'secondary':
           return [styles.secondaryButtonText, buttonConfig.textStyle];
-        case "destructive":
+        case 'destructive':
           return [styles.destructiveButtonText, buttonConfig.textStyle];
         default:
           return [styles.primaryButtonText, buttonConfig.textStyle];
@@ -122,7 +122,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
               )}
               <Text style={styles.headerTitle}>{headerTitle}</Text>
               <TouchableOpacity onPress={onRequestClose}>
-                <SvgIcon name="close" size={24} color={colors.textDark} />
+                <SvgIcon name='close' size={24} color={colors.textDark} />
               </TouchableOpacity>
             </View>
           )}
@@ -150,10 +150,10 @@ const BORDER_RADIUS = 12;
 
 const styles = StyleSheet.create({
   overlay: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
     padding: 16,
     // Ensure modal is above other content on web
     ...Platform.select({
@@ -165,10 +165,10 @@ const styles = StyleSheet.create({
   modalContainer: {
     backgroundColor: colors.white,
     borderRadius: BORDER_RADIUS,
-    padding: MODAL_PADDING,
-    width: "100%",
+    elevation: 8,
+    maxHeight: '85%',
     maxWidth: 400,
-    maxHeight: "85%",
+    padding: MODAL_PADDING,
     shadowColor: colors.black,
     shadowOffset: {
       width: 0,
@@ -176,89 +176,89 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 8,
-    elevation: 8,
+    width: '100%',
   },
   // Allows content to grow and push footer while staying inside container
   contentContainer: {
     flexShrink: 1,
     gap: MODAL_PADDING / 2,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: MODAL_PADDING,
-    marginBottom: MODAL_PADDING,
-    marginTop: -MODAL_PADDING,
-    marginHorizontal: -MODAL_PADDING,
+    alignItems: 'center',
     backgroundColor: colors.white,
-    borderBottomWidth: 1,
     borderBottomColor: colors.borderLight,
-    gap: 8,
+    borderBottomWidth: 1,
     borderTopLeftRadius: BORDER_RADIUS,
     borderTopRightRadius: BORDER_RADIUS,
+    flexDirection: 'row',
+    gap: 8,
+    justifyContent: 'space-between',
+    marginBottom: MODAL_PADDING,
+    marginHorizontal: -MODAL_PADDING,
+    marginTop: -MODAL_PADDING,
+    padding: MODAL_PADDING,
   },
   headerTitle: {
+    color: colors.textDark,
     flex: 1,
     fontSize: 20,
-    fontWeight: "bold",
-    color: colors.textDark,
+    fontWeight: 'bold',
   },
   iconContainer: {
-    alignItems: "center",
+    alignItems: 'center',
   },
   title: {
-    fontSize: 20,
-    fontWeight: "bold",
     color: colors.textDark,
-    textAlign: "center",
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   message: {
-    fontSize: 14,
     color: colors.textMedium,
+    fontSize: 14,
     lineHeight: 22,
   },
   buttonContainer: {
-    minHeight: 44,
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 12,
+    minHeight: 44,
     paddingTop: MODAL_PADDING,
   },
   button: {
-    flex: 1,
-    minHeight: 44,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    alignItems: 'center',
     borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
+    flex: 1,
+    justifyContent: 'center',
+    minHeight: 44,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   primaryButton: {
     backgroundColor: colors.primary,
   },
   secondaryButton: {
     backgroundColor: colors.bgLight,
-    borderWidth: 1,
     borderColor: colors.borderLight,
+    borderWidth: 1,
   },
   destructiveButton: {
     backgroundColor: colors.error,
   },
   primaryButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
     color: colors.white,
+    fontSize: 16,
+    fontWeight: '600',
   },
   secondaryButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
     color: colors.textDark,
+    fontSize: 16,
+    fontWeight: '600',
   },
   destructiveButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
     color: colors.white,
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 

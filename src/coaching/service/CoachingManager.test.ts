@@ -1,12 +1,12 @@
-import { CoachingManager } from "./CoachingManager";
-import { CoachingService } from "./CoachingService";
-import { COACHING_MODE_CONFIG, generateInputHash } from "../versions";
-import { ShotFormData, RoastLevel, Suggestion, CoachingSnapshot } from "@types";
+import { CoachingManager } from './CoachingManager';
+import { CoachingService } from './CoachingService';
+import { COACHING_MODE_CONFIG, generateInputHash } from '../versions';
+import { ShotFormData, RoastLevel, Suggestion, CoachingSnapshot } from '@types';
 
 // Mock dependencies
-jest.mock("./CoachingService");
-jest.mock("../versions", () => ({
-  ...jest.requireActual("../versions"),
+jest.mock('./CoachingService');
+jest.mock('../versions', () => ({
+  ...jest.requireActual('../versions'),
   generateInputHash: jest.fn(),
 }));
 
@@ -17,41 +17,41 @@ const mockGenerateInputHash = generateInputHash as jest.MockedFunction<
   typeof generateInputHash
 >;
 
-describe("CoachingManager", () => {
+describe('CoachingManager', () => {
   let coachingManager: CoachingManager;
   let mockCoachingService: jest.Mocked<CoachingService>;
 
   const mockShotFormData: ShotFormData = {
-    beanId: "bean-1",
-    machineId: "machine-1",
-    dose_g: "18.0",
-    yield_g: "36.0",
-    shotTime_s: "30.0",
-    ratio: "2.0",
-    grindSetting: "5.0",
-    waterTemp_C: "93.0",
-    preinfusion_s: "5.0",
+    beanId: 'bean-1',
+    machineId: 'machine-1',
+    dose_g: '18.0',
+    yield_g: '36.0',
+    shotTime_s: '30.0',
+    ratio: '2.0',
+    grindSetting: '5.0',
+    waterTemp_C: '93.0',
+    preinfusion_s: '5.0',
     overallScore: 4.5, // Auto-calculated score (0-10)
     acidity: 0.5,
     bitterness: -0.3,
     body: 0.2,
     aftertaste: 0.1,
-    tastingTags: ["balanced", "sweet"],
-    notes: "Great shot!",
+    tastingTags: ['balanced', 'sweet'],
+    notes: 'Great shot!',
     isFavorite: false,
   };
 
-  const mockRoast: RoastLevel = "Medium";
+  const mockRoast: RoastLevel = 'Medium';
 
   const mockSuggestions: Suggestion[] = [
     {
-      field: "dose_g",
+      field: 'dose_g',
       delta: 0.5,
       target: 18.5,
-      reason: "Slightly increase dose for better body",
+      reason: 'Slightly increase dose for better body',
       priority: 2,
-      confidence: "med",
-      source: "rule",
+      confidence: 'med',
+      source: 'rule',
     },
   ];
 
@@ -63,48 +63,48 @@ describe("CoachingManager", () => {
     } as any;
 
     MockCoachingService.mockImplementation(() => mockCoachingService);
-    mockGenerateInputHash.mockReturnValue("test-hash-123");
+    mockGenerateInputHash.mockReturnValue('test-hash-123');
   });
 
-  describe("Constructor and Configuration", () => {
-    it("should initialize with rule mode by default", () => {
+  describe('Constructor and Configuration', () => {
+    it('should initialize with rule mode by default', () => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: false,
         maxCacheAge: 1000,
       });
 
-      expect(MockCoachingService).toHaveBeenCalledWith("rule", undefined);
+      expect(MockCoachingService).toHaveBeenCalledWith('rule', undefined);
       expect(coachingManager.getVersion()).toBe(
         COACHING_MODE_CONFIG.rule.version
       );
     });
 
-    it("should initialize with AI mode and API key", () => {
+    it('should initialize with AI mode and API key', () => {
       coachingManager = new CoachingManager({
-        mode: "ai",
-        aiApiKey: "test-api-key",
+        mode: 'ai',
+        aiApiKey: 'test-api-key',
         enableCaching: false,
         maxCacheAge: 1000,
       });
 
-      expect(MockCoachingService).toHaveBeenCalledWith("ai", "test-api-key");
+      expect(MockCoachingService).toHaveBeenCalledWith('ai', 'test-api-key');
       expect(coachingManager.getVersion()).toBe(
         COACHING_MODE_CONFIG.ai.version
       );
     });
 
-    it("should initialize with hybrid mode", () => {
+    it('should initialize with hybrid mode', () => {
       coachingManager = new CoachingManager({
-        mode: "hybrid",
-        aiApiKey: "test-api-key",
+        mode: 'hybrid',
+        aiApiKey: 'test-api-key',
         enableCaching: false,
         maxCacheAge: 1000,
       });
 
       expect(MockCoachingService).toHaveBeenCalledWith(
-        "hybrid",
-        "test-api-key"
+        'hybrid',
+        'test-api-key'
       );
       expect(coachingManager.getVersion()).toBe(
         COACHING_MODE_CONFIG.hybrid.version
@@ -112,16 +112,16 @@ describe("CoachingManager", () => {
     });
   });
 
-  describe("getSuggestions", () => {
+  describe('getSuggestions', () => {
     beforeEach(() => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: false,
         maxCacheAge: 1000,
       });
     });
 
-    it("should generate suggestions without caching", async () => {
+    it('should generate suggestions without caching', async () => {
       const result = await coachingManager.getSuggestions(
         mockShotFormData,
         mockRoast
@@ -134,12 +134,12 @@ describe("CoachingManager", () => {
       expect(result).toEqual({
         version: COACHING_MODE_CONFIG.rule.version,
         suggestions: mockSuggestions,
-        inputHash: "rule-test-hash-123",
+        inputHash: 'rule-test-hash-123',
         computedAt: expect.any(String),
       });
     });
 
-    it("should generate suggestions with force refresh", async () => {
+    it('should generate suggestions with force refresh', async () => {
       const result = await coachingManager.getSuggestions(
         mockShotFormData,
         mockRoast,
@@ -155,7 +155,7 @@ describe("CoachingManager", () => {
       expect(result).toBeDefined();
     });
 
-    it("should use current timestamp for computedAt", async () => {
+    it('should use current timestamp for computedAt', async () => {
       const beforeTime = Date.now();
       const result = await coachingManager.getSuggestions(
         mockShotFormData,
@@ -168,13 +168,13 @@ describe("CoachingManager", () => {
       expect(computedTime).toBeLessThanOrEqual(afterTime);
     });
 
-    it("should handle different roast levels", async () => {
+    it('should handle different roast levels', async () => {
       const roastLevels: RoastLevel[] = [
-        "Light",
-        "Medium Light",
-        "Medium",
-        "Medium Dark",
-        "Dark",
+        'Light',
+        'Medium Light',
+        'Medium',
+        'Medium Dark',
+        'Dark',
       ];
 
       for (const roast of roastLevels) {
@@ -187,16 +187,16 @@ describe("CoachingManager", () => {
     });
   });
 
-  describe("Caching Behavior", () => {
+  describe('Caching Behavior', () => {
     beforeEach(() => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: true,
         maxCacheAge: 1000, // 1 second for testing
       });
     });
 
-    it("should cache suggestions when caching is enabled", async () => {
+    it('should cache suggestions when caching is enabled', async () => {
       // First call
       await coachingManager.getSuggestions(mockShotFormData, mockRoast);
 
@@ -206,7 +206,7 @@ describe("CoachingManager", () => {
       expect(mockCoachingService.getSuggestions).toHaveBeenCalledTimes(1);
     });
 
-    it("should bypass cache with force refresh", async () => {
+    it('should bypass cache with force refresh', async () => {
       // First call
       await coachingManager.getSuggestions(mockShotFormData, mockRoast);
 
@@ -218,7 +218,7 @@ describe("CoachingManager", () => {
       expect(mockCoachingService.getSuggestions).toHaveBeenCalledTimes(2);
     });
 
-    it("should bypass cache when useCache is false", async () => {
+    it('should bypass cache when useCache is false', async () => {
       // First call
       await coachingManager.getSuggestions(mockShotFormData, mockRoast);
 
@@ -230,12 +230,12 @@ describe("CoachingManager", () => {
       expect(mockCoachingService.getSuggestions).toHaveBeenCalledTimes(2);
     });
 
-    it("should expire cache after maxCacheAge", async () => {
+    it('should expire cache after maxCacheAge', async () => {
       // First call
       await coachingManager.getSuggestions(mockShotFormData, mockRoast);
 
       // Wait for cache to expire
-      await new Promise((resolve) => setTimeout(resolve, 1100));
+      await new Promise(resolve => setTimeout(resolve, 1100));
 
       // Second call should generate new suggestions
       await coachingManager.getSuggestions(mockShotFormData, mockRoast);
@@ -243,16 +243,16 @@ describe("CoachingManager", () => {
       expect(mockCoachingService.getSuggestions).toHaveBeenCalledTimes(2);
     });
 
-    it("should generate different cache keys for different parameters", async () => {
+    it('should generate different cache keys for different parameters', async () => {
       const differentShotData: ShotFormData = {
         ...mockShotFormData,
-        dose_g: "20.0", // Different dose
+        dose_g: '20.0', // Different dose
       };
 
       // Mock different hash values for different inputs
       mockGenerateInputHash
-        .mockReturnValueOnce("hash-for-original")
-        .mockReturnValueOnce("hash-for-different");
+        .mockReturnValueOnce('hash-for-original')
+        .mockReturnValueOnce('hash-for-different');
 
       // First call with original data
       await coachingManager.getSuggestions(mockShotFormData, mockRoast);
@@ -263,32 +263,32 @@ describe("CoachingManager", () => {
       expect(mockCoachingService.getSuggestions).toHaveBeenCalledTimes(2);
     });
 
-    it("should generate different cache keys for different roast levels", async () => {
+    it('should generate different cache keys for different roast levels', async () => {
       // Mock different hash values for different roast levels
       mockGenerateInputHash
-        .mockReturnValueOnce("hash-for-medium")
-        .mockReturnValueOnce("hash-for-light");
+        .mockReturnValueOnce('hash-for-medium')
+        .mockReturnValueOnce('hash-for-light');
 
       // First call with Medium roast
-      await coachingManager.getSuggestions(mockShotFormData, "Medium");
+      await coachingManager.getSuggestions(mockShotFormData, 'Medium');
 
       // Second call with Light roast
-      await coachingManager.getSuggestions(mockShotFormData, "Light");
+      await coachingManager.getSuggestions(mockShotFormData, 'Light');
 
       expect(mockCoachingService.getSuggestions).toHaveBeenCalledTimes(2);
     });
   });
 
-  describe("Cache Key Generation", () => {
+  describe('Cache Key Generation', () => {
     beforeEach(() => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: true,
         maxCacheAge: 1000,
       });
     });
 
-    it("should include all relevant parameters in cache key", async () => {
+    it('should include all relevant parameters in cache key', async () => {
       await coachingManager.getSuggestions(mockShotFormData, mockRoast);
 
       expect(mockGenerateInputHash).toHaveBeenCalledWith({
@@ -301,7 +301,7 @@ describe("CoachingManager", () => {
         time: 30.0,
         temp: 93.0,
         // roast and taste profile
-        roast: "Medium",
+        roast: 'Medium',
         acidity: 0.5,
         bitterness: -0.3,
         body: 0.2,
@@ -310,9 +310,9 @@ describe("CoachingManager", () => {
       });
     });
 
-    it("should use correct cache prefix for rule mode", async () => {
+    it('should use correct cache prefix for rule mode', async () => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: true,
         maxCacheAge: 1000,
       });
@@ -326,9 +326,9 @@ describe("CoachingManager", () => {
       );
     });
 
-    it("should use correct cache prefix for AI mode", async () => {
+    it('should use correct cache prefix for AI mode', async () => {
       coachingManager = new CoachingManager({
-        mode: "ai",
+        mode: 'ai',
         enableCaching: true,
         maxCacheAge: 1000,
       });
@@ -342,9 +342,9 @@ describe("CoachingManager", () => {
       );
     });
 
-    it("should use correct cache prefix for hybrid mode", async () => {
+    it('should use correct cache prefix for hybrid mode', async () => {
       coachingManager = new CoachingManager({
-        mode: "hybrid",
+        mode: 'hybrid',
         enableCaching: true,
         maxCacheAge: 1000,
       });
@@ -359,39 +359,39 @@ describe("CoachingManager", () => {
     });
   });
 
-  describe("Cache Management", () => {
+  describe('Cache Management', () => {
     beforeEach(() => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: true,
         maxCacheAge: 1000,
       });
     });
 
-    it("should clear cache", () => {
+    it('should clear cache', () => {
       coachingManager.clearCache();
       // No direct way to test cache clearing, but method should not throw
       expect(() => coachingManager.clearCache()).not.toThrow();
     });
 
-    it("should return cache statistics", () => {
+    it('should return cache statistics', () => {
       const stats = coachingManager.getCacheStats();
 
-      expect(stats).toHaveProperty("size");
-      expect(stats).toHaveProperty("keys");
-      expect(typeof stats.size).toBe("number");
+      expect(stats).toHaveProperty('size');
+      expect(stats).toHaveProperty('keys');
+      expect(typeof stats.size).toBe('number');
       expect(Array.isArray(stats.keys)).toBe(true);
     });
 
-    it("should track cache entries correctly", async () => {
+    it('should track cache entries correctly', async () => {
       // Initially empty cache
       let stats = coachingManager.getCacheStats();
       expect(stats.size).toBe(0);
 
       // Mock different hash values for different inputs
       mockGenerateInputHash
-        .mockReturnValueOnce("hash-for-first")
-        .mockReturnValueOnce("hash-for-second");
+        .mockReturnValueOnce('hash-for-first')
+        .mockReturnValueOnce('hash-for-second');
 
       // Add one entry
       await coachingManager.getSuggestions(mockShotFormData, mockRoast);
@@ -399,17 +399,17 @@ describe("CoachingManager", () => {
       expect(stats.size).toBe(1);
 
       // Add another entry with different parameters
-      const differentData = { ...mockShotFormData, dose_g: "20.0" };
+      const differentData = { ...mockShotFormData, dose_g: '20.0' };
       await coachingManager.getSuggestions(differentData, mockRoast);
       stats = coachingManager.getCacheStats();
       expect(stats.size).toBe(2);
     });
   });
 
-  describe("Version Management", () => {
-    it("should return correct version for rule mode", () => {
+  describe('Version Management', () => {
+    it('should return correct version for rule mode', () => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: false,
         maxCacheAge: 1000,
       });
@@ -419,9 +419,9 @@ describe("CoachingManager", () => {
       );
     });
 
-    it("should return correct version for AI mode", () => {
+    it('should return correct version for AI mode', () => {
       coachingManager = new CoachingManager({
-        mode: "ai",
+        mode: 'ai',
         enableCaching: false,
         maxCacheAge: 1000,
       });
@@ -431,9 +431,9 @@ describe("CoachingManager", () => {
       );
     });
 
-    it("should return correct version for hybrid mode", () => {
+    it('should return correct version for hybrid mode', () => {
       coachingManager = new CoachingManager({
-        mode: "hybrid",
+        mode: 'hybrid',
         enableCaching: false,
         maxCacheAge: 1000,
       });
@@ -444,39 +444,39 @@ describe("CoachingManager", () => {
     });
   });
 
-  describe("Error Handling", () => {
+  describe('Error Handling', () => {
     beforeEach(() => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: false,
         maxCacheAge: 1000,
       });
     });
 
-    it("should handle coaching service errors", async () => {
+    it('should handle coaching service errors', async () => {
       mockCoachingService.getSuggestions.mockRejectedValue(
-        new Error("Service error")
+        new Error('Service error')
       );
 
       await expect(
         coachingManager.getSuggestions(mockShotFormData, mockRoast)
-      ).rejects.toThrow("Service error");
+      ).rejects.toThrow('Service error');
     });
 
-    it("should handle hash generation errors", async () => {
+    it('should handle hash generation errors', async () => {
       mockGenerateInputHash.mockImplementation(() => {
-        throw new Error("Hash generation failed");
+        throw new Error('Hash generation failed');
       });
 
       await expect(
         coachingManager.getSuggestions(mockShotFormData, mockRoast)
-      ).rejects.toThrow("Hash generation failed");
+      ).rejects.toThrow('Hash generation failed');
     });
 
-    it("should handle invalid shot form data", async () => {
+    it('should handle invalid shot form data', async () => {
       const invalidShotData = {
         ...mockShotFormData,
-        dose_g: "invalid", // Invalid number - parseFloat returns NaN
+        dose_g: 'invalid', // Invalid number - parseFloat returns NaN
       } as any;
 
       // Should handle gracefully (parseFloat returns NaN, not an error)
@@ -491,16 +491,16 @@ describe("CoachingManager", () => {
     });
   });
 
-  describe("Edge Cases", () => {
+  describe('Edge Cases', () => {
     beforeEach(() => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: false,
         maxCacheAge: 1000,
       });
     });
 
-    it("should handle empty suggestions", async () => {
+    it('should handle empty suggestions', async () => {
       mockCoachingService.getSuggestions.mockResolvedValue([]);
 
       const result = await coachingManager.getSuggestions(
@@ -512,14 +512,14 @@ describe("CoachingManager", () => {
       expect(result.version).toBe(COACHING_MODE_CONFIG.rule.version);
     });
 
-    it("should handle extreme shot parameters", async () => {
+    it('should handle extreme shot parameters', async () => {
       const extremeData: ShotFormData = {
         ...mockShotFormData,
-        dose_g: "50.0",
-        yield_g: "10.0",
-        shotTime_s: "60.0",
-        ratio: "0.2",
-        waterTemp_C: "100.0",
+        dose_g: '50.0',
+        yield_g: '10.0',
+        shotTime_s: '60.0',
+        ratio: '0.2',
+        waterTemp_C: '100.0',
         acidity: 1.0,
         bitterness: 1.0,
         body: 1.0,
@@ -547,14 +547,14 @@ describe("CoachingManager", () => {
       );
     });
 
-    it("should handle zero values", async () => {
+    it('should handle zero values', async () => {
       const zeroData: ShotFormData = {
         ...mockShotFormData,
-        dose_g: "0",
-        yield_g: "0",
-        shotTime_s: "0",
-        ratio: "0",
-        waterTemp_C: "0",
+        dose_g: '0',
+        yield_g: '0',
+        shotTime_s: '0',
+        ratio: '0',
+        waterTemp_C: '0',
         acidity: 0,
         bitterness: 0,
         body: 0,
@@ -579,7 +579,7 @@ describe("CoachingManager", () => {
       );
     });
 
-    it("should handle negative values", async () => {
+    it('should handle negative values', async () => {
       const negativeData: ShotFormData = {
         ...mockShotFormData,
         acidity: -1.0,
@@ -605,10 +605,10 @@ describe("CoachingManager", () => {
     });
   });
 
-  describe("Performance", () => {
-    it("should handle multiple concurrent requests", async () => {
+  describe('Performance', () => {
+    it('should handle multiple concurrent requests', async () => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: false,
         maxCacheAge: 1000,
       });
@@ -631,9 +631,9 @@ describe("CoachingManager", () => {
       expect(mockCoachingService.getSuggestions).toHaveBeenCalledTimes(10);
     });
 
-    it("should handle caching with concurrent requests", async () => {
+    it('should handle caching with concurrent requests', async () => {
       coachingManager = new CoachingManager({
-        mode: "rule",
+        mode: 'rule',
         enableCaching: true,
         maxCacheAge: 1000,
       });
@@ -642,7 +642,7 @@ describe("CoachingManager", () => {
       mockCoachingService.getSuggestions.mockResolvedValue(mockSuggestions);
 
       // Mock the same hash for all concurrent requests
-      mockGenerateInputHash.mockReturnValue("same-hash-for-all");
+      mockGenerateInputHash.mockReturnValue('same-hash-for-all');
 
       // First, make one request to populate the cache
       await coachingManager.getSuggestions(mockShotFormData, mockRoast);

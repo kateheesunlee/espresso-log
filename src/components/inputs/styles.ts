@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native";
-import { colors } from "../../themes/colors";
+import { StyleSheet } from 'react-native';
+import { colors } from '../../themes/colors';
 
 // Shared input component styles
 export const inputStyles = StyleSheet.create({
@@ -10,49 +10,49 @@ export const inputStyles = StyleSheet.create({
 
   // Label and text styles
   labelRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 8,
   },
   labelContainer: {
+    alignItems: 'center',
     flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
   },
   label: {
-    fontSize: 16,
-    fontWeight: "600",
     color: colors.textDark,
+    fontSize: 16,
+    fontWeight: '600',
     marginRight: 8,
   },
   subLabel: {
-    fontSize: 14,
     color: colors.textMedium,
-    marginRight: 8,
     flex: 1,
+    fontSize: 14,
+    marginRight: 8,
   },
   unitToggle: {
-    flexDirection: "row",
-    alignItems: "center",
+    alignItems: 'center',
     backgroundColor: colors.bgLight,
+    borderColor: colors.borderLight,
     borderRadius: 6,
+    borderWidth: 1,
+    flexDirection: 'row',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
   },
   unitToggleText: {
-    fontSize: 12,
-    fontWeight: "600",
     color: colors.primary,
+    fontSize: 12,
+    fontWeight: '600',
     marginRight: 4,
   },
   subtitle: {
-    fontSize: 14,
     color: colors.textMedium,
+    fontSize: 14,
+    fontStyle: 'italic',
     marginBottom: 8,
-    fontStyle: "italic",
   },
   required: {
     color: colors.error,
@@ -61,53 +61,53 @@ export const inputStyles = StyleSheet.create({
   // Input field styles
   textInput: {
     backgroundColor: colors.white,
+    borderColor: colors.borderLight,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.borderLight,
-    padding: 12,
     fontSize: 16,
+    padding: 12,
   },
   multilineInput: {
     height: 100,
-    textAlignVertical: "top",
+    textAlignVertical: 'top',
   },
 
   // Number input specific styles
   inputRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    alignItems: 'center',
+    flexDirection: 'row',
   },
   numberInputContainer: {
-    flex: 1,
     backgroundColor: colors.white,
+    borderColor: colors.borderLight,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.borderLight,
+    flex: 1,
     marginRight: 8,
-    position: "relative",
+    position: 'relative',
   },
   numberInput: {
     padding: 12,
     paddingLeft: 40, // Make room for clear button
     paddingRight: 40, // Make room for unit overlay
     fontSize: 16,
-    textAlign: "center",
+    textAlign: 'center',
   },
   unitOverlay: {
-    position: "absolute",
-    right: 12,
-    top: 12,
-    fontSize: 16,
     color: colors.textMedium,
-    pointerEvents: "none", // Don't interfere with input
+    fontSize: 16,
+    pointerEvents: 'none',
+    position: 'absolute',
+    right: 12,
+    top: 12, // Don't interfere with input
   },
   clearButtonOverlay: {
-    position: "absolute",
+    position: 'absolute',
     left: 8,
-    top: "50%",
+    top: '50%',
     transform: [{ translateY: -12 }], // Can't use percentage here. Roughly half of clear button height
     padding: 2,
-    borderRadius: "50%",
+    borderRadius: '50%',
     borderWidth: 1,
     borderColor: colors.borderLight,
     backgroundColor: colors.bgLight,
@@ -116,27 +116,27 @@ export const inputStyles = StyleSheet.create({
     color: colors.textLight,
   },
   arrowButtons: {
-    flexDirection: "row",
-    alignItems: "center",
+    alignItems: 'center',
+    flexDirection: 'row',
     marginLeft: 0,
   },
   arrowButton: {
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
+    alignItems: 'center',
     backgroundColor: colors.primaryLighter,
-    borderWidth: 1,
     borderColor: colors.primary,
+    borderWidth: 1,
+    height: 40,
+    justifyContent: 'center',
+    width: 40,
   },
   arrowButtonLeft: {
-    borderTopLeftRadius: 8,
     borderBottomLeftRadius: 8,
     borderRightWidth: 0,
+    borderTopLeftRadius: 8,
   },
   arrowButtonRight: {
-    borderTopRightRadius: 8,
     borderBottomRightRadius: 8,
+    borderTopRightRadius: 8,
   },
   arrowIcon: {
     color: colors.primary,

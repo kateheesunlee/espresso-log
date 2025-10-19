@@ -1,12 +1,12 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { colors } from "../../themes/colors";
-import FormField from "../inputs/FormField";
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { colors } from '../../themes/colors';
+import FormField from '../inputs/FormField';
 
 export interface ExpirationPeriodSelectorProps {
   value: number;
   onValueChange: (value: number) => void;
-  dateType?: "roasting" | "opening";
+  dateType?: 'roasting' | 'opening';
   label?: string;
   subtitle?: string;
 }
@@ -14,12 +14,12 @@ export interface ExpirationPeriodSelectorProps {
 const ExpirationPeriodSelector: React.FC<ExpirationPeriodSelectorProps> = ({
   value,
   onValueChange,
-  dateType = "roasting",
-  label = "Freshness Period",
+  dateType = 'roasting',
+  label = 'Freshness Period',
   subtitle,
 }) => {
   const defaultSubtitle = `How long do these beans stay fresh after ${
-    dateType === "roasting" ? "roasting" : "opening"
+    dateType === 'roasting' ? 'roasting' : 'opening'
   }?`;
   const displaySubtitle = subtitle || defaultSubtitle;
   const options = [1, 2, 3, 4];
@@ -27,13 +27,13 @@ const ExpirationPeriodSelector: React.FC<ExpirationPeriodSelectorProps> = ({
   const getOptionLabel = (weeks: number) => {
     switch (weeks) {
       case 1:
-        return "1 week";
+        return '1 week';
       case 2:
-        return "2 weeks";
+        return '2 weeks';
       case 3:
-        return "3 weeks";
+        return '3 weeks';
       case 4:
-        return "4 weeks";
+        return '4 weeks';
       default:
         return `${weeks} weeks`;
     }
@@ -42,22 +42,22 @@ const ExpirationPeriodSelector: React.FC<ExpirationPeriodSelectorProps> = ({
   const getOptionDescription = (weeks: number) => {
     switch (weeks) {
       case 1:
-        return "Ultra fresh";
+        return 'Ultra fresh';
       case 2:
-        return "Fresh";
+        return 'Fresh';
       case 3:
-        return "Good";
+        return 'Good';
       case 4:
-        return "Extended";
+        return 'Extended';
       default:
-        return "";
+        return '';
     }
   };
 
   return (
     <FormField label={label} subtitle={displaySubtitle}>
       <View style={styles.optionsContainer}>
-        {options.map((weeks) => (
+        {options.map(weeks => (
           <TouchableOpacity
             key={weeks}
             style={[styles.option, value === weeks && styles.optionSelected]}
@@ -87,40 +87,40 @@ const ExpirationPeriodSelector: React.FC<ExpirationPeriodSelectorProps> = ({
 };
 
 const styles = StyleSheet.create({
-  optionsContainer: {
-    flexDirection: "row",
-    gap: 8,
-  },
   option: {
-    flex: 1,
+    alignItems: 'center',
     backgroundColor: colors.hover,
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    borderWidth: 2,
     borderColor: colors.borderLight,
-    alignItems: "center",
+    borderRadius: 12,
+    borderWidth: 2,
+    flex: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 12,
   },
-  optionSelected: {
-    backgroundColor: colors.primaryLight,
-    borderColor: colors.primary,
+  optionDescription: {
+    color: colors.textMedium,
+    fontSize: 10,
+    textAlign: 'center',
+  },
+  optionDescriptionSelected: {
+    color: colors.primary,
   },
   optionLabel: {
-    fontSize: 16,
-    fontWeight: "700",
     color: colors.text,
+    fontSize: 16,
+    fontWeight: '700',
     marginBottom: 2,
   },
   optionLabelSelected: {
     color: colors.primary,
   },
-  optionDescription: {
-    fontSize: 10,
-    color: colors.textMedium,
-    textAlign: "center",
+  optionSelected: {
+    backgroundColor: colors.primaryLight,
+    borderColor: colors.primary,
   },
-  optionDescriptionSelected: {
-    color: colors.primary,
+  optionsContainer: {
+    flexDirection: 'row',
+    gap: 8,
   },
 });
 

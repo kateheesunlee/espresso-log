@@ -1,4 +1,4 @@
-import { TASTE_BALANCE_QUALITY_INDICATORS_BY_LABEL } from "@types";
+import { TASTE_BALANCE_QUALITY_INDICATORS_BY_LABEL } from '@types';
 
 const EPS = 0.08; // near-zero cutoff
 const BAND_THRESHOLDS = {
@@ -9,23 +9,23 @@ const BAND_THRESHOLDS = {
 };
 
 // Strength band definition
-type Band = "slight" | "moderate" | "strong" | "extreme";
+type Band = 'slight' | 'moderate' | 'strong' | 'extreme';
 
 type Trio = [string, string, string];
 
 const adverbByBand: Record<Band, string> = {
-  slight: "Slightly",
-  moderate: "Moderately",
-  strong: "Strongly",
-  extreme: "Extremely",
+  slight: 'Slightly',
+  moderate: 'Moderately',
+  strong: 'Strongly',
+  extreme: 'Extremely',
 };
 
 function bandOf(abs: number): Band | null {
   if (abs < EPS) return null;
-  if (abs <= BAND_THRESHOLDS.slight) return "slight";
-  if (abs <= BAND_THRESHOLDS.moderate) return "moderate";
-  if (abs <= BAND_THRESHOLDS.strong) return "strong";
-  return "extreme";
+  if (abs <= BAND_THRESHOLDS.slight) return 'slight';
+  if (abs <= BAND_THRESHOLDS.moderate) return 'moderate';
+  if (abs <= BAND_THRESHOLDS.strong) return 'strong';
+  return 'extreme';
 }
 
 // Band-based adverb
@@ -44,6 +44,14 @@ function adverbByBandOf(abs: number): string | null {
  * left and right are an adverb + lowercase adjective
  */
 export function formatBalance(value: number, labels: [string, string, string]) {
+  // Safety checks
+  if (typeof value !== 'number' || isNaN(value)) {
+    return labels[1] || 'Unknown'; // Return center label or fallback
+  }
+  if (!labels || labels.length !== 3) {
+    return 'Unknown';
+  }
+
   const [left, center, right] = labels;
   const abs = Math.abs(value);
   const b = bandOf(abs);
@@ -65,27 +73,27 @@ export function formatTastingSummary({
 }): string {
   // If all values are less than EPS, return "Balanced overall"
   const all = [acidity, bitterness, body, aftertaste];
-  if (all.every((v) => Math.abs(v) < EPS)) return "Balanced overall";
+  if (all.every(v => Math.abs(v) < EPS)) return 'Balanced overall';
 
   // Sort by absolute value (intensity level): bitterness → acidity → aftertaste → body
   const items = [
     {
-      key: "Bitterness",
+      key: 'Bitterness',
       value: bitterness,
       labels: TASTE_BALANCE_QUALITY_INDICATORS_BY_LABEL.Bitterness as Trio,
     },
     {
-      key: "Acidity",
+      key: 'Acidity',
       value: acidity,
       labels: TASTE_BALANCE_QUALITY_INDICATORS_BY_LABEL.Acidity as Trio,
     },
     {
-      key: "Aftertaste",
+      key: 'Aftertaste',
       value: aftertaste,
       labels: TASTE_BALANCE_QUALITY_INDICATORS_BY_LABEL.Aftertaste as Trio,
     },
     {
-      key: "Body",
+      key: 'Body',
       value: body,
       labels: TASTE_BALANCE_QUALITY_INDICATORS_BY_LABEL.Body as Trio,
     },
@@ -104,7 +112,7 @@ export function formatTastingSummary({
   }
 
   // Generate phrases in order of band severity (extreme → strong → moderate → slight)
-  const order: Band[] = ["extreme", "strong", "moderate", "slight"];
+  const order: Band[] = ['extreme', 'strong', 'moderate', 'slight'];
   const parts: string[] = [];
 
   for (const b of order) {
@@ -116,11 +124,11 @@ export function formatTastingSummary({
 
     // Format the phrase
     const phrase =
-      uniq.length > 0 ? `${adverbByBand[b]} ${uniq.join(", ")}` : "";
+      uniq.length > 0 ? `${adverbByBand[b]} ${uniq.join(', ')}` : '';
 
     if (phrase) parts.push(phrase);
   }
 
   // If no phrases are generated, return "Balanced overall"
-  return parts.length ? parts.join(", ") : "Balanced overall";
+  return parts.length ? parts.join(', ') : 'Balanced overall';
 }

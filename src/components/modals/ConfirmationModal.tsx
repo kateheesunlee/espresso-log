@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
-import { IconName } from "../SvgIcon";
-import BaseModal, { ButtonConfig, IconConfig } from "./BaseModal";
+import { IconName } from '../SvgIcon';
+import BaseModal, { ButtonConfig, IconConfig } from './BaseModal';
 
 interface ConfirmationModalProps {
   visible: boolean;
@@ -19,8 +19,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   visible,
   title,
   message,
-  confirmText = "Confirm",
-  cancelText = "Cancel",
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
   onConfirm,
   onCancel,
   destructive = false,
@@ -30,12 +30,12 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     {
       text: cancelText,
       onPress: onCancel,
-      variant: "secondary",
+      variant: 'secondary',
     },
     {
       text: confirmText,
       onPress: onConfirm,
-      variant: destructive ? "destructive" : "primary",
+      variant: destructive ? 'destructive' : 'primary',
     },
   ];
 
@@ -43,7 +43,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     <BaseModal
       visible={visible}
       onRequestClose={onCancel}
-      animationType="fade"
+      animationType='fade'
       title={title}
       message={message}
       buttonConfigs={buttonConfigs}

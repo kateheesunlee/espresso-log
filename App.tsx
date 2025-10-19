@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
-import { StatusBar } from "expo-status-bar";
-import { View, StyleSheet, ActivityIndicator } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import AppNavigator from "./src/navigation/AppNavigator";
-import { useStore } from "./src/store/useStore";
-import { colors } from "./src/themes/colors";
+import React, { useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import AppNavigator from './src/navigation/AppNavigator';
+import { useStore } from './src/store/useStore';
+import { colors } from './src/themes/colors';
 
 export default function App() {
   const { initializeApp, isLoading } = useStore();
@@ -16,7 +16,7 @@ export default function App() {
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator size='large' color={colors.primary} />
       </View>
     );
   }
@@ -24,10 +24,10 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View
-        style={{ flex: 1, overflow: "scroll", backgroundColor: colors.bgLight }}
+        style={{ flex: 1, overflow: 'scroll', backgroundColor: colors.bgLight }}
       >
         <AppNavigator />
-        <StatusBar style="light" backgroundColor={colors.primary} />
+        <StatusBar style='light' backgroundColor={colors.primary} />
       </View>
     </GestureHandlerRootView>
   );
@@ -35,9 +35,9 @@ export default function App() {
 
 const styles = StyleSheet.create({
   loadingContainer: {
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f5f5f5",
+    justifyContent: 'center',
   },
 });

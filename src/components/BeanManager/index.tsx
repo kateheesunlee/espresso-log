@@ -1,15 +1,15 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { Bean } from "@types";
-import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Bean } from '@types';
+import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 
-import { useStore } from "../../store/useStore";
-import { formatDate } from "../../utils/formatDate";
-import { colors } from "../../themes/colors";
+import { useStore } from '../../store/useStore';
+import { formatDate } from '../../utils/formatDate';
+import { colors } from '../../themes/colors';
 
-import BeanFreshnessIndicator from "./BeanFreshnessIndicator";
-import BeanDateModal from "../modals/BeanDateModal";
-import SvgIcon from "../SvgIcon";
+import BeanFreshnessIndicator from './BeanFreshnessIndicator';
+import BeanDateModal from '../modals/BeanDateModal';
+import SvgIcon from '../SvgIcon';
 
 const BeanManager = ({ bean }: { bean: Bean }) => {
   const [showDateModal, setShowDateModal] = useState(false);
@@ -33,7 +33,7 @@ const BeanManager = ({ bean }: { bean: Bean }) => {
         <View style={styles.leftContainer}>
           <View style={styles.dateContainer}>
             <Text style={styles.type}>
-              {type === "roasting" ? "Roasted:" : "Opened:"}
+              {type === 'roasting' ? 'Roasted:' : 'Opened:'}
             </Text>
             <Text style={styles.date}>{formatDate(date)}</Text>
           </View>
@@ -45,7 +45,7 @@ const BeanManager = ({ bean }: { bean: Bean }) => {
             style={styles.actionButton}
           >
             <SvgIcon
-              name="refresh-coffee-bag"
+              name='refresh-coffee-bag'
               size={40}
               color={colors.primary}
             />
@@ -66,52 +66,52 @@ const BeanManager = ({ bean }: { bean: Bean }) => {
 export default BeanManager;
 
 const styles = StyleSheet.create({
+  actionButton: {
+    alignItems: 'center',
+    backgroundColor: colors.white,
+    borderColor: colors.primary,
+    borderRadius: 8,
+    borderWidth: 1,
+    boxShadow: `0 0 4px 0 rgba(0, 0, 0, 0.1)`,
+    gap: 6,
+    padding: 8,
+  },
+  actionButtonText: {
+    color: colors.primary,
+    fontSize: 10,
+    fontWeight: '600',
+  },
   container: {
-    width: "100%",
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 16,
+    width: '100%',
+  },
+  date: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    fontWeight: '400',
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    gap: 4,
   },
   leftContainer: {
     flex: 1,
-    flexDirection: "column",
-    width: "100%",
-    justifyContent: "flex-start",
+    flexDirection: 'column',
     gap: 12,
+    justifyContent: 'flex-start',
+    width: '100%',
   },
   rightContainer: {
+    alignItems: 'center',
+    flexDirection: 'column',
     flexShrink: 0,
     gap: 8,
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-  dateContainer: {
-    flexDirection: "row",
-    gap: 4,
+    justifyContent: 'flex-end',
   },
   type: {
-    fontSize: 14,
-    fontWeight: "600",
     color: colors.textSecondary,
-  },
-  date: {
     fontSize: 14,
-    fontWeight: "400",
-    color: colors.textSecondary,
-  },
-  actionButton: {
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    padding: 8,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    boxShadow: `0 0 4px 0 rgba(0, 0, 0, 0.1)`,
-  },
-  actionButtonText: {
-    fontSize: 10,
-    fontWeight: "600",
-    color: colors.primary,
+    fontWeight: '600',
   },
 });

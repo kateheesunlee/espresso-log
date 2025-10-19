@@ -14,9 +14,9 @@ export const THRESHOLDS = {
  */
 export const ROAST_THRESHOLDS = {
   Light: { imbalanceThreshold: 0.1 }, // More sensitive
-  "Medium Light": { imbalanceThreshold: 0.15 }, // Slightly sensitive
+  'Medium Light': { imbalanceThreshold: 0.15 }, // Slightly sensitive
   Medium: { imbalanceThreshold: 0.2 }, // Standard
-  "Medium Dark": { imbalanceThreshold: 0.25 }, // More tolerant
+  'Medium Dark': { imbalanceThreshold: 0.25 }, // More tolerant
   Dark: { imbalanceThreshold: 0.3 }, // Most tolerant
 } as const;
 

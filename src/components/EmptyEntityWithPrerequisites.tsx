@@ -1,8 +1,8 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-import { colors } from "../themes/colors";
-import SvgIcon, { IconName } from "./SvgIcon";
+import { colors } from '../themes/colors';
+import SvgIcon, { IconName } from './SvgIcon';
 
 interface EmptyEntityWithPrerequisitesProps {
   icon: IconName;
@@ -32,11 +32,11 @@ const EmptyEntityWithPrerequisites: React.FC<
   const canCreateShot = hasBeans && hasMachines;
   const missingPrerequisites: string[] = [];
 
-  if (!hasBeans) missingPrerequisites.push("bean");
-  if (!hasMachines) missingPrerequisites.push("machine");
+  if (!hasBeans) missingPrerequisites.push('bean');
+  if (!hasMachines) missingPrerequisites.push('machine');
 
   const getPrerequisiteText = () => {
-    if (missingPrerequisites.length === 0) return "";
+    if (missingPrerequisites.length === 0) return '';
     if (missingPrerequisites.length === 1) {
       return `You'll need to add a ${missingPrerequisites[0]} first.`;
     }
@@ -59,7 +59,7 @@ const EmptyEntityWithPrerequisites: React.FC<
                 style={styles.prerequisiteButton}
                 onPress={onAddBean}
               >
-                <SvgIcon name="bean" size={20} color={colors.primary} />
+                <SvgIcon name='bean' size={20} color={colors.primary} />
                 <Text style={styles.prerequisiteButtonText}>Add Bean</Text>
               </TouchableOpacity>
             )}
@@ -69,7 +69,7 @@ const EmptyEntityWithPrerequisites: React.FC<
                 style={styles.prerequisiteButton}
                 onPress={onAddMachine}
               >
-                <SvgIcon name="coffeemaker" size={20} color={colors.primary} />
+                <SvgIcon name='coffeemaker' size={20} color={colors.primary} />
                 <Text style={styles.prerequisiteButtonText}>Add Machine</Text>
               </TouchableOpacity>
             )}
@@ -97,78 +97,78 @@ const EmptyEntityWithPrerequisites: React.FC<
 
 const styles = StyleSheet.create({
   container: {
+    alignItems: 'center',
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
     padding: 32,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: colors.textDark,
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: colors.textMedium,
-    textAlign: "center",
-    marginBottom: 24,
-  },
-  prerequisiteContainer: {
-    backgroundColor: colors.warningBackground,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
-    width: "100%",
-    alignItems: "center",
-  },
-  prerequisiteText: {
-    fontSize: 14,
-    color: colors.primary,
-    textAlign: "center",
-    marginBottom: 16,
-    fontWeight: "500",
-  },
-  prerequisiteButtons: {
-    flexDirection: "row",
-    gap: 12,
-    justifyContent: "center",
-  },
-  prerequisiteButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.white,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    gap: 6,
-  },
-  prerequisiteButtonText: {
-    fontSize: 14,
-    color: colors.primary,
-    fontWeight: "500",
-  },
-  primaryButton: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-    minWidth: 200,
-    alignItems: "center",
   },
   disabledButton: {
     backgroundColor: colors.disabled,
   },
+  disabledButtonText: {
+    color: colors.textLight,
+  },
+  prerequisiteButton: {
+    alignItems: 'center',
+    backgroundColor: colors.white,
+    borderColor: colors.primary,
+    borderRadius: 8,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  prerequisiteButtonText: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  prerequisiteButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    justifyContent: 'center',
+  },
+  prerequisiteContainer: {
+    alignItems: 'center',
+    backgroundColor: colors.warningBackground,
+    borderRadius: 12,
+    marginBottom: 24,
+    padding: 16,
+    width: '100%',
+  },
+  prerequisiteText: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  primaryButton: {
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    minWidth: 200,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+  },
   primaryButtonText: {
     color: colors.white,
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
-  disabledButtonText: {
-    color: colors.textLight,
+  subtitle: {
+    color: colors.textMedium,
+    fontSize: 16,
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  title: {
+    color: colors.textDark,
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    marginTop: 16,
   },
 });
 

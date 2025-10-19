@@ -1,8 +1,8 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React from 'react';
+import { StyleSheet } from 'react-native';
 
-import { colors } from "../../themes/colors";
-import BaseModal, { ButtonConfig, IconConfig } from "./BaseModal";
+import { colors } from '../../themes/colors';
+import BaseModal, { ButtonConfig, IconConfig } from './BaseModal';
 
 interface ErrorModalProps {
   visible: boolean;
@@ -14,13 +14,13 @@ interface ErrorModalProps {
 
 const ErrorModal: React.FC<ErrorModalProps> = ({
   visible,
-  title = "Error",
+  title = 'Error',
   message,
-  buttonText = "OK",
+  buttonText = 'OK',
   onButtonPress,
 }) => {
   const iconConfig: IconConfig = {
-    name: "warning",
+    name: 'warning',
     color: colors.error,
   };
 
@@ -28,7 +28,7 @@ const ErrorModal: React.FC<ErrorModalProps> = ({
     {
       text: buttonText,
       onPress: onButtonPress,
-      variant: "destructive",
+      variant: 'destructive',
     },
   ];
 
@@ -36,7 +36,7 @@ const ErrorModal: React.FC<ErrorModalProps> = ({
     <BaseModal
       visible={visible}
       onRequestClose={onButtonPress}
-      animationType="fade"
+      animationType='fade'
       iconConfig={iconConfig}
       title={title}
       message={message}
@@ -48,9 +48,9 @@ const ErrorModal: React.FC<ErrorModalProps> = ({
 
 const styles = StyleSheet.create({
   modalContainer: {
-    width: "85%",
+    alignItems: 'center',
     maxWidth: 350,
-    alignItems: "center",
+    width: '85%',
   },
 });
 

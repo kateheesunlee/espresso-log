@@ -1,11 +1,11 @@
-import React, { useRef } from "react";
-import { View, Text, StyleSheet, Animated } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import * as Haptics from "expo-haptics";
+import React, { useRef } from 'react';
+import { View, Text, StyleSheet, Animated } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import * as Haptics from 'expo-haptics';
 
-import { RoastLevel, ROAST_LEVELS } from "@types";
-import { colors } from "../../../themes/colors";
-import SvgIcon from "../../SvgIcon";
+import { RoastLevel, ROAST_LEVELS } from '@types';
+import { colors } from '../../../themes/colors';
+import SvgIcon from '../../SvgIcon';
 
 interface RoastingSliderProps {
   value: RoastLevel;
@@ -19,19 +19,19 @@ const TRACK_HEIGHT = 8;
 const ROASTING_LEVELS: RoastLevel[] = [...ROAST_LEVELS];
 
 const roastingColorMap = {
-  ["Light"]: colors.roastingLight,
-  ["Medium Light"]: colors.roastingMediumLight,
-  ["Medium"]: colors.roastingMedium,
-  ["Medium Dark"]: colors.roastingMediumDark,
-  ["Dark"]: colors.roastingDark,
+  ['Light']: colors.roastingLight,
+  ['Medium Light']: colors.roastingMediumLight,
+  ['Medium']: colors.roastingMedium,
+  ['Medium Dark']: colors.roastingMediumDark,
+  ['Dark']: colors.roastingDark,
 };
 
 const roastingColorMapLight = {
-  ["Light"]: colors.roastingLight_Light,
-  ["Medium Light"]: colors.roastingMediumLight_Light,
-  ["Medium"]: colors.roastingMedium_Light,
-  ["Medium Dark"]: colors.roastingMediumDark_Light,
-  ["Dark"]: colors.roastingDark_Light,
+  ['Light']: colors.roastingLight_Light,
+  ['Medium Light']: colors.roastingMediumLight_Light,
+  ['Medium']: colors.roastingMedium_Light,
+  ['Medium Dark']: colors.roastingMediumDark_Light,
+  ['Dark']: colors.roastingDark_Light,
 };
 
 const RoastingSlider: React.FC<RoastingSliderProps> = ({
@@ -46,7 +46,7 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
 
   // Helper function to get a valid roast level, defaulting to Medium if not found
   const getValidRoastLevel = (val: RoastLevel): RoastLevel => {
-    return ROASTING_LEVELS.includes(val) ? val : "Medium";
+    return ROASTING_LEVELS.includes(val) ? val : 'Medium';
   };
 
   // Calculate initial position based on value
@@ -81,7 +81,7 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
 
   const panGesture = Gesture.Pan()
     .enabled(!disabled)
-    .onUpdate((event) => {
+    .onUpdate(event => {
       translateX.setValue(lastOffset.current + event.translationX);
     })
     .onStart(() => {
@@ -95,7 +95,7 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
         friction: 8,
       }).start();
     })
-    .onEnd((event) => {
+    .onEnd(event => {
       const newPosition = Math.max(
         0,
         Math.min(
@@ -136,7 +136,7 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
     <View style={styles.sliderContainer}>
       <View
         style={styles.trackContainer}
-        onLayout={(event) => {
+        onLayout={event => {
           const { width } = event.nativeEvent.layout;
           sliderWidth.current = width;
           // Initialize position when we get the width
@@ -159,7 +159,7 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
             ]}
           >
             <SvgIcon
-              name="bean_filled"
+              name='bean_filled'
               size={HANDLE_SIZE}
               color={roastingColorMap[getValidRoastLevel(value)]}
               secondaryColor={roastingColorMapLight[getValidRoastLevel(value)]}
@@ -170,7 +170,7 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
 
       {/* Roasting level indicators below track */}
       <View style={styles.roastingIndicators}>
-        {ROASTING_LEVELS.map((level) => (
+        {ROASTING_LEVELS.map(level => (
           <Text key={level} style={styles.roastingIndicator}>
             {level}
           </Text>
@@ -181,36 +181,36 @@ const RoastingSlider: React.FC<RoastingSliderProps> = ({
 };
 
 const styles = StyleSheet.create({
-  sliderContainer: {
-    marginBottom: 8,
+  handle: {
+    alignItems: 'center',
+    height: HANDLE_SIZE,
+    justifyContent: 'center',
+    position: 'absolute',
+    width: HANDLE_SIZE,
   },
-  trackContainer: {
-    position: "relative",
-    height: 40,
-    justifyContent: "center",
-  },
-  track: {
-    height: TRACK_HEIGHT,
-    backgroundColor: colors.borderLight,
-    borderRadius: TRACK_HEIGHT / 2,
-    width: "100%",
+  roastingIndicator: {
+    color: colors.textMedium,
+    fontSize: 12,
   },
   roastingIndicators: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 2,
     paddingHorizontal: 6,
   },
-  roastingIndicator: {
-    fontSize: 12,
-    color: colors.textMedium,
+  sliderContainer: {
+    marginBottom: 8,
   },
-  handle: {
-    position: "absolute",
-    width: HANDLE_SIZE,
-    height: HANDLE_SIZE,
-    justifyContent: "center",
-    alignItems: "center",
+  track: {
+    backgroundColor: colors.borderLight,
+    borderRadius: TRACK_HEIGHT / 2,
+    height: TRACK_HEIGHT,
+    width: '100%',
+  },
+  trackContainer: {
+    height: 40,
+    justifyContent: 'center',
+    position: 'relative',
   },
 });
 

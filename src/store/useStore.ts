@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { database } from "../database/UniversalDatabase";
+import { create } from 'zustand';
+import { database } from '../database/UniversalDatabase';
 import {
   User,
   Machine,
@@ -7,15 +7,15 @@ import {
   Shot,
   ShotFormData,
   shotFormDataToShot,
-} from "@types";
-import { classifyExtraction } from "../coaching/extraction";
-import { CoachingManager } from "../coaching/service/CoachingManager";
+} from '@types';
+import { classifyExtraction } from '../coaching/extraction';
+import { CoachingManager } from '../coaching/service/CoachingManager';
 import {
   EXTRACTION_CONFIG,
   generateInputHash,
   shouldRegenerateSnapshot,
   getLatestVersion,
-} from "../coaching/versions";
+} from '../coaching/versions';
 
 interface AppState {
   // User
@@ -38,7 +38,7 @@ interface AppState {
   initializeApp: () => Promise<void>;
   setCurrentUser: (user: User) => void;
   configureCoaching: (
-    mode: "rule" | "ai" | "hybrid",
+    mode: 'rule' | 'ai' | 'hybrid',
     aiApiKey?: string
   ) => void;
 
@@ -46,7 +46,7 @@ interface AppState {
   loadMachines: () => Promise<void>;
   loadAllMachines: () => Promise<void>;
   createMachine: (
-    machine: Omit<Machine, "createdAt" | "updatedAt">
+    machine: Omit<Machine, 'createdAt' | 'updatedAt'>
   ) => Promise<void>;
   updateMachine: (machine: Machine) => Promise<void>;
   deleteMachine: (id: string) => Promise<void>;
@@ -54,7 +54,7 @@ interface AppState {
   // Bean actions
   loadBeans: () => Promise<void>;
   loadAllBeans: () => Promise<void>;
-  createBean: (bean: Omit<Bean, "createdAt" | "updatedAt">) => Promise<void>;
+  createBean: (bean: Omit<Bean, 'createdAt' | 'updatedAt'>) => Promise<void>;
   updateBean: (bean: Bean) => Promise<void>;
   deleteBean: (id: string) => Promise<void>;
   toggleFavoriteBean: (id: string) => Promise<void>;
@@ -78,7 +78,7 @@ export const useStore = create<AppState>((set, get) => ({
   allMachines: [],
   allBeans: [],
   coachingManager: new CoachingManager({
-    mode: "rule",
+    mode: 'rule',
     enableCaching: false, // Not needed for current workflow (coaching stored in shot snapshots)
     maxCacheAge: 24 * 60 * 60 * 1000, // 24 hours (for future use)
   }),
@@ -91,13 +91,13 @@ export const useStore = create<AppState>((set, get) => ({
       await database.init();
 
       // Create default user if none exists
-      const userId = "default-user";
+      const userId = 'default-user';
       let user = await database.getUser(userId);
 
       if (!user) {
         await database.createUser({
           id: userId,
-          displayName: "Espresso Enthusiast",
+          displayName: 'Espresso Enthusiast',
         });
         user = await database.getUser(userId);
       }
@@ -111,7 +111,7 @@ export const useStore = create<AppState>((set, get) => ({
         await get().loadShots();
       }
     } catch (error) {
-      console.error("Failed to initialize app:", error);
+      console.error('Failed to initialize app:', error);
     } finally {
       set({ isLoading: false });
     }
@@ -121,7 +121,7 @@ export const useStore = create<AppState>((set, get) => ({
     set({ currentUser: user });
   },
 
-  configureCoaching: (mode: "rule" | "ai" | "hybrid", aiApiKey?: string) => {
+  configureCoaching: (mode: 'rule' | 'ai' | 'hybrid', aiApiKey?: string) => {
     const { coachingManager } = get();
     const newManager = new CoachingManager({
       mode,
@@ -141,7 +141,7 @@ export const useStore = create<AppState>((set, get) => ({
       const machines = await database.getMachines(currentUser.id);
       set({ machines });
     } catch (error) {
-      console.error("Failed to load machines:", error);
+      console.error('Failed to load machines:', error);
     }
   },
 
@@ -153,11 +153,11 @@ export const useStore = create<AppState>((set, get) => ({
       const allMachines = await database.getAllMachines(currentUser.id);
       set({ allMachines });
     } catch (error) {
-      console.error("Failed to load all machines:", error);
+      console.error('Failed to load all machines:', error);
     }
   },
 
-  createMachine: async (machineData) => {
+  createMachine: async machineData => {
     const { currentUser } = get();
     if (!currentUser) return;
 
@@ -169,27 +169,27 @@ export const useStore = create<AppState>((set, get) => ({
       await get().loadMachines();
       await get().loadAllMachines();
     } catch (error) {
-      console.error("Failed to create machine:", error);
+      console.error('Failed to create machine:', error);
     }
   },
 
-  updateMachine: async (machine) => {
+  updateMachine: async machine => {
     try {
       await database.updateMachine(machine);
       await get().loadMachines();
       await get().loadAllMachines();
     } catch (error) {
-      console.error("Failed to update machine:", error);
+      console.error('Failed to update machine:', error);
     }
   },
 
-  deleteMachine: async (id) => {
+  deleteMachine: async id => {
     try {
       await database.deleteMachine(id);
       await get().loadMachines();
       await get().loadAllMachines();
     } catch (error) {
-      console.error("Failed to delete machine:", error);
+      console.error('Failed to delete machine:', error);
     }
   },
 
@@ -202,7 +202,7 @@ export const useStore = create<AppState>((set, get) => ({
       const beans = await database.getBeans(currentUser.id);
       set({ beans });
     } catch (error) {
-      console.error("Failed to load beans:", error);
+      console.error('Failed to load beans:', error);
     }
   },
 
@@ -214,11 +214,11 @@ export const useStore = create<AppState>((set, get) => ({
       const allBeans = await database.getAllBeans(currentUser.id);
       set({ allBeans });
     } catch (error) {
-      console.error("Failed to load all beans:", error);
+      console.error('Failed to load all beans:', error);
     }
   },
 
-  createBean: async (beanData) => {
+  createBean: async beanData => {
     const { currentUser } = get();
     if (!currentUser) return;
 
@@ -230,37 +230,37 @@ export const useStore = create<AppState>((set, get) => ({
       await get().loadBeans();
       await get().loadAllBeans();
     } catch (error) {
-      console.error("Failed to create bean:", error);
+      console.error('Failed to create bean:', error);
     }
   },
 
-  updateBean: async (bean) => {
+  updateBean: async bean => {
     try {
       await database.updateBean(bean);
       await get().loadBeans();
       await get().loadAllBeans();
     } catch (error) {
-      console.error("Failed to update bean:", error);
+      console.error('Failed to update bean:', error);
     }
   },
 
-  deleteBean: async (id) => {
+  deleteBean: async id => {
     try {
       await database.deleteBean(id);
       await get().loadBeans();
       await get().loadAllBeans();
     } catch (error) {
-      console.error("Failed to delete bean:", error);
+      console.error('Failed to delete bean:', error);
     }
   },
 
-  toggleFavoriteBean: async (id) => {
+  toggleFavoriteBean: async id => {
     try {
       await database.toggleFavoriteBean(id);
       await get().loadBeans();
       await get().loadAllBeans();
     } catch (error) {
-      console.error("Failed to toggle favorite bean:", error);
+      console.error('Failed to toggle favorite bean:', error);
       throw error;
     }
   },
@@ -274,11 +274,11 @@ export const useStore = create<AppState>((set, get) => ({
       const shots = await database.getShots(currentUser.id);
       set({ shots });
     } catch (error) {
-      console.error("Failed to load shots:", error);
+      console.error('Failed to load shots:', error);
     }
   },
 
-  createShot: async (shotFormData) => {
+  createShot: async shotFormData => {
     const { currentUser, coachingManager } = get();
     if (!currentUser) return;
 
@@ -331,7 +331,7 @@ export const useStore = create<AppState>((set, get) => ({
         ratio: parseFloat(shotFormData.ratio),
         // advanced parameters
         shotTime_s:
-          shotFormData.shotTime_s && shotFormData.shotTime_s.trim() !== ""
+          shotFormData.shotTime_s && shotFormData.shotTime_s.trim() !== ''
             ? parseFloat(shotFormData.shotTime_s)
             : undefined,
         waterTemp_C: shotFormData.waterTemp_C
@@ -365,7 +365,7 @@ export const useStore = create<AppState>((set, get) => ({
             ratio: parseFloat(shotFormData.ratio),
             // advanced parameters
             shotTime_s:
-              shotFormData.shotTime_s && shotFormData.shotTime_s.trim() !== ""
+              shotFormData.shotTime_s && shotFormData.shotTime_s.trim() !== ''
                 ? parseFloat(shotFormData.shotTime_s)
                 : undefined,
             waterTemp_C: shotFormData.waterTemp_C
@@ -387,34 +387,34 @@ export const useStore = create<AppState>((set, get) => ({
       });
       await get().loadShots();
     } catch (error) {
-      console.error("Failed to create shot:", error);
+      console.error('Failed to create shot:', error);
     }
   },
 
-  updateShot: async (shot) => {
+  updateShot: async shot => {
     try {
       await database.updateShot(shot);
       await get().loadShots();
     } catch (error) {
-      console.error("Failed to update shot:", error);
+      console.error('Failed to update shot:', error);
     }
   },
 
-  deleteShot: async (id) => {
+  deleteShot: async id => {
     try {
       await database.deleteShot(id);
       await get().loadShots();
     } catch (error) {
-      console.error("Failed to delete shot:", error);
+      console.error('Failed to delete shot:', error);
     }
   },
 
-  toggleFavoriteShot: async (id) => {
+  toggleFavoriteShot: async id => {
     try {
       await database.toggleFavoriteShot(id);
       await get().loadShots();
     } catch (error) {
-      console.error("Failed to toggle favorite shot:", error);
+      console.error('Failed to toggle favorite shot:', error);
       throw error;
     }
   },
@@ -428,7 +428,7 @@ export const useStore = create<AppState>((set, get) => ({
         return;
       }
 
-      const bean = allBeans.find((b) => b.id === shot.beanId);
+      const bean = allBeans.find(b => b.id === shot.beanId);
       if (!bean?.roastLevel) {
         console.warn(`Bean with roast level not found for shot ${shotId}`);
         return;
@@ -440,11 +440,11 @@ export const useStore = create<AppState>((set, get) => ({
         machineId: shot.machineId,
         dose_g: shot.dose_g.toString(),
         yield_g: shot.yield_g.toString(),
-        shotTime_s: shot.shotTime_s?.toString() || "",
+        shotTime_s: shot.shotTime_s?.toString() || '',
         ratio: shot.ratio.toString(),
         grindSetting: shot.grindSetting.toString(),
-        waterTemp_C: shot.waterTemp_C?.toString() || "",
-        preinfusion_s: shot.preinfusion_s?.toString() || "",
+        waterTemp_C: shot.waterTemp_C?.toString() || '',
+        preinfusion_s: shot.preinfusion_s?.toString() || '',
         overallScore: shot.overallScore,
         acidity: shot.acidity,
         bitterness: shot.bitterness,
@@ -475,14 +475,14 @@ export const useStore = create<AppState>((set, get) => ({
       await database.updateShot(updatedShot);
       await get().loadShots();
     } catch (error) {
-      console.error("Failed to refresh coaching:", error);
+      console.error('Failed to refresh coaching:', error);
       throw error;
     }
   },
 
   checkAndUpdateOutdatedSnapshots: async () => {
     const { shots, coachingManager, allBeans } = get();
-    const currentExtractionVersion = getLatestVersion("extraction");
+    const currentExtractionVersion = getLatestVersion('extraction');
     const currentCoachingVersion = coachingManager.getVersion();
 
     console.log(`Checking snapshots for version updates...`);
@@ -499,7 +499,7 @@ export const useStore = create<AppState>((set, get) => ({
         const shouldRegenerateExtraction = shouldRegenerateSnapshot(
           currentExtractionVersion,
           shot.extractionSnapshot.version,
-          "extraction"
+          'extraction'
         );
 
         if (shouldRegenerateExtraction) {
@@ -515,7 +515,7 @@ export const useStore = create<AppState>((set, get) => ({
         const shouldRegenerateCoaching = shouldRegenerateSnapshot(
           currentCoachingVersion,
           shot.coachingSnapshot.version,
-          "coaching"
+          'coaching'
         );
 
         if (shouldRegenerateCoaching) {
@@ -542,7 +542,7 @@ export const useStore = create<AppState>((set, get) => ({
     if (updatedCount > 0) {
       console.log(`Updated ${updatedCount} shots with new snapshot versions`);
     } else {
-      console.log("All snapshots are up to date");
+      console.log('All snapshots are up to date');
     }
   },
 }));

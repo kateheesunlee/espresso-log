@@ -1,8 +1,8 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-import { colors } from "../themes/colors";
-import SvgIcon, { IconName } from "./SvgIcon";
+import { colors } from '../themes/colors';
+import SvgIcon, { IconName } from './SvgIcon';
 
 interface EmptyEntityProps {
   icon: IconName;
@@ -34,35 +34,35 @@ const EmptyEntity: React.FC<EmptyEntityProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 32,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: colors.textDark,
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: colors.textMedium,
-    textAlign: "center",
-    marginBottom: 24,
-  },
   button: {
     backgroundColor: colors.primary,
+    borderRadius: 8,
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 8,
   },
   buttonText: {
     color: colors.white,
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
+  },
+  container: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+    padding: 32,
+  },
+  subtitle: {
+    color: colors.textMedium,
+    fontSize: 16,
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  title: {
+    color: colors.textDark,
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    marginTop: 16,
   },
 });
 

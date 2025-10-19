@@ -1,15 +1,15 @@
-import React from "react";
+import React from 'react';
 import {
   ScrollView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
-} from "react-native";
+} from 'react-native';
 
 interface KeyboardDismissScrollViewProps {
   style?: any;
   contentContainerStyle?: any;
-  keyboardShouldPersistTaps?: "always" | "never" | "handled";
+  keyboardShouldPersistTaps?: 'always' | 'never' | 'handled';
   showsVerticalScrollIndicator?: boolean;
   children: React.ReactNode;
 }
@@ -17,11 +17,11 @@ interface KeyboardDismissScrollViewProps {
 const KeyboardDismissScrollView: React.FC<KeyboardDismissScrollViewProps> = ({
   style,
   contentContainerStyle,
-  keyboardShouldPersistTaps = "handled",
+  keyboardShouldPersistTaps = 'handled',
   showsVerticalScrollIndicator = false,
   children,
 }) => {
-  if (Platform.OS === "web") {
+  if (Platform.OS === 'web') {
     return (
       <ScrollView
         style={style}

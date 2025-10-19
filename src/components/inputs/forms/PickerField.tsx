@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,19 +6,19 @@ import {
   FlatList,
   StyleSheet,
   TextInput,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-import { colors } from "../../../themes/colors";
-import FormField, { FormFieldProps } from "../FormField";
-import BaseModal from "../../modals/BaseModal";
+import { colors } from '../../../themes/colors';
+import FormField, { FormFieldProps } from '../FormField';
+import BaseModal from '../../modals/BaseModal';
 
 interface PickerOption {
   id: string;
   name: string;
 }
 
-interface PickerFieldProps extends Omit<FormFieldProps, "children"> {
+interface PickerFieldProps extends Omit<FormFieldProps, 'children'> {
   value: string;
   options: PickerOption[];
   onValueChange: (value: string) => void;
@@ -43,22 +43,22 @@ const PickerField: React.FC<PickerFieldProps> = ({
   showClearButton = false,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
 
-  const selectedOption = options.find((option) => option.id === value);
-  const filteredOptions = options.filter((option) =>
+  const selectedOption = options.find(option => option.id === value);
+  const filteredOptions = options.filter(option =>
     option.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const handleSelect = (optionId: string) => {
     onValueChange(optionId);
     setIsVisible(false);
-    setSearchText("");
+    setSearchText('');
   };
 
   const handleCreateNew = () => {
     setIsVisible(false);
-    setSearchText("");
+    setSearchText('');
     onCreateNew?.();
   };
 
@@ -84,7 +84,7 @@ const PickerField: React.FC<PickerFieldProps> = ({
                 {selectedOption ? selectedOption.name : placeholder}
               </Text>
               <Ionicons
-                name="chevron-down"
+                name='chevron-down'
                 size={16}
                 color={colors.textMedium}
               />
@@ -97,10 +97,10 @@ const PickerField: React.FC<PickerFieldProps> = ({
                   styles.clearButton,
                   !value && styles.clearButtonDisabled,
                 ]}
-                onPress={() => onValueChange("")}
+                onPress={() => onValueChange('')}
               >
                 <Ionicons
-                  name="close-circle"
+                  name='close-circle'
                   size={18}
                   color={!value ? colors.textLight : colors.textMedium}
                 />
@@ -122,7 +122,7 @@ const PickerField: React.FC<PickerFieldProps> = ({
             >
               {selectedOption ? selectedOption.name : placeholder}
             </Text>
-            <Ionicons name="chevron-down" size={20} color={colors.textMedium} />
+            <Ionicons name='chevron-down' size={20} color={colors.textMedium} />
           </TouchableOpacity>
         </FormField>
       )}
@@ -145,7 +145,7 @@ const PickerField: React.FC<PickerFieldProps> = ({
         <View style={styles.modalContent}>
           <View style={styles.searchContainer}>
             <Ionicons
-              name="search"
+              name='search'
               size={20}
               color={colors.textMedium}
               style={styles.searchIcon}
@@ -160,7 +160,7 @@ const PickerField: React.FC<PickerFieldProps> = ({
 
           <FlatList
             data={filteredOptions}
-            keyExtractor={(item) => item.id}
+            keyExtractor={item => item.id}
             style={styles.optionsList}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
@@ -180,7 +180,7 @@ const PickerField: React.FC<PickerFieldProps> = ({
                   {item.name}
                 </Text>
                 {item.id === value && (
-                  <Ionicons name="checkmark" size={20} color={colors.primary} />
+                  <Ionicons name='checkmark' size={20} color={colors.primary} />
                 )}
               </TouchableOpacity>
             )}
@@ -201,40 +201,40 @@ const PickerField: React.FC<PickerFieldProps> = ({
 const styles = StyleSheet.create({
   // Compact styles (for filters)
   compactRowContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 16,
   },
   compactLabel: {
-    fontSize: 14,
-    fontWeight: "600",
     color: colors.textDark,
+    fontSize: 14,
+    fontWeight: '600',
     marginRight: 12,
     minWidth: 60,
   },
   compactInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    alignItems: 'center',
+    flexDirection: 'row',
     flex: 1,
   },
   compactPickerButton: {
+    alignItems: 'center',
     backgroundColor: colors.white,
+    borderColor: colors.borderLight,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: colors.borderLight,
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'space-between',
+    minHeight: 32,
     paddingHorizontal: 8,
     paddingVertical: 6,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    minHeight: 32,
-    flex: 1,
   },
   compactPickerText: {
-    fontSize: 14,
     color: colors.textDark,
     flex: 1,
+    fontSize: 14,
   },
   clearButton: {
     marginLeft: 6,
@@ -247,75 +247,75 @@ const styles = StyleSheet.create({
     color: colors.error,
   },
   pickerButton: {
+    alignItems: 'center',
     backgroundColor: colors.white,
+    borderColor: colors.borderLight,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.borderLight,
-    padding: 12,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     minHeight: 50,
+    padding: 12,
   },
   pickerText: {
-    fontSize: 16,
     color: colors.textDark,
     flex: 1,
+    fontSize: 16,
   },
   placeholderText: {
     color: colors.textLight,
   },
   modalContent: {
-    width: "100%",
-    maxHeight: "80%",
+    maxHeight: '80%',
     minHeight: 400,
+    width: '100%',
   },
   searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    alignItems: 'center',
     backgroundColor: colors.bgLight,
     borderRadius: 8,
+    flexDirection: 'row',
     paddingHorizontal: 12,
   },
   searchIcon: {
     marginRight: 8,
   },
   searchInput: {
-    flex: 1,
-    padding: 12,
-    fontSize: 16,
     color: colors.textDark,
+    flex: 1,
+    fontSize: 16,
+    padding: 12,
   },
   optionsList: {
     flex: 1,
   },
   optionItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    borderBottomWidth: 1,
+    alignItems: 'center',
     borderBottomColor: colors.divider,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 16,
   },
   selectedOption: {
     backgroundColor: colors.hover,
   },
   optionText: {
-    fontSize: 16,
     color: colors.textDark,
     flex: 1,
+    fontSize: 16,
   },
   selectedOptionText: {
     color: colors.primary,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   emptyContainer: {
+    alignItems: 'center',
     padding: 32,
-    alignItems: "center",
   },
   emptyText: {
-    fontSize: 16,
     color: colors.textMedium,
+    fontSize: 16,
   },
 });
 

@@ -1,12 +1,12 @@
 // Coaching Manager - Handles coaching generation
 // Note: In-memory caching is kept for future use, but not necessary for current workflow
 // since coaching results are stored permanently in shot snapshots
-import { ShotFormData, RoastLevel, Suggestion, CoachingSnapshot } from "@types";
-import { CoachingService } from "./CoachingService";
-import { COACHING_MODE_CONFIG, generateInputHash } from "../versions";
+import { ShotFormData, RoastLevel, Suggestion, CoachingSnapshot } from '@types';
+import { CoachingService } from './CoachingService';
+import { COACHING_MODE_CONFIG, generateInputHash } from '../versions';
 
 interface CoachingConfig {
-  mode: "rule" | "ai" | "hybrid";
+  mode: 'rule' | 'ai' | 'hybrid';
   aiApiKey?: string;
   enableCaching: boolean; // Useful for on-demand coaching or real-time suggestions
   maxCacheAge: number; // in milliseconds
@@ -88,7 +88,7 @@ export class CoachingManager {
       ratio: parseFloat(shotFormData.ratio),
       // advanced parameters
       time:
-        shotFormData.shotTime_s && shotFormData.shotTime_s.trim() !== ""
+        shotFormData.shotTime_s && shotFormData.shotTime_s.trim() !== ''
           ? parseFloat(shotFormData.shotTime_s)
           : undefined,
       temp: shotFormData.waterTemp_C

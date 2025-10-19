@@ -4,14 +4,14 @@ import {
   CoachField,
   ShotFormData,
   ExtractionSummary,
-} from "@types";
-import { classifyExtraction } from "../extraction";
+} from '@types';
+import { classifyExtraction } from '../extraction';
 import {
   THRESHOLDS,
   ROAST_THRESHOLDS,
   DEFAULT_DELTAS,
   MAX_DELTAS,
-} from "../constants";
+} from '../constants';
 
 // ---- Utility Functions ---------------------------------------
 
@@ -29,10 +29,10 @@ function magnitude(v?: number) {
 }
 
 /** Convert magnitude to confidence level using threshold bands */
-function confFromMag(m: number): "low" | "med" | "high" {
-  if (m >= THRESHOLDS.HIGH_CONFIDENCE_MAGNITUDE) return "high";
-  if (m >= THRESHOLDS.MED_CONFIDENCE_MAGNITUDE) return "med";
-  return "low";
+function confFromMag(m: number): 'low' | 'med' | 'high' {
+  if (m >= THRESHOLDS.HIGH_CONFIDENCE_MAGNITUDE) return 'high';
+  if (m >= THRESHOLDS.MED_CONFIDENCE_MAGNITUDE) return 'med';
+  return 'low';
 }
 
 /**
@@ -46,7 +46,7 @@ function createSuggestion(
     target?: number;
     reason: string;
     priority: number; // lower number = more important
-    confidence: "low" | "med" | "high";
+    confidence: 'low' | 'med' | 'high';
   }
 ): Suggestion {
   return {
@@ -56,7 +56,7 @@ function createSuggestion(
     reason: options.reason,
     priority: options.priority,
     confidence: options.confidence,
-    source: "rule",
+    source: 'rule',
   };
 }
 
@@ -87,72 +87,72 @@ function generateBitternessSuggestions(
   if (bitternessValue > threshold) {
     // High bitterness - over extraction territory
     suggestions.push(
-      createSuggestion("grindStep", {
+      createSuggestion('grindStep', {
         delta: +deltas.grindStep,
-        reason: "Bitterness high → coarser grind",
+        reason: 'Bitterness high → coarser grind',
         priority: 1,
         confidence: confFromMag(magnitude(bitternessValue)),
       })
     );
     suggestions.push(
-      createSuggestion("ratio", {
+      createSuggestion('ratio', {
         target: +(ratio + deltas.ratio).toFixed(1),
-        reason: "Open up the shot (higher ratio)",
+        reason: 'Open up the shot (higher ratio)',
         priority: 2,
-        confidence: "med",
+        confidence: 'med',
       })
     );
     suggestions.push(
-      createSuggestion("shotTime_s", {
+      createSuggestion('shotTime_s', {
         delta: -deltas.shotTime_s,
-        reason: "Slightly shorten extraction",
+        reason: 'Slightly shorten extraction',
         priority: 3,
-        confidence: "low",
+        confidence: 'low',
       })
     );
     if (waterTemp_C !== undefined) {
       suggestions.push(
-        createSuggestion("waterTemp_C", {
+        createSuggestion('waterTemp_C', {
           delta: -deltas.waterTemp_C,
-          reason: "Lower temp to reduce harshness",
+          reason: 'Lower temp to reduce harshness',
           priority: 4,
-          confidence: "low",
+          confidence: 'low',
         })
       );
     }
   } else if (bitternessValue < -threshold) {
     // Low bitterness - under extraction territory
     suggestions.push(
-      createSuggestion("grindStep", {
+      createSuggestion('grindStep', {
         delta: -deltas.grindStep,
-        reason: "Bitterness low/flat → finer grind",
+        reason: 'Bitterness low/flat → finer grind',
         priority: 1,
         confidence: confFromMag(magnitude(bitternessValue)),
       })
     );
     suggestions.push(
-      createSuggestion("ratio", {
+      createSuggestion('ratio', {
         target: +(ratio - 0.1).toFixed(1),
-        reason: "Slightly lower ratio for intensity",
+        reason: 'Slightly lower ratio for intensity',
         priority: 3,
-        confidence: "low",
+        confidence: 'low',
       })
     );
     suggestions.push(
-      createSuggestion("shotTime_s", {
+      createSuggestion('shotTime_s', {
         delta: +deltas.shotTime_s,
-        reason: "Slightly longer extraction",
+        reason: 'Slightly longer extraction',
         priority: 4,
-        confidence: "low",
+        confidence: 'low',
       })
     );
     if (waterTemp_C !== undefined) {
       suggestions.push(
-        createSuggestion("waterTemp_C", {
+        createSuggestion('waterTemp_C', {
           delta: +deltas.waterTemp_C,
-          reason: "Raise temp to enhance development",
+          reason: 'Raise temp to enhance development',
           priority: 5,
-          confidence: "low",
+          confidence: 'low',
         })
       );
     }
@@ -178,65 +178,65 @@ function generateAciditySuggestions(
   if (acidityValue > threshold) {
     // High acidity - too sour/bright
     suggestions.push(
-      createSuggestion("grindStep", {
+      createSuggestion('grindStep', {
         delta: -deltas.grindStep,
-        reason: "Acidity high → finer grind",
+        reason: 'Acidity high → finer grind',
         priority: 1,
         confidence: confFromMag(magnitude(acidityValue)),
       })
     );
     suggestions.push(
-      createSuggestion("ratio", {
+      createSuggestion('ratio', {
         target: +(ratio - 0.1).toFixed(1),
-        reason: "Lower ratio to tame sharpness",
+        reason: 'Lower ratio to tame sharpness',
         priority: 2,
-        confidence: "med",
+        confidence: 'med',
       })
     );
     if (waterTemp_C !== undefined) {
       suggestions.push(
-        createSuggestion("waterTemp_C", {
+        createSuggestion('waterTemp_C', {
           delta: +deltas.waterTemp_C,
-          reason: "Raise temp slightly",
+          reason: 'Raise temp slightly',
           priority: 4,
-          confidence: "low",
+          confidence: 'low',
         })
       );
     }
   } else if (acidityValue < -threshold) {
     // Low acidity - flat/dull
     suggestions.push(
-      createSuggestion("grindStep", {
+      createSuggestion('grindStep', {
         delta: -deltas.grindStep,
-        reason: "Acidity low → finer grind",
+        reason: 'Acidity low → finer grind',
         priority: 1,
         confidence: confFromMag(magnitude(acidityValue)),
       })
     );
     if (waterTemp_C !== undefined) {
       suggestions.push(
-        createSuggestion("waterTemp_C", {
+        createSuggestion('waterTemp_C', {
           delta: +deltas.waterTemp_C,
-          reason: "Raise temp to boost brightness",
+          reason: 'Raise temp to boost brightness',
           priority: 2,
-          confidence: "med",
+          confidence: 'med',
         })
       );
     }
     suggestions.push(
-      createSuggestion("dose_g", {
+      createSuggestion('dose_g', {
         delta: +deltas.dose_g,
-        reason: "A touch more dose for structure",
+        reason: 'A touch more dose for structure',
         priority: 3,
-        confidence: "low",
+        confidence: 'low',
       })
     );
     suggestions.push(
-      createSuggestion("shotTime_s", {
+      createSuggestion('shotTime_s', {
         delta: +deltas.shotTime_s,
-        reason: "Slightly longer time to develop acids",
+        reason: 'Slightly longer time to develop acids',
         priority: 4,
-        confidence: "low",
+        confidence: 'low',
       })
     );
   }
@@ -260,53 +260,53 @@ function generateBodySuggestions(
   if (bodyValue < -threshold) {
     // Low body - thin/watery
     suggestions.push(
-      createSuggestion("dose_g", {
+      createSuggestion('dose_g', {
         delta: +deltas.dose_g,
-        reason: "Body low → increase dose slightly",
+        reason: 'Body low → increase dose slightly',
         priority: 1,
         confidence: confFromMag(magnitude(bodyValue)),
       })
     );
     suggestions.push(
-      createSuggestion("grindStep", {
+      createSuggestion('grindStep', {
         delta: -deltas.grindStep,
-        reason: "Finer grind to build texture",
+        reason: 'Finer grind to build texture',
         priority: 2,
-        confidence: "med",
+        confidence: 'med',
       })
     );
     suggestions.push(
-      createSuggestion("ratio", {
+      createSuggestion('ratio', {
         target: +(ratio - 0.1).toFixed(1),
-        reason: "Lower ratio for weight",
+        reason: 'Lower ratio for weight',
         priority: 3,
-        confidence: "low",
+        confidence: 'low',
       })
     );
   } else if (bodyValue > threshold) {
     // Heavy body - too thick/syrupy
     suggestions.push(
-      createSuggestion("ratio", {
+      createSuggestion('ratio', {
         target: +(ratio + 0.2).toFixed(1),
-        reason: "Body heavy → open ratio",
+        reason: 'Body heavy → open ratio',
         priority: 1,
-        confidence: "med",
+        confidence: 'med',
       })
     );
     suggestions.push(
-      createSuggestion("grindStep", {
+      createSuggestion('grindStep', {
         delta: +deltas.grindStep,
-        reason: "Coarser for lighter texture",
+        reason: 'Coarser for lighter texture',
         priority: 2,
-        confidence: "med",
+        confidence: 'med',
       })
     );
     suggestions.push(
-      createSuggestion("dose_g", {
+      createSuggestion('dose_g', {
         delta: -0.2,
-        reason: "Slightly reduce dose",
+        reason: 'Slightly reduce dose',
         priority: 3,
-        confidence: "low",
+        confidence: 'low',
       })
     );
   }
@@ -331,47 +331,47 @@ function generateAftertasteSuggestions(
   if (aftertasteValue > threshold) {
     // Harsh/unpleasant finish
     suggestions.push(
-      createSuggestion("grindStep", {
+      createSuggestion('grindStep', {
         delta: +deltas.grindStep,
-        reason: "Harsh finish → go coarser",
+        reason: 'Harsh finish → go coarser',
         priority: 1,
         confidence: confFromMag(magnitude(aftertasteValue)),
       })
     );
     suggestions.push(
-      createSuggestion("ratio", {
+      createSuggestion('ratio', {
         target: +(ratio + 0.2).toFixed(1),
-        reason: "Higher ratio to clean finish",
+        reason: 'Higher ratio to clean finish',
         priority: 2,
-        confidence: "med",
+        confidence: 'med',
       })
     );
     if (waterTemp_C !== undefined) {
       suggestions.push(
-        createSuggestion("waterTemp_C", {
+        createSuggestion('waterTemp_C', {
           delta: -deltas.waterTemp_C,
-          reason: "Lower temp slightly",
+          reason: 'Lower temp slightly',
           priority: 3,
-          confidence: "low",
+          confidence: 'low',
         })
       );
     }
   } else if (aftertasteValue < -threshold) {
     // Short/disappearing finish
     suggestions.push(
-      createSuggestion("grindStep", {
+      createSuggestion('grindStep', {
         delta: -deltas.grindStep,
-        reason: "Finish too short → finer",
+        reason: 'Finish too short → finer',
         priority: 2,
-        confidence: "low",
+        confidence: 'low',
       })
     );
     suggestions.push(
-      createSuggestion("shotTime_s", {
+      createSuggestion('shotTime_s', {
         delta: +deltas.shotTime_s,
-        reason: "Longer extraction for lingering sweetness",
+        reason: 'Longer extraction for lingering sweetness',
         priority: 3,
-        confidence: "low",
+        confidence: 'low',
       })
     );
   }
@@ -388,32 +388,32 @@ function generateAftertasteSuggestions(
 function applyRoastBias(roast: RoastLevel, s: Suggestion): Suggestion {
   const out = { ...s };
 
-  if (roast === "Light") {
+  if (roast === 'Light') {
     // Light roasts: sensitive to temperature
-    if (s.field === "waterTemp_C" && s.delta && s.delta < 0) {
+    if (s.field === 'waterTemp_C' && s.delta && s.delta < 0) {
       out.priority += 2; // De-prioritize lowering temp (light needs heat)
     }
-    if (s.field === "waterTemp_C" && s.delta && s.delta > 0) {
+    if (s.field === 'waterTemp_C' && s.delta && s.delta > 0) {
       out.priority -= 1; // Boost raising temp (helps extraction)
     }
-    if (s.field === "grindStep" && s.delta && s.delta < 0) {
+    if (s.field === 'grindStep' && s.delta && s.delta < 0) {
       out.priority -= 1; // Boost finer grind (light roasts need extraction)
     }
-    if (s.field === "preinfusion_s" && s.delta && s.delta > 0) {
+    if (s.field === 'preinfusion_s' && s.delta && s.delta > 0) {
       out.priority -= 1; // Boost preinfusion (helps even extraction)
     }
   }
 
-  if (roast === "Dark" || roast === "Medium Dark") {
+  if (roast === 'Dark' || roast === 'Medium Dark') {
     // Dark roasts: prone to bitterness, benefit from lower temp
-    if (s.field === "waterTemp_C" && s.delta && s.delta < 0) {
+    if (s.field === 'waterTemp_C' && s.delta && s.delta < 0) {
       out.priority -= 1; // Boost lowering temp (reduces harshness)
       out.delta = s.delta * 1.5; // Amplify temp decrease (rounded later)
     }
-    if (s.field === "grindStep" && s.delta && s.delta > 0) {
+    if (s.field === 'grindStep' && s.delta && s.delta > 0) {
       out.priority -= 1; // Boost coarser grind (prevents over-extraction)
     }
-    if (s.field === "shotTime_s" && s.delta && s.delta < 0) {
+    if (s.field === 'shotTime_s' && s.delta && s.delta < 0) {
       out.priority -= 1; // Boost shorter time (reduces bitterness)
     }
   }
@@ -435,42 +435,42 @@ function weightForFactory(
   const DROP_WEIGHT = 1e6; // effectively removes a suggestion from top-N
 
   // Map extraction label -> coarse direction
-  const dir = extraction.label.startsWith("under")
-    ? "under"
-    : extraction.label.startsWith("over")
-    ? "over"
-    : "balanced";
+  const dir = extraction.label.startsWith('under')
+    ? 'under'
+    : extraction.label.startsWith('over')
+      ? 'over'
+      : 'balanced';
 
   // Helper to read delta sign safely
   const sign = (v?: number) => ((v ?? 0) === 0 ? 0 : v! > 0 ? +1 : -1);
 
   return (s: Suggestion) => {
     // Default (balanced) → minimal shaping
-    if (dir === "balanced") {
+    if (dir === 'balanced') {
       // small nudge to avoid grind dominating everything
-      return s.field === "ratio" ? -0.05 : 0;
+      return s.field === 'ratio' ? -0.05 : 0;
     }
 
     // ---- 1) Hard gate: drop suggestions that contradict the direction ----
-    if (dir === "under") {
+    if (dir === 'under') {
       // Need: finer(-), time+, temp+, ratio↓, (dose+ slightly)
       if (
-        (s.field === "grindStep" && sign(s.delta) === +1) || // coarser (bad)
-        (s.field === "shotTime_s" && sign(s.delta) === -1) || // shorter (bad)
-        (s.field === "waterTemp_C" && sign(s.delta) === -1) || // lower temp (bad)
-        (s.field === "ratio" && (s.target ?? ratio) > ratio) || // higher ratio (bad)
-        (s.field === "dose_g" && sign(s.delta) === -1) // less dose (bad)
+        (s.field === 'grindStep' && sign(s.delta) === +1) || // coarser (bad)
+        (s.field === 'shotTime_s' && sign(s.delta) === -1) || // shorter (bad)
+        (s.field === 'waterTemp_C' && sign(s.delta) === -1) || // lower temp (bad)
+        (s.field === 'ratio' && (s.target ?? ratio) > ratio) || // higher ratio (bad)
+        (s.field === 'dose_g' && sign(s.delta) === -1) // less dose (bad)
       ) {
         return DROP_WEIGHT;
       }
-    } else if (dir === "over") {
+    } else if (dir === 'over') {
       // Need: coarser(+), time-, temp-, ratio↑, (dose- slightly)
       if (
-        (s.field === "grindStep" && sign(s.delta) === -1) || // finer (bad)
-        (s.field === "shotTime_s" && sign(s.delta) === +1) || // longer (bad)
-        (s.field === "waterTemp_C" && sign(s.delta) === +1) || // higher temp (bad)
-        (s.field === "ratio" && (s.target ?? ratio) < ratio) || // lower ratio (bad)
-        (s.field === "dose_g" && sign(s.delta) === +1) // more dose (bad)
+        (s.field === 'grindStep' && sign(s.delta) === -1) || // finer (bad)
+        (s.field === 'shotTime_s' && sign(s.delta) === +1) || // longer (bad)
+        (s.field === 'waterTemp_C' && sign(s.delta) === +1) || // higher temp (bad)
+        (s.field === 'ratio' && (s.target ?? ratio) < ratio) || // lower ratio (bad)
+        (s.field === 'dose_g' && sign(s.delta) === +1) // more dose (bad)
       ) {
         return DROP_WEIGHT;
       }
@@ -479,25 +479,25 @@ function weightForFactory(
     // ---- 2) Directional boost: reward suggestions that align with the direction ----
     let w = 0;
 
-    if (dir === "under") {
-      if (s.field === "grindStep" && sign(s.delta) === -1) w -= 2.0; // finer
-      if (s.field === "shotTime_s" && sign(s.delta) === +1) w -= 1.5; // longer
-      if (s.field === "waterTemp_C" && sign(s.delta) === +1) w -= 1.0; // higher temp
-      if (s.field === "ratio" && (s.target ?? ratio) < ratio) w -= 1.2; // lower ratio
-      if (s.field === "dose_g" && sign(s.delta) === +1) w -= 0.5; // a bit more dose
-    } else if (dir === "over") {
-      if (s.field === "grindStep" && sign(s.delta) === +1) w -= 2.0; // coarser
-      if (s.field === "shotTime_s" && sign(s.delta) === -1) w -= 1.5; // shorter
-      if (s.field === "waterTemp_C" && sign(s.delta) === -1) w -= 1.0; // lower temp
-      if (s.field === "ratio" && (s.target ?? ratio) > ratio) w -= 1.2; // higher ratio
-      if (s.field === "dose_g" && sign(s.delta) === -1) w -= 0.5; // a bit less dose
+    if (dir === 'under') {
+      if (s.field === 'grindStep' && sign(s.delta) === -1) w -= 2.0; // finer
+      if (s.field === 'shotTime_s' && sign(s.delta) === +1) w -= 1.5; // longer
+      if (s.field === 'waterTemp_C' && sign(s.delta) === +1) w -= 1.0; // higher temp
+      if (s.field === 'ratio' && (s.target ?? ratio) < ratio) w -= 1.2; // lower ratio
+      if (s.field === 'dose_g' && sign(s.delta) === +1) w -= 0.5; // a bit more dose
+    } else if (dir === 'over') {
+      if (s.field === 'grindStep' && sign(s.delta) === +1) w -= 2.0; // coarser
+      if (s.field === 'shotTime_s' && sign(s.delta) === -1) w -= 1.5; // shorter
+      if (s.field === 'waterTemp_C' && sign(s.delta) === -1) w -= 1.0; // lower temp
+      if (s.field === 'ratio' && (s.target ?? ratio) > ratio) w -= 1.2; // higher ratio
+      if (s.field === 'dose_g' && sign(s.delta) === -1) w -= 0.5; // a bit less dose
     }
 
     // Confidence multiplier
-    if (extraction.confidence === "high") w *= 1.2;
+    if (extraction.confidence === 'high') w *= 1.2;
 
     // Slight emphasis for ratio targets so it doesn't lose to grind all the time
-    if (s.field === "ratio") w *= 1.15;
+    if (s.field === 'ratio') w *= 1.15;
 
     return w;
   };
@@ -528,7 +528,7 @@ const DELTA_RULES: Partial<Record<CoachField, DeltaRule>> = {
   },
   dose_g: {
     // 0.1g precision
-    round: (x) => Math.round(x * 10) / 10,
+    round: x => Math.round(x * 10) / 10,
     min: -MAX_DELTAS.dose_g,
     max: +MAX_DELTAS.dose_g,
   },
@@ -665,7 +665,7 @@ export function ruleCoachShot(
 
   // ---- Normalization & Clamping ----
   const normalized = Array.from(byField.values())
-    .map((orig) => {
+    .map(orig => {
       const s = { ...orig };
 
       // delta normalization (field-specific rules applied automatically)
@@ -676,7 +676,7 @@ export function ruleCoachShot(
       }
 
       // ratio target normalization
-      if (s.field === "ratio" && s.target !== undefined) {
+      if (s.field === 'ratio' && s.target !== undefined) {
         const r = normalizeRatioTarget(s.target, ratio);
         if (!r.keep) return null;
         s.target = r.value;

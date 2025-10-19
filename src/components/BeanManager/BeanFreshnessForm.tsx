@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,16 +6,16 @@ import {
   StyleSheet,
   Platform,
   ScrollView,
-} from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { colors } from "../../themes/colors";
-import { formatDate } from "src/utils/formatDate";
+} from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { colors } from '../../themes/colors';
+import { formatDate } from 'src/utils/formatDate';
 
-import { FormField } from "../inputs";
-import SvgIcon from "../SvgIcon";
-import ExpirationPeriodSelector from "./ExpirationPeriodSelector";
+import { FormField } from '../inputs';
+import SvgIcon from '../SvgIcon';
+import ExpirationPeriodSelector from './ExpirationPeriodSelector';
 
-type DateType = "roasting" | "opening";
+type DateType = 'roasting' | 'opening';
 
 export interface BeanFreshnessFormProps {
   initialDate?: Date;
@@ -28,14 +28,14 @@ export interface BeanFreshnessFormProps {
 
 const BeanFreshnessForm: React.FC<BeanFreshnessFormProps> = ({
   initialDate,
-  initialDateType = "roasting",
+  initialDateType = 'roasting',
   onDateChange,
   onDateTypeChange,
   expirationPeriodWeeks = 2,
   onExpirationPeriodChange,
 }) => {
   const [selectedDate, setSelectedDate] = useState(initialDate || new Date());
-  const [dateType, setDateType] = useState<"roasting" | "opening">(
+  const [dateType, setDateType] = useState<'roasting' | 'opening'>(
     initialDateType
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -53,52 +53,52 @@ const BeanFreshnessForm: React.FC<BeanFreshnessFormProps> = ({
   }, [initialDateType]);
 
   const handleDateChange = (event: any, date?: Date) => {
-    setShowDatePicker(Platform.OS === "ios");
+    setShowDatePicker(Platform.OS === 'ios');
     if (date) {
       setSelectedDate(date);
       onDateChange(date);
     }
   };
 
-  const handleDateTypeChange = (type: "roasting" | "opening") => {
+  const handleDateTypeChange = (type: 'roasting' | 'opening') => {
     setDateType(type);
     onDateTypeChange(type);
   };
 
-  const getDateTypeLabel = (type: "roasting" | "opening") => {
-    return type === "roasting" ? "Roasting Date" : "Opening Date";
+  const getDateTypeLabel = (type: 'roasting' | 'opening') => {
+    return type === 'roasting' ? 'Roasting Date' : 'Opening Date';
   };
 
-  const getDateTypeDescription = (type: "roasting" | "opening") => {
-    return type === "roasting"
-      ? "When the beans were roasted"
-      : "When you opened the bag";
+  const getDateTypeDescription = (type: 'roasting' | 'opening') => {
+    return type === 'roasting'
+      ? 'When the beans were roasted'
+      : 'When you opened the bag';
   };
 
   return (
     <ScrollView
-      keyboardShouldPersistTaps="handled"
+      keyboardShouldPersistTaps='handled'
       showsVerticalScrollIndicator={false}
     >
       {/* Date Type Selection */}
-      <FormField label="Track freshness from">
+      <FormField label='Track freshness from'>
         <View style={styles.typeButtons}>
           <TouchableOpacity
             style={[
               styles.typeButton,
-              dateType === "roasting" && styles.typeButtonActive,
+              dateType === 'roasting' && styles.typeButtonActive,
             ]}
-            onPress={() => handleDateTypeChange("roasting")}
+            onPress={() => handleDateTypeChange('roasting')}
           >
             <SvgIcon
-              name="roaster"
+              name='roaster'
               size={40}
-              color={dateType === "roasting" ? colors.primary : colors.textDark}
+              color={dateType === 'roasting' ? colors.primary : colors.textDark}
             />
             <Text
               style={[
                 styles.typeButtonText,
-                dateType === "roasting" && styles.typeButtonTextActive,
+                dateType === 'roasting' && styles.typeButtonTextActive,
               ]}
             >
               Roasting
@@ -106,29 +106,29 @@ const BeanFreshnessForm: React.FC<BeanFreshnessFormProps> = ({
             <Text
               style={[
                 styles.typeButtonSubtext,
-                dateType === "roasting" && styles.typeButtonSubtextActive,
+                dateType === 'roasting' && styles.typeButtonSubtextActive,
               ]}
             >
-              {getDateTypeDescription("roasting")}
+              {getDateTypeDescription('roasting')}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[
               styles.typeButton,
-              dateType === "opening" && styles.typeButtonActive,
+              dateType === 'opening' && styles.typeButtonActive,
             ]}
-            onPress={() => handleDateTypeChange("opening")}
+            onPress={() => handleDateTypeChange('opening')}
           >
             <SvgIcon
-              name="open_bag"
+              name='open_bag'
               size={40}
-              color={dateType === "opening" ? colors.primary : colors.textDark}
+              color={dateType === 'opening' ? colors.primary : colors.textDark}
             />
             <Text
               style={[
                 styles.typeButtonText,
-                dateType === "opening" && styles.typeButtonTextActive,
+                dateType === 'opening' && styles.typeButtonTextActive,
                 {
                   marginTop: 4,
                 },
@@ -139,10 +139,10 @@ const BeanFreshnessForm: React.FC<BeanFreshnessFormProps> = ({
             <Text
               style={[
                 styles.typeButtonSubtext,
-                dateType === "opening" && styles.typeButtonSubtextActive,
+                dateType === 'opening' && styles.typeButtonSubtextActive,
               ]}
             >
-              {getDateTypeDescription("opening")}
+              {getDateTypeDescription('opening')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -177,15 +177,15 @@ const BeanFreshnessForm: React.FC<BeanFreshnessFormProps> = ({
               showDatePicker && styles.dateButtonSubtextActive,
             ]}
           >
-            {showDatePicker ? "Tap to close" : "Tap to change"}
+            {showDatePicker ? 'Tap to close' : 'Tap to change'}
           </Text>
         </TouchableOpacity>
 
         {showDatePicker && (
           <DateTimePicker
             value={selectedDate}
-            mode="date"
-            display={Platform.OS === "ios" ? "spinner" : "default"}
+            mode='date'
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
             onChange={handleDateChange}
             maximumDate={new Date()}
           />
@@ -196,68 +196,68 @@ const BeanFreshnessForm: React.FC<BeanFreshnessFormProps> = ({
 };
 
 const styles = StyleSheet.create({
-  typeButtons: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  typeButton: {
-    flex: 1,
-    backgroundColor: colors.hover,
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 2,
-    borderColor: colors.borderLight,
-    alignItems: "center",
-  },
-  typeButtonActive: {
-    backgroundColor: colors.primaryLight,
-    borderColor: colors.primary,
-  },
-  typeButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textDark,
-    marginBottom: 4,
-  },
-  typeButtonTextActive: {
-    color: colors.primary,
-  },
-  typeButtonSubtext: {
-    fontSize: 12,
-    color: colors.textMedium,
-    textAlign: "center",
-  },
-  typeButtonSubtextActive: {
-    color: colors.primary,
-  },
   dateButton: {
+    alignItems: 'center',
     backgroundColor: colors.hover,
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
     borderColor: colors.borderLight,
-    alignItems: "center",
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 12,
   },
   dateButtonActive: {
     backgroundColor: colors.primaryLight,
     borderColor: colors.primary,
     borderWidth: 2,
   },
+  dateButtonSubtext: {
+    color: colors.textMedium,
+    fontSize: 12,
+  },
+  dateButtonSubtextActive: {
+    color: colors.primary,
+  },
   dateButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
     color: colors.textDark,
+    fontSize: 16,
+    fontWeight: '600',
     marginBottom: 4,
   },
   dateButtonTextActive: {
     color: colors.primary,
   },
-  dateButtonSubtext: {
-    fontSize: 12,
-    color: colors.textMedium,
+  typeButton: {
+    alignItems: 'center',
+    backgroundColor: colors.hover,
+    borderColor: colors.borderLight,
+    borderRadius: 12,
+    borderWidth: 2,
+    flex: 1,
+    padding: 16,
   },
-  dateButtonSubtextActive: {
+  typeButtonActive: {
+    backgroundColor: colors.primaryLight,
+    borderColor: colors.primary,
+  },
+  typeButtonSubtext: {
+    color: colors.textMedium,
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  typeButtonSubtextActive: {
     color: colors.primary,
+  },
+  typeButtonText: {
+    color: colors.textDark,
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  typeButtonTextActive: {
+    color: colors.primary,
+  },
+  typeButtons: {
+    flexDirection: 'row',
+    gap: 12,
   },
 });
 

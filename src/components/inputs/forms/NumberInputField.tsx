@@ -1,17 +1,17 @@
-import React, { useRef, useCallback, useEffect } from "react";
+import React, { useRef, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   Platform,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-import { inputStyles } from "../styles";
-import FormField, { FormFieldProps } from "../FormField";
+import { inputStyles } from '../styles';
+import FormField, { FormFieldProps } from '../FormField';
 
-interface NumberInputFieldProps extends Omit<FormFieldProps, "children"> {
+interface NumberInputFieldProps extends Omit<FormFieldProps, 'children'> {
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
@@ -26,7 +26,7 @@ const NumberInputField: React.FC<NumberInputFieldProps> = ({
   label,
   value,
   onChangeText,
-  placeholder = "",
+  placeholder = '',
   required = false,
   subtitle,
   unit,
@@ -47,10 +47,10 @@ const NumberInputField: React.FC<NumberInputFieldProps> = ({
   }, [value]);
 
   const triggerHapticFeedback = async () => {
-    if (Platform.OS === "ios") {
+    if (Platform.OS === 'ios') {
       try {
         const { impactAsync, ImpactFeedbackStyle } = await import(
-          "expo-haptics"
+          'expo-haptics'
         );
         impactAsync(ImpactFeedbackStyle.Light);
       } catch (error) {
@@ -62,8 +62,8 @@ const NumberInputField: React.FC<NumberInputFieldProps> = ({
   const updateValue = useCallback(
     (increment: boolean) => {
       // if value is empty, set placeholder value if it exists, otherwise use 0
-      if (valueRef.current === "") {
-        onChangeText(placeholder ?? "0");
+      if (valueRef.current === '') {
+        onChangeText(placeholder ?? '0');
         return;
       }
 
@@ -81,7 +81,7 @@ const NumberInputField: React.FC<NumberInputFieldProps> = ({
       // Only update if the value actually changed (not constrained)
       if (constrainedValue !== currentValue) {
         // Preserve the precision based on step
-        const decimals = step.toString().split(".")[1]?.length || 0;
+        const decimals = step.toString().split('.')[1]?.length || 0;
         const formattedValue = constrainedValue.toFixed(decimals);
 
         onChangeText(formattedValue);
@@ -140,7 +140,7 @@ const NumberInputField: React.FC<NumberInputFieldProps> = ({
   };
 
   const handleReset = () => {
-    onChangeText("");
+    onChangeText('');
   };
 
   const handleIncrementPressIn = () => {
@@ -176,7 +176,7 @@ const NumberInputField: React.FC<NumberInputFieldProps> = ({
             value={value}
             onChangeText={onChangeText}
             placeholder={placeholder}
-            keyboardType="numeric"
+            keyboardType='numeric'
           />
           {unit && <Text style={inputStyles.unitOverlay}>{unit}</Text>}
           {value && (
@@ -186,7 +186,7 @@ const NumberInputField: React.FC<NumberInputFieldProps> = ({
               activeOpacity={0.5}
             >
               <Ionicons
-                name="close"
+                name='close'
                 size={16}
                 color={inputStyles.clearButtonText.color}
               />
@@ -202,7 +202,7 @@ const NumberInputField: React.FC<NumberInputFieldProps> = ({
             activeOpacity={0.5}
           >
             <Ionicons
-              name="remove"
+              name='remove'
               size={20}
               color={inputStyles.arrowIcon.color}
             />
@@ -215,7 +215,7 @@ const NumberInputField: React.FC<NumberInputFieldProps> = ({
             activeOpacity={0.5}
           >
             <Ionicons
-              name="add"
+              name='add'
               size={20}
               color={inputStyles.arrowIcon.color}
             />

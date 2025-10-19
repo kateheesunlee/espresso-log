@@ -1,33 +1,33 @@
-import React, { useState, useEffect } from "react";
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
   ScrollView,
-  TouchableOpacity,
   Share,
-} from "react-native";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
-import { useStore } from "../store/useStore";
-import { RootStackParamList } from "../navigation/AppNavigator";
-import { Shot } from "@types";
-import { colors } from "../themes/colors";
-import { formatDateLong } from "../utils/formatDate";
+import { Shot } from '@types';
+import { RootStackParamList } from '../navigation/AppNavigator';
+import { useStore } from '../store/useStore';
+import { colors } from '../themes/colors';
+import { formatDateLong } from '../utils/formatDate';
 
-import SvgIcon from "../components/SvgIcon";
-import ConfirmationModal from "../components/modals/ConfirmationModal";
-import ErrorModal from "../components/modals/ErrorModal";
-import { FormField } from "../components/inputs";
-import RoastingIndicator from "../components/RoastingIndicator";
-import TastingNotes from "../components/TastingNotes";
+import { FormField } from '../components/inputs';
+import ConfirmationModal from '../components/modals/ConfirmationModal';
+import ErrorModal from '../components/modals/ErrorModal';
+import RoastingIndicator from '../components/RoastingIndicator';
+import SvgIcon from '../components/SvgIcon';
+import TastingNotes from '../components/TastingNotes';
 
 type ShotDetailScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  "ShotDetail"
+  'ShotDetail'
 >;
-type ShotDetailScreenRouteProp = RouteProp<RootStackParamList, "ShotDetail">;
+type ShotDetailScreenRouteProp = RouteProp<RootStackParamList, 'ShotDetail'>;
 
 const ShotDetailScreen: React.FC = () => {
   const navigation = useNavigation<ShotDetailScreenNavigationProp>();
@@ -41,10 +41,10 @@ const ShotDetailScreen: React.FC = () => {
   const [errorModal, setErrorModal] = useState<{
     visible: boolean;
     message: string;
-  }>({ visible: false, message: "" });
+  }>({ visible: false, message: '' });
 
   useEffect(() => {
-    const foundShot = shots.find((s) => s.id === route.params.shotId);
+    const foundShot = shots.find(s => s.id === route.params.shotId);
     setShot(foundShot || null);
   }, [shots, route.params.shotId]);
 
@@ -56,7 +56,7 @@ const ShotDetailScreen: React.FC = () => {
     } catch (error) {
       setErrorModal({
         visible: true,
-        message: "Failed to update favorite shot",
+        message: 'Failed to update favorite shot',
       });
     }
   };
@@ -68,7 +68,7 @@ const ShotDetailScreen: React.FC = () => {
 
   const handleOneMoreConfirm = () => {
     setOneMoreModalVisible(false);
-    navigation.navigate("NewShot", { duplicateFrom: shot!.id });
+    navigation.navigate('NewShot', { duplicateFrom: shot!.id });
   };
 
   const handleDelete = () => {
@@ -82,7 +82,7 @@ const ShotDetailScreen: React.FC = () => {
       await deleteShot(shot.id);
       navigation.goBack();
     } catch (error) {
-      setErrorModal({ visible: true, message: "Failed to delete shot" });
+      setErrorModal({ visible: true, message: 'Failed to delete shot' });
     }
     setDeleteConfirmation(false);
   };
@@ -94,34 +94,34 @@ const ShotDetailScreen: React.FC = () => {
   const handleShare = async () => {
     if (!shot) return;
 
-    const bean = beans.find((b) => b.id === shot.beanId);
-    const machine = machines.find((m) => m.id === shot.machineId);
+    const bean = beans.find(b => b.id === shot.beanId);
+    const machine = machines.find(m => m.id === shot.machineId);
 
     const shareText = `Espresso Shot Details:
-Bean: ${bean?.name || "Unknown"}
+Bean: ${bean?.name || 'Unknown'}
 Machine: ${
-      machine?.nickname || `${machine?.brand} ${machine?.model}` || "Unknown"
+      machine?.nickname || `${machine?.brand} ${machine?.model}` || 'Unknown'
     }
 Grind: ${shot.grindSetting}
 Dose: ${shot.dose_g}g
 Yield: ${shot.yield_g}g
-Ratio: ${shot.ratio ? `1:${shot.ratio.toFixed(1)}` : "N/A"}
-Time: ${shot.shotTime_s ? `${shot.shotTime_s}s` : "N/A"}
-Temperature: ${shot.waterTemp_C ? `${shot.waterTemp_C}°C` : "N/A"}
+Ratio: ${shot.ratio ? `1:${shot.ratio.toFixed(1)}` : 'N/A'}
+Time: ${shot.shotTime_s ? `${shot.shotTime_s}s` : 'N/A'}
+Temperature: ${shot.waterTemp_C ? `${shot.waterTemp_C}°C` : 'N/A'}
 Overall Score: ${
       shot.overallScore !== undefined && shot.overallScore !== null
         ? `${shot.overallScore}/10`
-        : "N/A"
+        : 'N/A'
     }
-${shot.notes ? `Notes: ${shot.notes}` : ""}`;
+${shot.notes ? `Notes: ${shot.notes}` : ''}`;
 
     try {
       await Share.share({
         message: shareText,
-        title: "Espresso Shot Details",
+        title: 'Espresso Shot Details',
       });
     } catch (error) {
-      setErrorModal({ visible: true, message: "Failed to share shot details" });
+      setErrorModal({ visible: true, message: 'Failed to share shot details' });
     }
   };
 
@@ -133,8 +133,8 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
     );
   }
 
-  const bean = beans.find((b) => b.id === shot.beanId);
-  const machine = machines.find((m) => m.id === shot.machineId);
+  const bean = beans.find(b => b.id === shot.beanId);
+  const machine = machines.find(m => m.id === shot.machineId);
 
   return (
     <View style={{ flex: 1 }}>
@@ -143,15 +143,15 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
           <View style={styles.headerInfo}>
             <View style={styles.shotTitleContainer}>
               <Text style={styles.shotTitle}>
-                {bean?.name || "Unknown Bean"}
+                {bean?.name || 'Unknown Bean'}
               </Text>
-              <RoastingIndicator roastLevel={bean?.roastLevel!} size="md" />
+              <RoastingIndicator roastLevel={bean?.roastLevel!} size='md' />
             </View>
 
             <Text style={styles.shotSubtitle}>
               {machine?.nickname ||
                 `${machine?.brand} ${machine?.model}` ||
-                "Unknown Machine"}
+                'Unknown Machine'}
             </Text>
             <Text style={styles.shotDate}>
               {formatDateLong(shot.createdAt)}
@@ -159,7 +159,7 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
           </View>
           {shot.isFavorite && (
             <SvgIcon
-              name="heart_filled"
+              name='heart_filled'
               size={24}
               color={shot.isFavorite ? colors.heart : colors.primary}
               secondaryColor={
@@ -173,34 +173,34 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
           <Text style={styles.sectionTitle}>Extraction Parameters</Text>
           <View style={styles.metricsGrid}>
             <View style={styles.metricCard}>
-              <SvgIcon name="dial" size={36} color={colors.textMedium} />
+              <SvgIcon name='dial' size={36} color={colors.textMedium} />
               <View style={styles.metricTextContainer}>
                 <Text style={styles.metricLabel}>Grind</Text>
                 <Text style={styles.metricValue}>
-                  {shot.grindSetting || "N/A"}
+                  {shot.grindSetting || 'N/A'}
                 </Text>
               </View>
             </View>
             <View style={styles.metricCard}>
-              <SvgIcon name="scale" size={36} color={colors.textMedium} />
+              <SvgIcon name='scale' size={36} color={colors.textMedium} />
               <View style={styles.metricTextContainer}>
                 <Text style={styles.metricLabel}>Dose</Text>
                 <Text style={styles.metricValue}>{shot.dose_g}g</Text>
               </View>
             </View>
             <View style={styles.metricCard}>
-              <SvgIcon name="water" size={36} color={colors.textMedium} />
+              <SvgIcon name='water' size={36} color={colors.textMedium} />
               <View style={styles.metricTextContainer}>
                 <Text style={styles.metricLabel}>Yield</Text>
                 <Text style={styles.metricValue}>{shot.yield_g}g</Text>
               </View>
             </View>
             <View style={styles.metricCard}>
-              <SvgIcon name="ratio" size={36} color={colors.textMedium} />
+              <SvgIcon name='ratio' size={36} color={colors.textMedium} />
               <View style={styles.metricTextContainer}>
                 <Text style={styles.metricLabel}>Ratio</Text>
                 <Text style={styles.metricValue}>
-                  {shot.ratio ? `1:${shot.ratio.toFixed(1)}` : "N/A"}
+                  {shot.ratio ? `1:${shot.ratio.toFixed(1)}` : 'N/A'}
                 </Text>
               </View>
             </View>
@@ -213,22 +213,22 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
             <View style={styles.metricsGrid}>
               {shot.shotTime_s && (
                 <View style={styles.metricCard}>
-                  <SvgIcon name="timer" size={36} color={colors.textMedium} />
+                  <SvgIcon name='timer' size={36} color={colors.textMedium} />
                   <View style={styles.metricTextContainer}>
                     <Text style={styles.metricLabel}>Time</Text>
                     <Text style={styles.metricValue}>
-                      {shot.shotTime_s ? `${shot.shotTime_s}s` : "N/A"}
+                      {shot.shotTime_s ? `${shot.shotTime_s}s` : 'N/A'}
                     </Text>
                   </View>
                 </View>
               )}
               {shot.waterTemp_C && (
                 <View style={styles.metricCard}>
-                  <SvgIcon name="temp" size={36} color={colors.textMedium} />
+                  <SvgIcon name='temp' size={36} color={colors.textMedium} />
                   <View style={styles.metricTextContainer}>
                     <Text style={styles.metricLabel}>Temperature</Text>
                     <Text style={styles.metricValue}>
-                      {shot.waterTemp_C ? `${shot.waterTemp_C}°C` : "N/A"}
+                      {shot.waterTemp_C ? `${shot.waterTemp_C}°C` : 'N/A'}
                     </Text>
                   </View>
                 </View>
@@ -251,12 +251,27 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
                 readOnly={true}
               />
 
-              <FormField label="Overall Score">
+              <FormField label='Overall Score'>
                 <View style={styles.scoreContainer}>
                   <Text style={styles.scoreValue}>{shot.overallScore}/10</Text>
                   <Text style={styles.scoreLabel}>Tasting Score</Text>
                 </View>
               </FormField>
+            </View>
+          </View>
+        )}
+
+        {shot.tastingTags && shot.tastingTags.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Tasting Tags</Text>
+            <View style={styles.tagsContainer}>
+              {shot.tastingTags
+                .filter(tag => tag && typeof tag === 'string')
+                .map((tag, index) => (
+                  <View key={index} style={styles.tagChip}>
+                    <Text style={styles.tagText}>{tag}</Text>
+                  </View>
+                ))}
             </View>
           </View>
         )}
@@ -274,26 +289,26 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
             onPress={handleToggleFavorite}
           >
             <SvgIcon
-              name={shot.isFavorite ? "heart_filled" : "heart"}
+              name={shot.isFavorite ? 'heart_filled' : 'heart'}
               size={24}
             />
             <Text style={styles.actionButtonText}>
-              {shot.isFavorite ? "Remove from Favorites" : "Mark as Favorite"}
+              {shot.isFavorite ? 'Remove from Favorites' : 'Mark as Favorite'}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionButton} onPress={handleOneMore}>
-            <SvgIcon name="add-notes" size={24} />
+            <SvgIcon name='add-notes' size={24} />
             <Text style={styles.actionButtonText}>One More</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionButton} onPress={handleShare}>
-            <SvgIcon name="share" size={24} />
+            <SvgIcon name='share' size={24} />
             <Text style={styles.actionButtonText}>Share</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionButton} onPress={handleDelete}>
-            <SvgIcon name="delete" size={24} />
+            <SvgIcon name='delete' size={24} />
             <Text style={styles.actionButtonText}>Delete</Text>
           </TouchableOpacity>
         </View>
@@ -301,10 +316,10 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
 
       <ConfirmationModal
         visible={deleteConfirmation}
-        title="Delete Shot"
-        message="Are you sure you want to delete this shot? This action cannot be undone."
-        confirmText="Delete"
-        cancelText="Cancel"
+        title='Delete Shot'
+        message='Are you sure you want to delete this shot? This action cannot be undone.'
+        confirmText='Delete'
+        cancelText='Cancel'
         onConfirm={confirmDeleteShot}
         onCancel={cancelDeleteShot}
         destructive={true}
@@ -312,65 +327,137 @@ ${shot.notes ? `Notes: ${shot.notes}` : ""}`;
 
       <ConfirmationModal
         visible={oneMoreModalVisible}
-        title="One More Shot"
+        title='One More Shot'
         message="This will open a new shot form pre-filled with the current shot's parameters. You can modify any values before saving."
-        confirmText="One More"
-        cancelText="Cancel"
+        confirmText='One More'
+        cancelText='Cancel'
         onConfirm={handleOneMoreConfirm}
         onCancel={() => setOneMoreModalVisible(false)}
-        icon="add-notes"
+        icon='add-notes'
       />
 
       <ErrorModal
         visible={errorModal.visible}
         message={errorModal.message}
-        onButtonPress={() => setErrorModal({ visible: false, message: "" })}
+        onButtonPress={() => setErrorModal({ visible: false, message: '' })}
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  actionButton: {
+    alignItems: 'center',
+    backgroundColor: colors.white,
+    borderColor: colors.borderLight,
+    borderRadius: 12,
+    borderWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 12,
+    padding: 16,
   },
-  loadingText: {
+  actionButtonText: {
+    color: colors.primary,
     fontSize: 16,
-    color: colors.textMedium,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  actions: {
+    padding: 20,
+  },
+  additionalParams: {
+    borderTopColor: colors.borderLight,
+    borderTopWidth: 1,
+    marginTop: 16,
+    paddingTop: 16,
   },
   header: {
+    alignItems: 'flex-start',
     backgroundColor: colors.white,
-    padding: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    borderBottomWidth: 1,
     borderBottomColor: colors.borderLight,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 20,
   },
   headerInfo: {
     flex: 1,
   },
-  shotTitleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
+  loadingContainer: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
   },
-  shotTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: colors.textDark,
-    marginBottom: 4,
-  },
-  shotSubtitle: {
-    fontSize: 16,
+  loadingText: {
     color: colors.textMedium,
-    marginBottom: 4,
+    fontSize: 16,
   },
-  shotDate: {
+  metricCard: {
+    alignItems: 'center',
+    backgroundColor: colors.hover,
+    borderRadius: 12,
+    flexDirection: 'row',
+    marginBottom: 12,
+    padding: 16,
+    width: '48%',
+  },
+  metricLabel: {
+    color: colors.textMedium,
+    fontSize: 12,
+    opacity: 0.8,
+  },
+  metricTextContainer: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  metricValue: {
+    color: colors.primary,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 2,
+  },
+  metricsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  notesText: {
+    color: colors.textDark,
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  paramLabel: {
+    color: colors.textMedium,
+    fontSize: 16,
+  },
+  paramRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  paramValue: {
+    color: colors.textDark,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  ratingSection: {
+    marginTop: 8,
+  },
+  scoreContainer: {
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  scoreLabel: {
+    color: colors.textMedium,
     fontSize: 14,
-    color: colors.textLight,
+    opacity: 0.8,
+  },
+  scoreValue: {
+    color: colors.primary,
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 4,
   },
   section: {
     backgroundColor: colors.white,
@@ -378,102 +465,48 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
     color: colors.textDark,
+    fontSize: 20,
+    fontWeight: 'bold',
     marginBottom: 16,
   },
-  metricsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
+  shotDate: {
+    color: colors.textLight,
+    fontSize: 14,
   },
-  metricCard: {
-    backgroundColor: colors.hover,
-    borderRadius: 12,
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    width: "48%",
-    marginBottom: 12,
-  },
-  metricTextContainer: {
-    marginLeft: 12,
-    flex: 1,
-  },
-  metricValue: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: colors.primary,
-    marginTop: 2,
-  },
-  metricLabel: {
-    fontSize: 12,
+  shotSubtitle: {
     color: colors.textMedium,
-    opacity: 0.8,
-  },
-  additionalParams: {
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: colors.borderLight,
-  },
-  paramRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-  paramLabel: {
     fontSize: 16,
-    color: colors.textMedium,
-  },
-  paramValue: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.textDark,
-  },
-  ratingSection: {
-    marginTop: 8,
-  },
-  scoreContainer: {
-    alignItems: "center",
-    paddingVertical: 16,
-  },
-  scoreValue: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: colors.primary,
     marginBottom: 4,
   },
-  scoreLabel: {
-    fontSize: 14,
-    color: colors.textMedium,
-    opacity: 0.8,
-  },
-  notesText: {
-    fontSize: 16,
+  shotTitle: {
     color: colors.textDark,
-    lineHeight: 24,
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 4,
   },
-  actions: {
-    padding: 20,
-    gap: 12,
+  shotTitleContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
   },
-  actionButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    padding: 16,
+  tagChip: {
+    backgroundColor: colors.primaryLight,
+    borderColor: colors.primary,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: colors.borderLight,
+    marginBottom: 8,
+    marginRight: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
-  actionButtonText: {
-    marginLeft: 8,
-    fontSize: 16,
-    fontWeight: "600",
+  tagText: {
     color: colors.primary,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 });
 

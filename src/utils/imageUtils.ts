@@ -1,5 +1,5 @@
-import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system";
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 
 export interface ImagePickerResult {
   uri: string;
@@ -9,9 +9,9 @@ export interface ImagePickerResult {
 export const requestCameraPermissions = async (): Promise<boolean> => {
   try {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    return status === "granted";
+    return status === 'granted';
   } catch (error) {
-    console.error("Error requesting camera permissions:", error);
+    console.error('Error requesting camera permissions:', error);
     return false;
   }
 };
@@ -19,9 +19,9 @@ export const requestCameraPermissions = async (): Promise<boolean> => {
 export const requestMediaLibraryPermissions = async (): Promise<boolean> => {
   try {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    return status === "granted";
+    return status === 'granted';
   } catch (error) {
-    console.error("Error requesting media library permissions:", error);
+    console.error('Error requesting media library permissions:', error);
     return false;
   }
 };
@@ -31,7 +31,7 @@ export const pickImageFromCamera = async (): Promise<ImagePickerResult> => {
     const hasPermission = await requestCameraPermissions();
 
     if (!hasPermission) {
-      return { uri: "", cancelled: true };
+      return { uri: '', cancelled: true };
     }
 
     const result = await ImagePicker.launchCameraAsync({
@@ -55,12 +55,12 @@ export const pickImageFromCamera = async (): Promise<ImagePickerResult> => {
     }
 
     return {
-      uri: "",
+      uri: '',
       cancelled: result.canceled,
     };
   } catch (error) {
-    console.error("Error picking image from camera:", error);
-    return { uri: "", cancelled: true };
+    console.error('Error picking image from camera:', error);
+    return { uri: '', cancelled: true };
   }
 };
 
@@ -69,7 +69,7 @@ export const pickImageFromLibrary = async (): Promise<ImagePickerResult> => {
     const hasPermission = await requestMediaLibraryPermissions();
 
     if (!hasPermission) {
-      return { uri: "", cancelled: true };
+      return { uri: '', cancelled: true };
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -93,12 +93,12 @@ export const pickImageFromLibrary = async (): Promise<ImagePickerResult> => {
     }
 
     return {
-      uri: "",
+      uri: '',
       cancelled: result.canceled,
     };
   } catch (error) {
-    console.error("Error picking image from library:", error);
-    return { uri: "", cancelled: true };
+    console.error('Error picking image from library:', error);
+    return { uri: '', cancelled: true };
   }
 };
 

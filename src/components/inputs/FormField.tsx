@@ -1,6 +1,6 @@
-import { View, Text } from "react-native";
+import { View, Text } from 'react-native';
 
-import { inputStyles } from "./styles";
+import { inputStyles } from './styles';
 
 export interface FormFieldProps {
   children: React.ReactNode;

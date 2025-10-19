@@ -1,17 +1,17 @@
-import React from "react";
-import { TextInput as RNTextInput } from "react-native";
+import React from 'react';
+import { TextInput as RNTextInput } from 'react-native';
 
-import { inputStyles } from "../styles";
-import FormField, { FormFieldProps } from "../FormField";
+import { inputStyles } from '../styles';
+import FormField, { FormFieldProps } from '../FormField';
 
-interface TextFieldProps extends Omit<FormFieldProps, "children"> {
+interface TextFieldProps extends Omit<FormFieldProps, 'children'> {
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
   multiline?: boolean;
   numberOfLines?: number;
-  keyboardType?: "default" | "numeric" | "email-address" | "phone-pad";
-  autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  keyboardType?: 'default' | 'numeric' | 'email-address' | 'phone-pad';
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   readOnly?: boolean;
   style?: any;
 }
@@ -22,11 +22,11 @@ const TextField: React.FC<TextFieldProps> = ({
   subtitle,
   value,
   onChangeText,
-  placeholder = "",
+  placeholder = '',
   multiline = false,
   numberOfLines = 1,
-  keyboardType = "default",
-  autoCapitalize = "sentences",
+  keyboardType = 'default',
+  autoCapitalize = 'sentences',
   readOnly = false,
   style,
   ...rest

@@ -1,13 +1,13 @@
-import React, { useRef } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import * as Haptics from "expo-haptics";
+import React, { useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import * as Haptics from 'expo-haptics';
 
-import { colors } from "../../../themes/colors";
-import SvgIcon from "../../SvgIcon";
-import { inputStyles } from "../styles";
+import { colors } from '../../../themes/colors';
+import SvgIcon from '../../SvgIcon';
+import { inputStyles } from '../styles';
 
-type IconType = "star" | "coffee-bean";
+type IconType = 'star' | 'coffee-bean';
 interface RatingSliderProps {
   value: number;
   onValueChange: (value: number) => void;
@@ -20,14 +20,14 @@ interface RatingSliderProps {
 // Icon and color mapping configuration
 const iconConfig = {
   star: {
-    filledIcon: "star_filled",
-    emptyIcon: "star",
+    filledIcon: 'star_filled',
+    emptyIcon: 'star',
     color: colors.star,
     secondaryColor: colors.starLight,
   },
-  "coffee-bean": {
-    filledIcon: "bean_filled",
-    emptyIcon: "bean",
+  'coffee-bean': {
+    filledIcon: 'bean_filled',
+    emptyIcon: 'bean',
     color: colors.primary,
     secondaryColor: colors.primaryLight,
   },
@@ -37,7 +37,7 @@ const RatingSlider: React.FC<RatingSliderProps> = ({
   value,
   onValueChange,
   readonly = false,
-  iconType = "star",
+  iconType = 'star',
   size = 32,
   fullWidth = true,
 }) => {
@@ -81,7 +81,7 @@ const RatingSlider: React.FC<RatingSliderProps> = ({
 
   const panGesture = Gesture.Pan()
     .enabled(!readonly)
-    .onStart((event) => {
+    .onStart(event => {
       // Light haptic feedback when starting to drag
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
@@ -89,12 +89,12 @@ const RatingSlider: React.FC<RatingSliderProps> = ({
       const startValue = getValueFromPosition(event.x, sliderWidth.current);
       onValueChange(startValue);
     })
-    .onUpdate((event) => {
+    .onUpdate(event => {
       // Calculate the value based on the current position
       const currentValue = getValueFromPosition(event.x, sliderWidth.current);
       onValueChange(currentValue);
     })
-    .onEnd((event) => {
+    .onEnd(event => {
       // Medium haptic feedback when releasing the slider
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
@@ -160,11 +160,11 @@ const RatingSlider: React.FC<RatingSliderProps> = ({
       <View style={styles.sliderContainer}>
         {/* Track with icons inside for drag gestures */}
         <GestureDetector gesture={panGesture}>
-          <View style={[styles.trackContainer]}>
+          <View style={styles.trackContainer}>
             {/* Visible icons */}
             <View
               style={styles.iconsContainer}
-              onLayout={(event) => {
+              onLayout={event => {
                 const { width } = event.nativeEvent.layout;
                 iconsWidth.current = width;
                 // Update slider width to match icons width
@@ -191,56 +191,56 @@ const RatingSlider: React.FC<RatingSliderProps> = ({
 const getStyles = (fullWidth: boolean) =>
   StyleSheet.create({
     container: {
-      width: fullWidth ? "100%" : "auto",
-      alignSelf: "center",
-    },
-    labelContainer: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: 12,
-    },
-    label: {
-      fontSize: 16,
-      fontWeight: "600",
-      color: colors.textDark,
-    },
-    sliderContainer: {
-      position: "relative",
-    },
-    trackContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    iconsContainer: {
-      flexDirection: "row",
-      width: fullWidth ? "100%" : "auto",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-    iconContainer: {
-      position: "relative",
-      justifyContent: "center",
-      alignItems: "center",
+      alignSelf: 'center',
+      width: fullWidth ? '100%' : 'auto',
     },
     halfIconOverlay: {
-      position: "absolute",
-      top: 0,
+      height: '100%',
       left: 0,
-      width: "50%",
-      height: "100%",
-      overflow: "hidden",
+      overflow: 'hidden',
+      position: 'absolute',
+      top: 0,
+      width: '50%',
     },
-    ratingLabels: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      paddingHorizontal: 8,
-      marginTop: 8,
+    iconContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+    },
+    iconsContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: fullWidth ? '100%' : 'auto',
+    },
+    label: {
+      color: colors.textDark,
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    labelContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 12,
     },
     ratingLabel: {
-      fontSize: 12,
       color: colors.textMedium,
-      fontWeight: "500",
+      fontSize: 12,
+      fontWeight: '500',
+    },
+    ratingLabels: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: 8,
+      paddingHorizontal: 8,
+    },
+    sliderContainer: {
+      position: 'relative',
+    },
+    trackContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
     },
   });
 
