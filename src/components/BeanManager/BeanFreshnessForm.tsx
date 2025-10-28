@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
   Platform,
   ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { colors } from '../../themes/colors';
 import { formatDate } from 'src/utils/formatDate';
+import { colors } from '../../themes/colors';
 
+import { RoastLevel } from '../../types';
 import { FormField } from '../inputs';
 import SvgIcon from '../SvgIcon';
 import ExpirationPeriodSelector from './ExpirationPeriodSelector';
@@ -24,6 +25,7 @@ export interface BeanFreshnessFormProps {
   onDateTypeChange: (type: DateType) => void;
   expirationPeriodWeeks?: number;
   onExpirationPeriodChange?: (weeks: number) => void;
+  roastLevel?: RoastLevel;
 }
 
 const BeanFreshnessForm: React.FC<BeanFreshnessFormProps> = ({
@@ -33,6 +35,7 @@ const BeanFreshnessForm: React.FC<BeanFreshnessFormProps> = ({
   onDateTypeChange,
   expirationPeriodWeeks = 2,
   onExpirationPeriodChange,
+  roastLevel,
 }) => {
   const [selectedDate, setSelectedDate] = useState(initialDate || new Date());
   const [dateType, setDateType] = useState<'roasting' | 'opening'>(
@@ -71,8 +74,72 @@ const BeanFreshnessForm: React.FC<BeanFreshnessFormProps> = ({
 
   const getDateTypeDescription = (type: 'roasting' | 'opening') => {
     return type === 'roasting'
-      ? 'When the beans were roasted'
-      : 'When you opened the bag';
+      ? 'Best for freshly roasted beans'
+      : 'Best for store-bought coffee bags';
+  };
+
+  // suggested freshness periods by roast level
+  const suggestedFreshnessTextByRoastLevel: Record<
+    RoastLevel,
+    React.ReactNode
+  > = {
+    ['Light']: (
+      <Text style={styles.suggestedFreshnessPeriods}>
+        <Text style={styles.suggestedFreshnessPeriodsBold}>Light roast</Text>{' '}
+        beans develop slowly and stay vibrant longer - best enjoyed after about
+        4 weeks, and can remain expressive up to 8–12 weeks after roasting.
+      </Text>
+    ),
+    ['Medium Light']: (
+      <Text style={styles.suggestedFreshnessPeriods}>
+        <Text style={styles.suggestedFreshnessPeriodsBold}>
+          Medium-light roast
+        </Text>{' '}
+        beans reach their ideal balance around 3 weeks after roasting, and stay
+        pleasantly bright for up to 6–8 weeks.
+      </Text>
+    ),
+    ['Medium']: (
+      <Text style={styles.suggestedFreshnessPeriods}>
+        <Text style={styles.suggestedFreshnessPeriodsBold}>Medium roast</Text>{' '}
+        beans hit their sweet spot at 2–3 weeks after roasting, maintaining a
+        steady flavor profile for up to 6 weeks.
+      </Text>
+    ),
+    ['Medium Dark']: (
+      <Text style={styles.suggestedFreshnessPeriods}>
+        <Text style={styles.suggestedFreshnessPeriodsBold}>
+          Medium-dark roast
+        </Text>{' '}
+        beans are full and bold early on - best around 2 weeks after roasting,
+        with richness starting to fade after 4–5 weeks.
+      </Text>
+    ),
+    ['Dark']: (
+      <Text style={styles.suggestedFreshnessPeriods}>
+        <Text style={styles.suggestedFreshnessPeriodsBold}>Dark roast</Text>{' '}
+        beans show their best character within 1–2 weeks after roasting, as
+        flavors tend to mellow quickly over time.
+      </Text>
+    ),
+  };
+
+  // suggested freshness periods by date type
+  const suggestedFreshnessPeriods: Record<
+    'roasting' | 'opening',
+    React.ReactNode
+  > = {
+    roasting: suggestedFreshnessTextByRoastLevel[roastLevel as RoastLevel] || (
+      <Text style={styles.suggestedFreshnessPeriods}>
+        No suggested freshness period for this roast level.
+      </Text>
+    ),
+    opening: (
+      <Text style={styles.suggestedFreshnessPeriods}>
+        Store-bought roasted beans usually stay fresh for about 3–6 months when
+        sealed, and taste best within 2–4 weeks once opened.
+      </Text>
+    ),
   };
 
   return (
@@ -146,6 +213,9 @@ const BeanFreshnessForm: React.FC<BeanFreshnessFormProps> = ({
             </Text>
           </TouchableOpacity>
         </View>
+        <Text style={styles.suggestedFreshnessPeriods}>
+          {suggestedFreshnessPeriods[dateType]}
+        </Text>
       </FormField>
 
       {/* Expiration Period */}
@@ -225,6 +295,16 @@ const styles = StyleSheet.create({
   dateButtonTextActive: {
     color: colors.primary,
   },
+  suggestedFreshnessPeriods: {
+    color: colors.textMedium,
+    fontSize: 14,
+    lineHeight: 18,
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  suggestedFreshnessPeriodsBold: {
+    fontWeight: 'bold',
+  },
   typeButton: {
     alignItems: 'center',
     backgroundColor: colors.hover,
@@ -235,7 +315,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   typeButtonActive: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.primaryLighter,
     borderColor: colors.primary,
   },
   typeButtonSubtext: {

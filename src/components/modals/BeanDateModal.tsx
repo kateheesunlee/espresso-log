@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { ScrollView } from 'react-native';
 import { Bean, createBeanDateEntry, normalizeDateForStorage } from '@types';
+import React, { useState } from 'react';
 
-import BaseModal, { ButtonConfig } from './BaseModal';
 import BeanFreshnessForm from '../BeanManager/BeanFreshnessForm';
 import { DEFAULT_EXPIRATION_PERIOD_WEEKS } from '../BeanManager/constants';
+import BaseModal, { ButtonConfig } from './BaseModal';
 
 export interface BeanDateModalProps {
   visible: boolean;
@@ -72,6 +71,7 @@ const BeanDateModal: React.FC<BeanDateModalProps> = ({
         onDateTypeChange={setDateType}
         expirationPeriodWeeks={expirationPeriodWeeks}
         onExpirationPeriodChange={setExpirationPeriodWeeks}
+        roastLevel={bean.roastLevel}
       />
     </BaseModal>
   );

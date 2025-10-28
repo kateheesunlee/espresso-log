@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import * as Haptics from 'expo-haptics';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { Shot } from '@types';
-import { useStore } from '../../store/useStore';
 import { RootStackParamList } from '../../navigation/AppNavigator';
+import { useStore } from '../../store/useStore';
 import { colors } from '../../themes/colors';
 
-import BaseCard, { ActionConfig } from './BaseCard';
+import { formatTastingSummary } from 'src/utils/formatTastingSummary';
+import { formatDateTime } from '../../utils/formatDate';
+import RoastingIndicator from '../RoastingIndicator';
 import SvgIcon from '../SvgIcon';
 import CoachingModal from '../modals/CoachingModal';
-import RoastingIndicator from '../RoastingIndicator';
 import ConfirmationModal from '../modals/ConfirmationModal';
-import { formatDateTime } from '../../utils/formatDate';
-import { formatTastingSummary } from 'src/utils/formatTastingSummary';
+import BaseCard, { ActionConfig } from './BaseCard';
 
 type ShotCardNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -190,7 +190,11 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
     return (
       <Text>
         {subtitle}{' '}
-        <RoastingIndicator roastLevel={bean?.roastLevel!} size='sm' compact />
+        <RoastingIndicator
+          roastLevel={bean?.roastLevel ?? 'Medium'}
+          size='sm'
+          compact
+        />
       </Text>
     );
   };
@@ -325,11 +329,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-  },
-  summaryLabel: {
-    color: colors.textDark,
-    fontSize: 16,
-    fontWeight: '600',
   },
   tastingSummaryText: {
     color: colors.textSecondary,

@@ -49,6 +49,7 @@ module.exports = {
     'react/no-unescaped-entities': 'error',
 
     // React Native specific rules
+    'react-native/sort-styles': 'warn',
     'react-native/no-unused-styles': 'error',
     'react-native/split-platform-components': 'error',
     'react-native/no-inline-styles': 'off',

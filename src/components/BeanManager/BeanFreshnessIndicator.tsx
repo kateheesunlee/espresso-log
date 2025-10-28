@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
 import { Bean, getBeanFreshnessStatus } from '@types';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../themes/colors';
 import SvgIcon, { IconName } from '../SvgIcon';
 
@@ -36,15 +36,15 @@ const BeanFreshnessIndicator: React.FC<BeanFreshnessIndicatorProps> = ({
           label: 'Still Tasty',
           icon: 'thumb-up',
         };
-      case 'past-prime':
+      case 'flavor-fading':
         return {
-          label: 'Past Prime',
-          icon: 'warning',
+          label: 'Flavor fading',
+          icon: 'coffee',
         };
-      case 'too old':
+      case 'best-days-gone':
         return {
-          label: 'Time to Toss',
-          icon: 'delete',
+          label: 'Best days gone',
+          icon: 'heart_broken_2_filled',
         };
       default:
         return {
@@ -109,15 +109,6 @@ const BeanFreshnessIndicator: React.FC<BeanFreshnessIndicatorProps> = ({
             {freshness.daysRemaining !== 1 ? 's' : ''} left
           </Text>
         )}
-        {showDaysRemaining &&
-          freshness.daysRemaining === 0 &&
-          freshness.status !== 'fresh' && (
-            <Text
-              style={[currentSizeStyles.daysText, { color: colors.primary }]}
-            >
-              Too old
-            </Text>
-          )}
       </View>
     </View>
   );

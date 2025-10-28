@@ -82,9 +82,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   container: {
+    borderTopColor: colors.divider,
+    borderTopWidth: 1,
     flexDirection: 'row',
     gap: 16,
-    marginTop: 8,
+    paddingTop: 12, // space from the border top
     width: '100%',
   },
   date: {

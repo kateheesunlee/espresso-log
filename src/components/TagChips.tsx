@@ -1,13 +1,13 @@
-import React, { useMemo, useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  StyleSheet,
-  FlatList,
-} from 'react-native';
 import * as Haptics from 'expo-haptics';
+import React, { useCallback, useMemo, useState } from 'react';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import { colors } from '../themes/colors';
 
@@ -27,9 +27,9 @@ export default function TagChips({
   recent = [],
 }: Props) {
   const [query, setQuery] = useState('');
-  const selected = new Set(value);
 
   const pool = useMemo(() => {
+    const selected = new Set(value);
     const base = [...recent, ...suggestions].filter(Boolean);
     // Remove duplicates & move already selected items to the end
     const seen = new Set<string>();
@@ -49,32 +49,32 @@ export default function TagChips({
       // Light haptic feedback when toggling chips
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-      if (selected.has(tag)) onChange(value.filter(v => v !== tag));
+      if (value.includes(tag)) onChange(value.filter(v => v !== tag));
       else onChange([...value, tag]);
     },
-    [selected, onChange, value]
+    [onChange, value]
   );
 
   const renderChip = useCallback(
-    ({ item }: { item: string }) => (
-      <TouchableOpacity
-        onPress={() => toggle(item)}
-        style={[styles.chip, selected.has(item) && styles.chipSelected]}
-        accessibilityRole='button'
-        accessibilityLabel={`tag ${item}`}
-        accessibilityState={{ selected: selected.has(item) }}
-      >
-        <Text
-          style={[
-            styles.chipText,
-            selected.has(item) && styles.chipTextSelected,
-          ]}
+    ({ item }: { item: string }) => {
+      const isSelected = value.includes(item);
+      return (
+        <TouchableOpacity
+          onPress={() => toggle(item)}
+          style={[styles.chip, isSelected && styles.chipSelected]}
+          accessibilityRole='button'
+          accessibilityLabel={`tag ${item}`}
+          accessibilityState={{ selected: isSelected }}
         >
-          {item}
-        </Text>
-      </TouchableOpacity>
-    ),
-    [toggle, selected]
+          <Text
+            style={[styles.chipText, isSelected && styles.chipTextSelected]}
+          >
+            {item}
+          </Text>
+        </TouchableOpacity>
+      );
+    },
+    [toggle, value]
   );
 
   const getItemLayout = useCallback(
@@ -191,11 +191,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   chipSelected: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.primaryLighter,
     borderColor: 'transparent',
+    color: colors.primary,
   },
   chipText: { color: colors.textDark, fontWeight: '600' },
-  chipTextSelected: { color: colors.textDark },
+  chipTextSelected: { color: colors.primary },
   container: {},
   input: {
     backgroundColor: colors.white,

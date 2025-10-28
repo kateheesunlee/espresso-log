@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors } from '../../themes/colors';
 import FormField from '../inputs/FormField';
 
@@ -18,41 +18,11 @@ const ExpirationPeriodSelector: React.FC<ExpirationPeriodSelectorProps> = ({
   label = 'Freshness Period',
   subtitle,
 }) => {
-  const defaultSubtitle = `How long do these beans stay fresh after ${
+  const defaultSubtitle = `What freshness period fits these beans best after ${
     dateType === 'roasting' ? 'roasting' : 'opening'
   }?`;
   const displaySubtitle = subtitle || defaultSubtitle;
   const options = [1, 2, 3, 4];
-
-  const getOptionLabel = (weeks: number) => {
-    switch (weeks) {
-      case 1:
-        return '1 week';
-      case 2:
-        return '2 weeks';
-      case 3:
-        return '3 weeks';
-      case 4:
-        return '4 weeks';
-      default:
-        return `${weeks} weeks`;
-    }
-  };
-
-  const getOptionDescription = (weeks: number) => {
-    switch (weeks) {
-      case 1:
-        return 'Ultra fresh';
-      case 2:
-        return 'Fresh';
-      case 3:
-        return 'Good';
-      case 4:
-        return 'Extended';
-      default:
-        return '';
-    }
-  };
 
   return (
     <FormField label={label} subtitle={displaySubtitle}>
@@ -70,14 +40,6 @@ const ExpirationPeriodSelector: React.FC<ExpirationPeriodSelectorProps> = ({
               ]}
             >
               {weeks}w
-            </Text>
-            <Text
-              style={[
-                styles.optionDescription,
-                value === weeks && styles.optionDescriptionSelected,
-              ]}
-            >
-              {getOptionDescription(weeks)}
             </Text>
           </TouchableOpacity>
         ))}
@@ -97,14 +59,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 12,
   },
-  optionDescription: {
-    color: colors.textMedium,
-    fontSize: 10,
-    textAlign: 'center',
-  },
-  optionDescriptionSelected: {
-    color: colors.primary,
-  },
   optionLabel: {
     color: colors.text,
     fontSize: 16,
@@ -115,7 +69,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   optionSelected: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.primaryLighter,
     borderColor: colors.primary,
   },
   optionsContainer: {

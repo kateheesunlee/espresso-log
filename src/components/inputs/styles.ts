@@ -51,7 +51,6 @@ export const inputStyles = StyleSheet.create({
   subtitle: {
     color: colors.textMedium,
     fontSize: 14,
-    fontStyle: 'italic',
     marginBottom: 8,
   },
   required: {

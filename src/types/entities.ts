@@ -304,7 +304,7 @@ export const getLastBeanDate = (bean: Bean): BeanDateEntry | null => {
 export const getBeanFreshnessStatus = (
   bean: Bean
 ): {
-  status: 'fresh' | 'still-okay' | 'past-prime' | 'too old';
+  status: 'fresh' | 'still-okay' | 'flavor-fading' | 'best-days-gone';
   daysRemaining: number;
   progress: number; // 0-1 for slider
 } => {
@@ -337,15 +337,15 @@ export const getBeanFreshnessStatus = (
   );
   const progress = Math.min(1, daysSinceDate / totalDays);
 
-  let status: 'fresh' | 'still-okay' | 'past-prime' | 'too old';
+  let status: 'fresh' | 'still-okay' | 'flavor-fading' | 'best-days-gone';
   if (daysRemaining === 0) {
-    status = 'too old';
+    status = 'best-days-gone';
   } else if (progress <= 0.25) {
     status = 'fresh';
   } else if (progress <= 0.75) {
     status = 'still-okay';
   } else {
-    status = 'past-prime';
+    status = 'flavor-fading';
   }
 
   return { status, daysRemaining, progress };

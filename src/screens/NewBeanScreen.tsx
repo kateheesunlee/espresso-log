@@ -490,6 +490,7 @@ const NewBeanScreen: React.FC = () => {
                 expirationPeriodWeeks: value,
               }))
             }
+            roastLevel={formData.roastLevel}
           />
 
           <TouchableOpacity
