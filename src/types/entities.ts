@@ -1,4 +1,4 @@
-import { RoastLevel, TastingTag, AromaTag } from './enums';
+import { RoastLevel, TastingTag } from './enums';
 
 // ============================================================================
 // Core Entity Types
@@ -29,19 +29,43 @@ export interface BeanDateEntry {
   type: 'roasting' | 'opening';
 }
 
+export enum Process {
+  Washed = 'Washed',
+  Natural = 'Natural',
+  Honey = 'Honey',
+  Anaerobic = 'Anaerobic',
+  'Wet-hulled' = 'Wet-hulled',
+  Other = 'Other',
+}
+
 export interface Bean {
   id: string;
   userId: string;
+
+  // basic fields
   name: string;
-  origin?: string;
-  process?: string;
+  roaster?: string;
   roastLevel?: RoastLevel;
-  roastDate?: string; // Deprecated. Keep for backward compatibility
+  aromaTags?: string[]; // Allow custom tags beyond predefined AromaTag enum
+
+  // advanced fields
+  origin?: string;
+  producer?: string;
+  altitudeMin?: string;
+  altitudeMax?: string;
+  varietal?: string;
+  process?: Process | '';
+  processDetail?: string;
+
+  // additional fields
+  buyUrl?: string;
+  notes?: string;
   dates: BeanDateEntry[]; // New array of date entries
   expirationPeriodWeeks: number; // 1-4 weeks
-  aromaTags?: string[]; // Allow custom tags beyond predefined AromaTag enum
   imageUri?: string;
   isFavorite?: boolean;
+
+  // timestamps
   deleted?: boolean;
   createdAt: string;
   updatedAt: string;

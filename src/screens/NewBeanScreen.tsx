@@ -1,13 +1,17 @@
+import { Ionicons } from '@expo/vector-icons';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Animated,
   KeyboardAvoidingView,
+  LayoutAnimation,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
+  UIManager,
   View,
 } from 'react-native';
 
@@ -16,6 +20,7 @@ import {
   createBeanDateEntry,
   getLastBeanDate,
   normalizeDateForStorage,
+  Process,
   RoastLevel,
 } from '@types';
 import { RootStackParamList } from '../navigation/AppNavigator';
@@ -26,11 +31,26 @@ import { showImagePickerOptions } from '../utils/imageUtils';
 import Avatar from '../components/Avatar';
 import BeanFreshnessForm from '../components/BeanManager/BeanFreshnessForm';
 import { DEFAULT_EXPIRATION_PERIOD_WEEKS } from '../components/BeanManager/constants';
-import { FormField, TagChipsField, TextField } from '../components/inputs';
+import {
+  FormField,
+  RangeNumberField,
+  SingleSelectChipsField,
+  TagChipsField,
+  TextField,
+} from '../components/inputs';
 import RoastingSlider from '../components/inputs/sliders/RoastingSlider';
 import ErrorModal from '../components/modals/ErrorModal';
 import SuccessModal from '../components/modals/SuccessModal';
 import SvgIcon from '../components/SvgIcon';
+
+const processPlaceholders: Record<Process, string> = {
+  Washed: 'e.g., Double-washed, Long fermentation, Kenya-style',
+  Natural: 'e.g., Drying on raised beds, Anaerobic Natural, 72h fermentation',
+  Honey: 'e.g., Yellow, Red, or Black honey process',
+  Anaerobic: 'e.g., Carbonic maceration, Lactic, Thermal shock',
+  'Wet-hulled': 'e.g., Giling Basah (Sumatra wet-hulled)',
+  Other: 'e.g., Yeast fermentation, Koji, Experimental process',
+};
 
 type NewBeanScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -40,14 +60,35 @@ type NewBeanScreenRouteProp = RouteProp<RootStackParamList, 'NewBean'>;
 
 interface BeanFormData {
   name: string;
-  origin: string;
-  process: string;
+  roaster: string;
   roastLevel: RoastLevel;
   aromaTags: string[];
-  roastDate: string;
+  // advanced fields
+  origin: string;
+  producer: string;
+  varietal: string;
+  altitudeMin: string;
+  altitudeMax: string;
+  process: Process | '';
+  processDetail: string;
+
+  // flattened bean date entry
   dateType: 'roasting' | 'opening';
+  roastDate: string; // roast or opening date
   expirationPeriodWeeks: number;
+  // additional fields
+  buyUrl: string;
+  notes: string;
   imageUri?: string;
+  isFavorite: boolean;
+}
+
+// Enable LayoutAnimation for Android
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
 const NewBeanScreen: React.FC = () => {
@@ -55,16 +96,34 @@ const NewBeanScreen: React.FC = () => {
   const route = useRoute<NewBeanScreenRouteProp>();
   const { createBean, updateBean, beans } = useStore();
 
+  const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false);
+  const rotateValue = useRef(new Animated.Value(0)).current;
+
   const [formData, setFormData] = useState<BeanFormData>({
     name: '',
-    origin: '',
-    process: '',
+    roaster: '',
     roastLevel: 'Medium',
     aromaTags: [],
+
+    // advanced fields start
+    origin: '',
+    producer: '',
+    altitudeMin: '',
+    altitudeMax: '',
+    varietal: '',
+    process: '',
+    processDetail: '',
+
+    // flattened bean date entry
     roastDate: '',
     dateType: 'roasting',
     expirationPeriodWeeks: 2, // Default to 2 weeks
+
+    // additional fields
+    buyUrl: '',
+    notes: '',
     imageUri: '',
+    isFavorite: false,
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -80,6 +139,23 @@ const NewBeanScreen: React.FC = () => {
     message: string;
   }>({ visible: false, message: '' });
 
+  const toggleAdvancedSection = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setIsAdvancedExpanded(!isAdvancedExpanded);
+
+    // Animate chevron rotation
+    Animated.timing(rotateValue, {
+      toValue: isAdvancedExpanded ? 0 : 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const rotateInterpolation = rotateValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '180deg'],
+  });
+
   useEffect(() => {
     // If editing an existing bean, load its data
     if (route.params?.beanId) {
@@ -88,20 +164,33 @@ const NewBeanScreen: React.FC = () => {
         setEditingBeanId(bean.id);
         // Get the last date entry from the bean's dates array
         const lastDateEntry = getLastBeanDate(bean);
-        const lastDate = lastDateEntry?.date || bean.roastDate || '';
+        const lastDate = lastDateEntry?.date || '';
         const lastDateType = lastDateEntry?.type || 'roasting';
 
         setFormData({
+          // basic fields
           name: bean.name,
-          origin: bean.origin || '',
-          process: bean.process || '',
+          roaster: bean.roaster || '',
           roastLevel: bean.roastLevel || 'Medium',
           aromaTags: bean.aromaTags || [],
+          // advanced fields
+          origin: bean.origin || '',
+          producer: bean.producer || '',
+          altitudeMin: bean.altitudeMin || '',
+          altitudeMax: bean.altitudeMax || '',
+          varietal: bean.varietal || '',
+          process: bean.process || '',
+          processDetail: bean.processDetail || '',
+          // additional fields
+          buyUrl: bean.buyUrl || '',
+          notes: bean.notes || '',
+          imageUri: bean.imageUri || '',
+          isFavorite: bean.isFavorite || false,
+          // flattened bean date entry
           roastDate: lastDate,
           dateType: lastDateType,
           expirationPeriodWeeks:
             bean.expirationPeriodWeeks || DEFAULT_EXPIRATION_PERIOD_WEEKS,
-          imageUri: bean.imageUri || '',
         });
       }
     }
@@ -208,6 +297,11 @@ const NewBeanScreen: React.FC = () => {
     }
   };
 
+  const processDetailPlaceholder = useMemo(
+    () => processPlaceholders[formData.process as Process],
+    [formData.process]
+  );
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -246,31 +340,23 @@ const NewBeanScreen: React.FC = () => {
           </View>
 
           <TextField
+            label='Roaster'
+            value={formData.roaster}
+            onChangeText={text =>
+              setFormData(prev => ({ ...prev, roaster: text }))
+            }
+            placeholder='e.g., Blue Bottle, Stumptown, Onyx, etc.'
+            required={true}
+          />
+
+          <TextField
             label='Bean Name'
             value={formData.name}
             onChangeText={text =>
               setFormData(prev => ({ ...prev, name: text }))
             }
-            placeholder='e.g., Ethiopian Yirgacheffe'
+            placeholder=''
             required={true}
-          />
-
-          <TextField
-            label='Origin'
-            value={formData.origin}
-            onChangeText={text =>
-              setFormData(prev => ({ ...prev, origin: text }))
-            }
-            placeholder='e.g., Ethiopia, Colombia, Brazil'
-          />
-
-          <TextField
-            label='Process'
-            value={formData.process}
-            onChangeText={text =>
-              setFormData(prev => ({ ...prev, process: text }))
-            }
-            placeholder='e.g., Washed, Natural, Honey'
           />
 
           <FormField label='Roast Level'>
@@ -290,6 +376,106 @@ const NewBeanScreen: React.FC = () => {
             allowCustom={true}
           />
 
+          <View>
+            <TouchableOpacity
+              style={styles.advancedHeader}
+              onPress={toggleAdvancedSection}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.sectionTitle}>Advanced Information</Text>
+              <Animated.View
+                style={{
+                  ...styles.chevronContainer,
+                  transform: [{ rotate: rotateInterpolation }],
+                }}
+              >
+                <Ionicons
+                  name='chevron-down'
+                  size={24}
+                  color={colors.textDark}
+                />
+              </Animated.View>
+            </TouchableOpacity>
+
+            {isAdvancedExpanded && (
+              <View>
+                {/* advanced fields start */}
+                <TextField
+                  label='Origin (Country / Region)'
+                  value={formData.origin}
+                  onChangeText={text =>
+                    setFormData(prev => ({ ...prev, origin: text }))
+                  }
+                  placeholder='e.g., Ethiopia, Colombia, Brazil'
+                />
+
+                <TextField
+                  label='Producer / Farm'
+                  value={formData.producer}
+                  onChangeText={text =>
+                    setFormData(prev => ({ ...prev, producer: text }))
+                  }
+                  placeholder='e.g., Hacienda La Esmeralda, Finca El Injerto, etc.'
+                />
+
+                <TextField
+                  label='Varietal(s)'
+                  value={formData.varietal}
+                  onChangeText={text =>
+                    setFormData(prev => ({ ...prev, varietal: text }))
+                  }
+                  placeholder='e.g., Geisha, Caturra, Bourbon, Blend, etc.'
+                />
+                <RangeNumberField
+                  label='Altitude (masl)'
+                  unit='m'
+                  minValue={formData.altitudeMin}
+                  maxValue={formData.altitudeMax}
+                  onMinValueChange={text =>
+                    setFormData(prev => ({ ...prev, altitudeMin: text }))
+                  }
+                  onMaxValueChange={text =>
+                    setFormData(prev => ({ ...prev, altitudeMax: text }))
+                  }
+                  step={100}
+                  placeholder='1500'
+                />
+
+                <SingleSelectChipsField
+                  label='Process'
+                  value={formData.process}
+                  onChange={process =>
+                    setFormData(prev => ({
+                      ...prev,
+                      process: process as Process,
+                    }))
+                  }
+                  suggestions={[
+                    Process.Washed,
+                    Process.Natural,
+                    Process.Honey,
+                    Process.Anaerobic,
+                    Process['Wet-hulled'],
+                    Process.Other,
+                  ]}
+                  allowCustom={false}
+                />
+
+                {formData.process && (
+                  <TextField
+                    label='Process detail (Optional)'
+                    value={formData.processDetail}
+                    onChangeText={text =>
+                      setFormData(prev => ({ ...prev, processDetail: text }))
+                    }
+                    placeholder={processDetailPlaceholder || ''}
+                  />
+                )}
+              </View>
+            )}
+          </View>
+
+          <Text style={styles.sectionTitle}>Bean Freshness</Text>
           <BeanFreshnessForm
             initialDate={
               formData.roastDate ? new Date(formData.roastDate) : new Date()
@@ -349,6 +535,16 @@ const NewBeanScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  advancedHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  chevronContainer: {
+    marginBottom: 16,
+    marginTop: 24,
+  },
   disabledButton: {
     backgroundColor: colors.disabled,
   },
@@ -403,6 +599,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 16,
+    marginTop: 24,
   },
 });
 

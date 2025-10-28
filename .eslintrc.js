@@ -51,12 +51,12 @@ module.exports = {
     // React Native specific rules
     'react-native/no-unused-styles': 'error',
     'react-native/split-platform-components': 'error',
-    'react-native/no-inline-styles': 'warn',
+    'react-native/no-inline-styles': 'off',
     'react-native/no-color-literals': 'warn',
     'react-native/no-raw-text': 'error', // This will catch the text rendering error!
 
     // General JavaScript/TypeScript rules
-    'no-console': 'warn',
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
     'no-debugger': 'error',
     'prefer-const': 'error',
     'no-var': 'error',

@@ -1,16 +1,14 @@
-import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { View, StyleSheet } from 'react-native';
-import { colors } from '../../themes/colors';
+import React from 'react';
 
 import { Bean } from '@types';
-import { useStore } from '../../store/useStore';
 import { RootStackParamList } from '../../navigation/AppNavigator';
+import { useStore } from '../../store/useStore';
 
-import BaseCard from './BaseCard';
-import RoastingIndicator from '../RoastingIndicator';
 import BeanManager from '../BeanManager';
+import RoastingIndicator from '../RoastingIndicator';
+import BaseCard from './BaseCard';
 
 export interface BeanCardProps {
   bean: Bean;
@@ -45,14 +43,18 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean }) => {
   };
 
   const subtitle = () => {
-    return <RoastingIndicator roastLevel={bean.roastLevel!} size='md' />;
+    return (
+      <RoastingIndicator roastLevel={bean.roastLevel || 'Medium'} size='md' />
+    );
   };
+
+  const title = bean.roaster ? `${bean.roaster} ${bean.name}` : bean.name;
 
   return (
     <BaseCard
       showAvatar={true}
       data={bean as any}
-      title={bean.name}
+      title={title}
       subtitle={subtitle()}
       details={details}
       fallbackIcon='bean'

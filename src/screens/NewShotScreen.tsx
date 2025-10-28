@@ -1,45 +1,43 @@
-import React, { useState, useEffect } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from 'react-native';
-import {
-  useNavigation,
-  useRoute,
   RouteProp,
   useFocusEffect,
+  useNavigation,
+  useRoute,
 } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import * as Haptics from 'expo-haptics';
-
-import { useStore } from '../store/useStore';
-import { RootStackParamList } from '../navigation/AppNavigator';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
-  TastingTag,
-  TASTING_TAGS,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+import {
   ShotFormData,
   shotToShotFormData,
-  shotFormDataToShot,
+  TASTING_TAGS,
+  TastingTag,
 } from '@types';
+import { RootStackParamList } from '../navigation/AppNavigator';
+import { useStore } from '../store/useStore';
 import { colors } from '../themes/colors';
 
-import PickerField from '../components/inputs/forms/PickerField';
-import SvgIcon from '../components/SvgIcon';
-import SuccessModal from '../components/modals/SuccessModal';
-import ErrorModal from '../components/modals/ErrorModal';
 import {
-  TextField,
   NumberInputField,
-  WaterTempField,
   TagChipsField,
-  FormField,
+  TextField,
+  WaterTempField,
 } from '../components/inputs';
+import PickerField from '../components/inputs/forms/PickerField';
 import { inputStyles } from '../components/inputs/styles';
+import ErrorModal from '../components/modals/ErrorModal';
+import SuccessModal from '../components/modals/SuccessModal';
+import SvgIcon from '../components/SvgIcon';
 import TastingNotes from '../components/TastingNotes';
 import { calculateOverallScore } from '../utils/calculateOverallScore';
 
@@ -75,14 +73,13 @@ const initialFormData: Partial<ShotFormData> = {
 const NewShotScreen: React.FC = () => {
   const navigation = useNavigation<NewShotScreenNavigationProp>();
   const route = useRoute<NewShotScreenRouteProp>();
-  const { beans, machines, createShot, updateShot, shots } = useStore();
+  const { beans, machines, createShot, shots } = useStore();
 
   const [formData, setFormData] = useState<ShotFormData>(
     initialFormData as ShotFormData
   );
 
   const [isLoading, setIsLoading] = useState(false);
-  const [editingShotId, setEditingShotId] = useState<string | null>(null);
   const [pendingBeanSelection, setPendingBeanSelection] = useState<
     string | null
   >(null);
@@ -125,6 +122,79 @@ const NewShotScreen: React.FC = () => {
     formData.aftertaste,
   ]);
 
+  const loadShotData = useCallback(
+    async (shotId: string) => {
+      try {
+        const shot = shots.find(s => s.id === shotId);
+        if (shot) {
+          // Don't set editingShotId - we want to create a new shot, not edit the existing one
+          const shotFormData = shotToShotFormData(shot);
+          setFormData(shotFormData);
+        }
+      } catch (error) {
+        console.error('Failed to load shot data:', error);
+      }
+    },
+    [shots]
+  );
+
+  const setLatestBeanAndMachine = useCallback(() => {
+    // Set the latest bean (most recently created)
+    if (beans.length > 0) {
+      const latestBean = beans.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )[0];
+      setFormData(prev => ({ ...prev, beanId: latestBean.id }));
+    }
+
+    // Set the latest machine (most recently created)
+    if (machines.length > 0) {
+      const latestMachine = machines.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )[0];
+      setFormData(prev => ({ ...prev, machineId: latestMachine.id }));
+    }
+  }, [beans, machines]);
+
+  const setSelectedFilters = useCallback(() => {
+    // Set the selected bean from filters
+    if (route.params?.selectedBeanId) {
+      setFormData(prev => ({
+        ...prev,
+        beanId: route.params?.selectedBeanId || '',
+      }));
+    } else if (beans.length > 0) {
+      // Fallback to latest bean if no filter selected
+      const latestBean = beans.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )[0];
+      setFormData(prev => ({ ...prev, beanId: latestBean.id }));
+    }
+
+    // Set the selected machine from filters
+    if (route.params?.selectedMachineId) {
+      setFormData(prev => ({
+        ...prev,
+        machineId: route.params?.selectedMachineId || '',
+      }));
+    } else if (machines.length > 0) {
+      // Fallback to latest machine if no filter selected
+      const latestMachine = machines.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )[0];
+      setFormData(prev => ({ ...prev, machineId: latestMachine.id }));
+    }
+  }, [
+    beans,
+    machines,
+    route.params?.selectedBeanId,
+    route.params?.selectedMachineId,
+  ]);
+
   useEffect(() => {
     // If duplicating from another shot, load its data
     if (route.params?.duplicateFrom && shots.length > 0) {
@@ -144,6 +214,9 @@ const NewShotScreen: React.FC = () => {
     shots,
     beans,
     machines,
+    loadShotData,
+    setSelectedFilters,
+    setLatestBeanAndMachine,
   ]);
 
   // Handle returning from bean/machine creation
@@ -166,7 +239,7 @@ const NewShotScreen: React.FC = () => {
 
   // Auto-select newly created beans/machines when returning from creation
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       // Check if we have a newly created bean (most recent one)
       if (beans.length > 0) {
         const latestBean = beans.sort(
@@ -199,73 +272,8 @@ const NewShotScreen: React.FC = () => {
           setFormData(prev => ({ ...prev, machineId: latestMachine.id }));
         }
       }
-    }, [beans, machines]) // Removed formData.beanId and formData.machineId from dependencies
+    }, [beans, formData.beanId, formData.machineId, machines]) // Removed formData.beanId and formData.machineId from dependencies
   );
-
-  const loadShotData = async (shotId: string) => {
-    try {
-      const shot = shots.find(s => s.id === shotId);
-      if (shot) {
-        // Don't set editingShotId - we want to create a new shot, not edit the existing one
-        const formData = shotToShotFormData(shot);
-        setFormData(formData);
-      }
-    } catch (error) {
-      console.error('Failed to load shot data:', error);
-    }
-  };
-
-  const setLatestBeanAndMachine = () => {
-    // Set the latest bean (most recently created)
-    if (beans.length > 0) {
-      const latestBean = beans.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )[0];
-      setFormData(prev => ({ ...prev, beanId: latestBean.id }));
-    }
-
-    // Set the latest machine (most recently created)
-    if (machines.length > 0) {
-      const latestMachine = machines.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )[0];
-      setFormData(prev => ({ ...prev, machineId: latestMachine.id }));
-    }
-  };
-
-  const setSelectedFilters = () => {
-    // Set the selected bean from filters
-    if (route.params?.selectedBeanId) {
-      setFormData(prev => ({
-        ...prev,
-        beanId: route.params!.selectedBeanId!,
-      }));
-    } else if (beans.length > 0) {
-      // Fallback to latest bean if no filter selected
-      const latestBean = beans.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )[0];
-      setFormData(prev => ({ ...prev, beanId: latestBean.id }));
-    }
-
-    // Set the selected machine from filters
-    if (route.params?.selectedMachineId) {
-      setFormData(prev => ({
-        ...prev,
-        machineId: route.params!.selectedMachineId!,
-      }));
-    } else if (machines.length > 0) {
-      // Fallback to latest machine if no filter selected
-      const latestMachine = machines.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )[0];
-      setFormData(prev => ({ ...prev, machineId: latestMachine.id }));
-    }
-  };
 
   const handleCreateBean = () => {
     // Navigate to NewBean screen - auto-selection will handle the rest
@@ -335,26 +343,10 @@ const NewShotScreen: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const shotOverride = shotFormDataToShot(formData);
-
-      if (editingShotId) {
-        // Update existing shot (duplicated shot)
-        const existingShot = shots.find(s => s.id === editingShotId);
-        if (existingShot) {
-          const updateData = {
-            ...existingShot,
-            ...shotOverride,
-            updatedAt: new Date().toISOString(),
-          };
-          await updateShot(updateData);
-          setSuccessModal({ visible: true, isUpdate: true });
-        }
-      } else {
-        // Create new shot
-        await createShot(formData);
-        setSuccessModal({ visible: true, isUpdate: false });
-      }
+      await createShot(formData);
+      setSuccessModal({ visible: true, isUpdate: false });
     } catch (error) {
+      console.error('Failed to save shot:', error);
       setErrorModal({ visible: true, message: 'Failed to save shot' });
     } finally {
       setIsLoading(false);
@@ -517,7 +509,7 @@ const NewShotScreen: React.FC = () => {
 
           <TastingNotes
             formData={formData}
-            setFormData={formData => setFormData(formData as ShotFormData)}
+            setFormData={data => setFormData(data as ShotFormData)}
           />
 
           <View style={styles.scoreContainer}>

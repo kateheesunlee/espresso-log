@@ -1,15 +1,17 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from '../screens/HomeScreen';
-import NewShotScreen from '../screens/NewShotScreen';
-import ShotDetailScreen from '../screens/ShotDetailScreen';
+import React from 'react';
+import SvgIcon from '../components/SvgIcon';
 import BeansScreen from '../screens/BeansScreen';
+import HomeScreen from '../screens/HomeScreen';
 import MachinesScreen from '../screens/MachinesScreen';
 import NewBeanScreen from '../screens/NewBeanScreen';
 import NewMachineScreen from '../screens/NewMachineScreen';
-import SvgIcon from '../components/SvgIcon';
+import NewShotScreen from '../screens/NewShotScreen';
+import ShotDetailScreen from '../screens/ShotDetailScreen';
 import { colors } from '../themes/colors';
 
 export type RootStackParamList = {
@@ -33,25 +35,32 @@ export type MainTabParamList = {
 const Tab = createBottomTabNavigator<MainTabParamList>();
 const Stack = createStackNavigator<RootStackParamList>();
 
+const getTabBarIcon = (routeName: string, focused: boolean) => {
+  let iconName: string;
+
+  if (routeName === 'Home') {
+    iconName = focused ? 'coffee_filled' : 'coffee';
+  } else if (routeName === 'Beans') {
+    iconName = focused ? 'bean_filled' : 'bean';
+  } else if (routeName === 'Machines') {
+    iconName = focused ? 'coffeemaker_filled' : 'coffeemaker';
+  } else {
+    iconName = 'note_filled';
+  }
+
+  return iconName;
+};
+
 function ShotsTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, size }) => {
-          let iconName: string;
-
-          if (route.name === 'Home') {
-            iconName = focused ? 'coffee_filled' : 'coffee';
-          } else if (route.name === 'Beans') {
-            iconName = focused ? 'bean_filled' : 'bean';
-          } else if (route.name === 'Machines') {
-            iconName = focused ? 'coffeemaker_filled' : 'coffeemaker';
-          } else {
-            iconName = 'note_filled';
-          }
-
-          return <SvgIcon name={iconName as any} size={size} />;
-        },
+        tabBarIcon: ({ focused, size }) => (
+          <SvgIcon
+            name={getTabBarIcon(route.name, focused) as any}
+            size={size}
+          />
+        ),
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.primary,
         headerStyle: {
@@ -114,7 +123,7 @@ export default function AppNavigator() {
           name='NewShot'
           component={NewShotScreen}
           options={({ route }) => ({
-            title: route.params?.duplicateFrom ? 'Edit Shot' : 'New Shot',
+            title: route.params?.duplicateFrom ? 'Duplicate Shot' : 'New Shot',
             headerBackTitle: route.params?.duplicateFrom ? 'Details' : 'Shots',
           })}
         />

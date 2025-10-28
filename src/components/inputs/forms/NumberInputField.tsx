@@ -1,15 +1,15 @@
-import React, { useRef, useCallback, useEffect } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
-  View,
+  Platform,
   Text,
   TextInput,
   TouchableOpacity,
-  Platform,
+  View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
-import { inputStyles } from '../styles';
 import FormField, { FormFieldProps } from '../FormField';
+import { inputStyles } from '../styles';
 
 interface NumberInputFieldProps extends Omit<FormFieldProps, 'children'> {
   value: string;
@@ -48,14 +48,8 @@ const NumberInputField: React.FC<NumberInputFieldProps> = ({
 
   const triggerHapticFeedback = async () => {
     if (Platform.OS === 'ios') {
-      try {
-        const { impactAsync, ImpactFeedbackStyle } = await import(
-          'expo-haptics'
-        );
-        impactAsync(ImpactFeedbackStyle.Light);
-      } catch (error) {
-        // Haptic feedback not available, continue silently
-      }
+      const { impactAsync, ImpactFeedbackStyle } = await import('expo-haptics');
+      impactAsync(ImpactFeedbackStyle.Light);
     }
   };
 
