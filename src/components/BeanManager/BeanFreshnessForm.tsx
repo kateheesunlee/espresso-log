@@ -258,6 +258,7 @@ const BeanFreshnessForm: React.FC<BeanFreshnessFormProps> = ({
             display={Platform.OS === 'ios' ? 'spinner' : 'default'}
             onChange={handleDateChange}
             maximumDate={new Date()}
+            themeVariant='light'
           />
         )}
       </FormField>
