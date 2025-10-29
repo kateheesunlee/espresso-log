@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import React, { useEffect, useMemo, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { useStore } from '../store/useStore';
-import { RootStackParamList } from '../navigation/AppNavigator';
 import { Shot } from '@types';
+import { RootStackParamList } from '../navigation/AppNavigator';
+import { useStore } from '../store/useStore';
 import { colors } from '../themes/colors';
 
-import SvgIcon from '../components/SvgIcon';
-import PickerField from '../components/inputs/forms/PickerField';
-import ScrollableListView from '../components/ScrollableListView';
 import EmptyEntity from '../components/EmptyEntity';
 import EmptyEntityWithPrerequisites from '../components/EmptyEntityWithPrerequisites';
+import ScrollableListView from '../components/ScrollableListView';
+import SvgIcon from '../components/SvgIcon';
 import ShotCard from '../components/cards/ShotCard';
+import PickerField from '../components/inputs/forms/PickerField';
+import { formatBeanName } from '../utils/formatBeanName';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -21,62 +22,36 @@ const HomeScreen: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const { shots, beans, machines, isLoading, loadShots } = useStore();
 
-  // Filter state
-  const [selectedBeanId, setSelectedBeanId] = useState<string>('');
-  const [selectedMachineId, setSelectedMachineId] = useState<string>('');
-  const [hasUserInteracted, setHasUserInteracted] = useState<boolean>(false);
+  // Compute default filters from last shot
+  const defaultFilters = useMemo(() => {
+    if (shots.length > 0 && beans.length > 0 && machines.length > 0) {
+      const lastShot = shots[0];
+      return {
+        beanId: lastShot.beanId || '',
+        machineId: lastShot.machineId || '',
+      };
+    }
+    return { beanId: '', machineId: '' };
+  }, [shots, beans, machines]);
+
+  // Filter state - initialized from defaults
+  const [selectedBeanId, setSelectedBeanId] = useState<string>(
+    defaultFilters.beanId
+  );
+  const [selectedMachineId, setSelectedMachineId] = useState<string>(
+    defaultFilters.machineId
+  );
 
   useEffect(() => {
     loadShots();
   }, [loadShots]);
 
-  // Pre-select filters based on last shot (only if user hasn't interacted)
-  useEffect(() => {
-    if (
-      shots.length > 0 &&
-      beans.length > 0 &&
-      machines.length > 0 &&
-      !hasUserInteracted
-    ) {
-      const lastShot = shots[0]; // Shots are sorted by creation date desc
-
-      // Pre-select bean from last shot
-      if (lastShot.beanId && !selectedBeanId) {
-        setSelectedBeanId(lastShot.beanId);
-      }
-
-      // Pre-select machine from last shot
-      if (lastShot.machineId && !selectedMachineId) {
-        setSelectedMachineId(lastShot.machineId);
-      }
-    }
-  }, [shots, beans, machines, hasUserInteracted]); // Removed selectedBeanId and selectedMachineId from dependencies
-
-  // Clear filters when selected bean or machine is deleted
-  useEffect(() => {
-    if (selectedBeanId && !beans.find(bean => bean.id === selectedBeanId)) {
-      setSelectedBeanId('');
-    }
-  }, [beans, selectedBeanId]);
-
-  useEffect(() => {
-    if (
-      selectedMachineId &&
-      !machines.find(machine => machine.id === selectedMachineId)
-    ) {
-      setSelectedMachineId('');
-    }
-  }, [machines, selectedMachineId]);
-
-  // Wrapper functions to track user interaction
   const handleBeanChange = (beanId: string) => {
     setSelectedBeanId(beanId);
-    setHasUserInteracted(true);
   };
 
   const handleMachineChange = (machineId: string) => {
     setSelectedMachineId(machineId);
-    setHasUserInteracted(true);
   };
 
   // Filter shots based on selected filters
@@ -99,7 +74,7 @@ const HomeScreen: React.FC = () => {
   // Prepare picker options
   const beanOptions = beans.map(bean => ({
     id: bean.id,
-    name: bean.name,
+    name: formatBeanName(bean),
   }));
 
   const machineOptions = machines.map(machine => ({
@@ -175,8 +150,8 @@ const HomeScreen: React.FC = () => {
               onPrimaryPress={handleNewShot}
               hasBeans={beans.length > 0}
               hasMachines={machines.length > 0}
-              onAddBean={() => (navigation as any).navigate('NewBean')}
-              onAddMachine={() => (navigation as any).navigate('NewMachine')}
+              onAddBean={() => navigation.navigate('NewBean' as never)}
+              onAddMachine={() => navigation.navigate('NewMachine' as never)}
             />
           ) : (
             <EmptyEntity

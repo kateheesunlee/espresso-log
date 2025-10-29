@@ -8,6 +8,7 @@ import { RootStackParamList } from '../../navigation/AppNavigator';
 import { useStore } from '../../store/useStore';
 
 import { colors } from '../../themes/colors';
+import { formatBeanName } from '../../utils/formatBeanName';
 import BeanManager from '../BeanManager';
 import RoastingIndicator from '../RoastingIndicator';
 import BaseCard from './BaseCard';
@@ -60,7 +61,7 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean }) => {
     await toggleFavoriteBean(bean.id);
   };
 
-  const title = bean.roaster ? `${bean.roaster} ${bean.name}` : bean.name;
+  const title = formatBeanName(bean);
 
   // add roasting indicator to subtitle section
   const subtitle = () => {

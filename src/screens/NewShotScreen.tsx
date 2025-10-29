@@ -40,6 +40,7 @@ import SuccessModal from '../components/modals/SuccessModal';
 import SvgIcon from '../components/SvgIcon';
 import TastingNotes from '../components/TastingNotes';
 import { calculateOverallScore } from '../utils/calculateOverallScore';
+import { formatBeanName } from '../utils/formatBeanName';
 
 type NewShotScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -405,7 +406,7 @@ const NewShotScreen: React.FC = () => {
           {renderPicker(
             'Bean',
             formData.beanId,
-            beans.map(b => ({ id: b.id, name: b.name })),
+            beans.map(b => ({ id: b.id, name: formatBeanName(b) })),
             value => handleInputChange('beanId', value),
             true,
             handleCreateBean,

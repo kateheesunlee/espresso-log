@@ -13,6 +13,7 @@ import {
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { useStore } from '../store/useStore';
 import { colors } from '../themes/colors';
+import { formatBeanName } from '../utils/formatBeanName';
 import { formatDateLong } from '../utils/formatDate';
 
 import { FormField } from '../components/inputs';
@@ -142,9 +143,7 @@ ${shot.notes ? `Notes: ${shot.notes}` : ''}`;
         <View style={styles.header}>
           <View style={styles.headerInfo}>
             <View style={styles.shotTitleContainer}>
-              <Text style={styles.shotTitle}>
-                {bean?.name || 'Unknown Bean'}
-              </Text>
+              <Text style={styles.shotTitle}>{formatBeanName(bean)}</Text>
               <RoastingIndicator
                 roastLevel={bean?.roastLevel || 'Medium'}
                 size='md'

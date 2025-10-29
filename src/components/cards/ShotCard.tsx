@@ -10,6 +10,7 @@ import { useStore } from '../../store/useStore';
 import { colors } from '../../themes/colors';
 
 import { formatTastingSummary } from 'src/utils/formatTastingSummary';
+import { formatBeanName } from '../../utils/formatBeanName';
 import { formatDateTime } from '../../utils/formatDate';
 import RoastingIndicator from '../RoastingIndicator';
 import SvgIcon from '../SvgIcon';
@@ -183,8 +184,7 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
     );
   };
 
-  const subtitle =
-    bean?.name || `Unknown Bean${bean?.deleted ? ' (deleted)' : ''}`;
+  const subtitle = formatBeanName(bean);
 
   const renderSubtitle = () => {
     return (
