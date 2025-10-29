@@ -1,0 +1,122 @@
+[
+  {
+    "id": "baratza-sette-270",
+    "name": "Baratza Sette 270",
+    "aliases": ["Baratza Sette", "Sette270", "Sette 270", "Sette"]
+  },
+  {
+    "id": "baratza-vario",
+    "name": "Baratza Vario",
+    "aliases": []
+  },
+  {
+    "id": "baratza-encore",
+    "name": "Baratza Encore",
+    "aliases": ["Encore"]
+  },
+  {
+    "id": "comandante-c40",
+    "name": "Comandante C40",
+    "aliases": ["Comandante", "C40"]
+  },
+  {
+    "id": "df64",
+    "name": "DF64",
+    "aliases": ["Turin DF64", "DF-64", "Turin DF-64"]
+  },
+  {
+    "id": "eureka-mignon",
+    "name": "Eureka Mignon",
+    "aliases": ["Mignon", "Eureka Mignon Specialita"]
+  },
+  {
+    "id": "eureka-specialita",
+    "name": "Eureka Specialita",
+    "aliases": ["Specialita", "Mignon Specialita", "Specialità"]
+  },
+  {
+    "id": "fellow-ode",
+    "name": "Fellow Ode",
+    "aliases": ["Ode", "Ode Gen2", "Ode Gen 2"]
+  },
+  {
+    "id": "hario-slim",
+    "name": "Hario Slim",
+    "aliases": ["Skerton", "Slim Plus"]
+  },
+  {
+    "id": "kalita",
+    "name": "Kalita",
+    "aliases": ["NEXT G"]
+  },
+  {
+    "id": "1zpresso-k-max",
+    "name": "1Zpresso K-Max",
+    "aliases": ["1zpresso", "KMAX", "1z KMAX"]
+  },
+  {
+    "id": "1zpresso-j-max",
+    "name": "1Zpresso J-Max",
+    "aliases": ["JMAX", "1z JMAX", "JE Plus"]
+  },
+  {
+    "id": "lagom-p64",
+    "name": "Lagom P64",
+    "aliases": ["P64", "Option-O Lagom P64"]
+  },
+  {
+    "id": "lagom-p100",
+    "name": "Lagom P100",
+    "aliases": ["P100", "Option-O Lagom P100"]
+  },
+  {
+    "id": "mahlkonig-x54",
+    "name": "Mahlkönig X54",
+    "aliases": ["X54", "Mahlkonig", "X54 Baratza"]
+  },
+  {
+    "id": "mazzer-mini",
+    "name": "Mazzer Mini",
+    "aliases": ["Mazzer"]
+  },
+  {
+    "id": "niche-zero",
+    "name": "Niche Zero",
+    "aliases": ["Niche", "Zero"]
+  },
+  {
+    "id": "orphan-espresso",
+    "name": "Orphan Espresso",
+    "aliases": ["OE"]
+  },
+  {
+    "id": "timemore-chestnut",
+    "name": "Timemore Chestnut",
+    "aliases": ["Timemore", "Chestnut C2"]
+  },
+  {
+    "id": "breville-smart-grinder",
+    "name": "Breville Smart Grinder",
+    "aliases": ["Smart Grinder Pro"]
+  },
+  {
+    "id": "breville-baratza-setup",
+    "name": "Breville Baratza Setup",
+    "aliases": ["Baratza Encore ESP"]
+  },
+  {
+    "id": "fuji-royal",
+    "name": "Fuji Royal",
+    "aliases": ["Fuji", "R-220"]
+  },
+  {
+    "id": "weenu",
+    "name": "Weenu",
+    "aliases": []
+  },
+  {
+    "id": "orizen",
+    "name": "Orizin",
+    "aliases": []
+  }
+]

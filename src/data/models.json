@@ -1,0 +1,422 @@
+[
+  {
+    "id": "ascaso-steel-duo",
+    "brandId": "ascaso",
+    "name": "Ascaso Steel Duo",
+    "aliases": ["Steel Duo", "Duo"]
+  },
+  {
+    "id": "ascaso-dream",
+    "brandId": "ascaso",
+    "name": "Ascaso Dream",
+    "aliases": ["Dream"]
+  },
+  {
+    "id": "ascaso-baby-t",
+    "brandId": "ascaso",
+    "name": "Ascaso Baby T",
+    "aliases": ["Baby T"]
+  },
+  {
+    "id": "bezzera-new-hobby",
+    "brandId": "bezzera",
+    "name": "Bezzera New Hobby",
+    "aliases": ["New Hobby"]
+  },
+  {
+    "id": "bezzera-bz07",
+    "brandId": "bezzera",
+    "name": "Bezzera BZ07",
+    "aliases": ["BZ07"]
+  },
+  {
+    "id": "bezzera-bz10",
+    "brandId": "bezzera",
+    "name": "Bezzera BZ10",
+    "aliases": ["BZ10"]
+  },
+  {
+    "id": "bezzera-bz13",
+    "brandId": "bezzera",
+    "name": "Bezzera BZ13",
+    "aliases": ["BZ13"]
+  },
+  {
+    "id": "bez-era-lady",
+    "brandId": "bez-era",
+    "name": "BezEra Lady",
+    "aliases": ["Lady", "Bezerra Lady"]
+  },
+  {
+    "id": "bez-era-pid",
+    "brandId": "bez-era",
+    "name": "BezEra PID",
+    "aliases": ["PID"]
+  },
+  {
+    "id": "breville-bambino-plus",
+    "brandId": "breville",
+    "name": "Breville Bambino Plus",
+    "aliases": ["Bambino Plus", "Bambino"]
+  },
+  {
+    "id": "breville-bes920xl",
+    "brandId": "breville",
+    "name": "Breville BES920XL",
+    "aliases": ["BES920", "Dual Boiler", "BDB"]
+  },
+  {
+    "id": "breville-barista-express",
+    "brandId": "breville",
+    "name": "Breville Barista Express",
+    "aliases": ["BES870", "Barista Express"]
+  },
+  {
+    "id": "breville-barista-touch",
+    "brandId": "breville",
+    "name": "Breville Barista Touch",
+    "aliases": ["Barista Touch", "Touch"]
+  },
+  {
+    "id": "breville-bambino",
+    "brandId": "breville",
+    "name": "Breville Bambino",
+    "aliases": ["Bambino"]
+  },
+  {
+    "id": "breville-oracle",
+    "brandId": "breville",
+    "name": "Breville Oracle",
+    "aliases": ["Oracle"]
+  },
+  {
+    "id": "breville-oracle-touch",
+    "brandId": "breville",
+    "name": "Breville Oracle Touch",
+    "aliases": ["Oracle Touch"]
+  },
+  {
+    "id": "breville-impress",
+    "brandId": "breville",
+    "name": "Breville Impress",
+    "aliases": ["Impress"]
+  },
+  {
+    "id": "cafelat-robot",
+    "brandId": "cafelat",
+    "name": "Cafelat Robot",
+    "aliases": ["Robot"]
+  },
+  {
+    "id": "cremina-2011",
+    "brandId": "cremina",
+    "name": "Cremina 2011",
+    "aliases": ["Cremina", "2011"]
+  },
+  {
+    "id": "dalla-corte-studio",
+    "brandId": "dalla-corte",
+    "name": "Dalla Corte Studio",
+    "aliases": ["Studio", "DC Studio"]
+  },
+  {
+    "id": "de-longhi-ecp3420",
+    "brandId": "de-longhi",
+    "name": "De'Longhi ECP3420",
+    "aliases": ["ECP3420", "La Specialista"]
+  },
+  {
+    "id": "ecm-classika",
+    "brandId": "ecm",
+    "name": "ECM Classika",
+    "aliases": ["Classika"]
+  },
+  {
+    "id": "ecm-robot",
+    "brandId": "ecm",
+    "name": "ECM Robot",
+    "aliases": ["Robot"]
+  },
+  {
+    "id": "ecm-synchronika",
+    "brandId": "ecm",
+    "name": "ECM Synchronika",
+    "aliases": ["Synchronika"]
+  },
+  {
+    "id": "ecm-puristika",
+    "brandId": "ecm",
+    "name": "ECM Puristika",
+    "aliases": ["Puristika"]
+  },
+  {
+    "id": "ecm-barista",
+    "brandId": "ecm",
+    "name": "ECM Barista A53",
+    "aliases": ["Barista A53"]
+  },
+  {
+    "id": "elektra-semiautomatica",
+    "brandId": "elektra",
+    "name": "Elektra Semiautomatica",
+    "aliases": ["Semiautomatica"]
+  },
+  {
+    "id": "flair-58",
+    "brandId": "flair",
+    "name": "Flair 58",
+    "aliases": ["58"]
+  },
+  {
+    "id": "flair-pro",
+    "brandId": "flair",
+    "name": "Flair Pro",
+    "aliases": ["Pro"]
+  },
+  {
+    "id": "flair-classic",
+    "brandId": "flair",
+    "name": "Flair Classic",
+    "aliases": ["Classic"]
+  },
+  {
+    "id": "flair-signature",
+    "brandId": "flair",
+    "name": "Flair Signature",
+    "aliases": ["Signature"]
+  },
+  {
+    "id": "gaggia-classic-pro",
+    "brandId": "gaggia",
+    "name": "Gaggia Classic Pro",
+    "aliases": ["Classic Pro", "Gaggia"]
+  },
+  {
+    "id": "gaggia-gaggia-new-evolution",
+    "brandId": "gaggia",
+    "name": "Gaggia New Evolution",
+    "aliases": ["New Evolution"]
+  },
+  {
+    "id": "gaggia-baby",
+    "brandId": "gaggia",
+    "name": "Gaggia Baby",
+    "aliases": ["Baby"]
+  },
+  {
+    "id": "iacoponi-i-six",
+    "brandId": "iacoponi",
+    "name": "Iacoponi i-Six",
+    "aliases": ["i-Six"]
+  },
+  {
+    "id": "jura-enamicro-1",
+    "brandId": "jura",
+    "name": "Jura ENA Micro 1",
+    "aliases": ["ENAMicro1", "Micro1"]
+  },
+  {
+    "id": "jura-enamicro-5",
+    "brandId": "jura",
+    "name": "Jura ENA Micro 5",
+    "aliases": ["ENAMicro5", "Micro5"]
+  },
+  {
+    "id": "la-marzocco-linea-mini",
+    "brandId": "la-marzocco",
+    "name": "La Marzocco Linea Mini",
+    "aliases": ["Linea Mini", "LM Linea Mini", "LM Mini"]
+  },
+  {
+    "id": "la-marzocco-gs3",
+    "brandId": "la-marzocco",
+    "name": "La Marzocco GS3",
+    "aliases": ["GS3", "LM GS3"]
+  },
+  {
+    "id": "la-marzocco-micra",
+    "brandId": "la-marzocco",
+    "name": "La Marzocco Micra",
+    "aliases": ["Micra", "LM Micra"]
+  },
+  {
+    "id": "la-marzocco-linea-pb",
+    "brandId": "la-marzocco",
+    "name": "La Marzocco Linea PB",
+    "aliases": ["Linea PB", "LM Linea PB"]
+  },
+  {
+    "id": "la-pavoni-europiccola",
+    "brandId": "la-pavoni",
+    "name": "La Pavoni Europiccola",
+    "aliases": ["Europiccola"]
+  },
+  {
+    "id": "la-pavoni-professional",
+    "brandId": "la-pavoni",
+    "name": "La Pavoni Professional",
+    "aliases": ["Professional"]
+  },
+  {
+    "id": "lago-m-lagom-p64",
+    "brandId": "lago-m",
+    "name": "LagoM Lagom P64",
+    "aliases": ["Option-O Lagom P64", "P64"]
+  },
+  {
+    "id": "lelit-mara-x",
+    "brandId": "lelit",
+    "name": "Lelit Mara X",
+    "aliases": ["Mara X", "MaraX"]
+  },
+  {
+    "id": "lelit-bianca-v3",
+    "brandId": "lelit",
+    "name": "Lelit Bianca V3",
+    "aliases": ["Bianca V3", "Bianca", "V3"]
+  },
+  {
+    "id": "lelit-elizabeth",
+    "brandId": "lelit",
+    "name": "Lelit Elizabeth",
+    "aliases": ["Elizabeth"]
+  },
+  {
+    "id": "lelit-anna",
+    "brandId": "lelit",
+    "name": "Lelit Anna",
+    "aliases": ["Anna"]
+  },
+  {
+    "id": "lelit-victoria",
+    "brandId": "lelit",
+    "name": "Lelit Victoria",
+    "aliases": ["Victoria"]
+  },
+  {
+    "id": "marzorocco-espresso-lover",
+    "brandId": "marzorocco",
+    "name": "Marzorocco Espresso Lover",
+    "aliases": ["Espresso Lover"]
+  },
+  {
+    "id": "nuova-simonelli-oscar-ii",
+    "brandId": "nuova-simonelli",
+    "name": "Nuova Simonelli Oscar II",
+    "aliases": ["Oscar II", "NS Oscar II"]
+  },
+  {
+    "id": "nuova-simonelli-appartamento",
+    "brandId": "nuova-simonelli",
+    "name": "Nuova Simonelli Appartamento",
+    "aliases": ["Appartamento"]
+  },
+  {
+    "id": "profitec-pro-700",
+    "brandId": "profitec",
+    "name": "Profitec Pro 700",
+    "aliases": ["Pro 700"]
+  },
+  {
+    "id": "profitec-pro-500",
+    "brandId": "profitec",
+    "name": "Profitec Pro 500",
+    "aliases": ["Pro 500"]
+  },
+  {
+    "id": "profitec-go",
+    "brandId": "profitec",
+    "name": "Profitec Go",
+    "aliases": ["Go"]
+  },
+  {
+    "id": "profitec-pro-300",
+    "brandId": "profitec",
+    "name": "Profitec Pro 300",
+    "aliases": ["Pro 300"]
+  },
+  {
+    "id": "quick-mill-vesuvio",
+    "brandId": "quick-mill",
+    "name": "Quick Mill Vesuvio",
+    "aliases": ["Vesuvio"]
+  },
+  {
+    "id": "rancilio-silvia",
+    "brandId": "rancilio",
+    "name": "Rancilio Silvia",
+    "aliases": ["Silvia"]
+  },
+  {
+    "id": "rancilio-silvia-pro-x",
+    "brandId": "rancilio",
+    "name": "Rancilio Silvia Pro X",
+    "aliases": ["Silvia Pro X", "Pro X"]
+  },
+  {
+    "id": "rancilio-silvia-pro",
+    "brandId": "rancilio",
+    "name": "Rancilio Silvia Pro",
+    "aliases": ["Silvia Pro", "Pro"]
+  },
+  {
+    "id": "rancilio-nicole",
+    "brandId": "rancilio",
+    "name": "Rancilio Nicole",
+    "aliases": ["Nicole"]
+  },
+  {
+    "id": "rocket-appartamento",
+    "brandId": "rocket",
+    "name": "Rocket Appartamento",
+    "aliases": ["Appartamento", "Appartamento 2024"]
+  },
+  {
+    "id": "rocket-giotto",
+    "brandId": "rocket",
+    "name": "Rocket Giotto",
+    "aliases": ["Giotto"]
+  },
+  {
+    "id": "rocket-evolution",
+    "brandId": "rocket",
+    "name": "Rocket Evolution R",
+    "aliases": ["Evolution R", "Evolution"]
+  },
+  {
+    "id": "sanremo-cafe-racer",
+    "brandId": "sanremo",
+    "name": "Sanremo Cafe Racer",
+    "aliases": ["Cafe Racer", "Racer"]
+  },
+  {
+    "id": "scarlet",
+    "brandId": "scarlet",
+    "name": "Scarlet",
+    "aliases": []
+  },
+  {
+    "id": "strietman-ct1",
+    "brandId": "strietman",
+    "name": "Strietman CT1",
+    "aliases": ["CT1"]
+  },
+  {
+    "id": "synesso-es1",
+    "brandId": "synesso",
+    "name": "Synesso ES1",
+    "aliases": ["ES1"]
+  },
+  {
+    "id": "victoria-arduino-black-eagle",
+    "brandId": "victoria-arduino",
+    "name": "Victoria Arduino Black Eagle",
+    "aliases": ["Black Eagle", "VA Black Eagle"]
+  },
+  {
+    "id": "wacaco-picopresso",
+    "brandId": "wacaco",
+    "name": "Wacaco Picopresso",
+    "aliases": ["Picopresso", "Pico"]
+  }
+]

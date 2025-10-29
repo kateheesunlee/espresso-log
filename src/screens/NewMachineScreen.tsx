@@ -1,26 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import React, { useEffect, useState } from 'react';
 import {
-  View,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Platform,
-  KeyboardAvoidingView,
+  View,
 } from 'react-native';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
 
-import { useStore } from '../store/useStore';
 import { RootStackParamList } from '../navigation/AppNavigator';
+import { useStore } from '../store/useStore';
 import { colors } from '../themes/colors';
 import { showImagePickerOptions } from '../utils/imageUtils';
 
-import SvgIcon from '../components/SvgIcon';
 import Avatar from '../components/Avatar';
-import SuccessModal from '../components/modals/SuccessModal';
-import ErrorModal from '../components/modals/ErrorModal';
 import { TextField } from '../components/inputs';
+import TypeAheadInput from '../components/inputs/forms/TypeAheadInput';
+import ErrorModal from '../components/modals/ErrorModal';
+import SuccessModal from '../components/modals/SuccessModal';
+import SvgIcon from '../components/SvgIcon';
+import brandsSeed from '../data/brands.json';
+import grindersSeed from '../data/grinders.json';
+import modelsSeed from '../data/models.json';
+import { database } from '../database/UniversalDatabase';
+import {
+  createUserBrand,
+  createUserGrinder,
+  createUserMachineModel,
+} from '../utils/seedDataHelpers';
 
 type NewMachineScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -49,6 +59,39 @@ const NewMachineScreen: React.FC = () => {
     imageUri: '',
   });
 
+  const [brandId, setBrandId] = useState<string>('');
+  const [allBrands, setAllBrands] = useState<
+    Array<{ id: string; name: string; aliases: string[] }>
+  >([]);
+  const [allGrinders, setAllGrinders] = useState<
+    Array<{ id: string; name: string; aliases: string[] }>
+  >([]);
+  const [allModels, setAllModels] = useState<
+    Array<{ id: string; brandId: string; name: string; aliases: string[] }>
+  >([]);
+
+  // Load data from database
+  useEffect(() => {
+    const loadDatabaseData = async () => {
+      try {
+        const [dbBrands, dbGrinders, dbModels] = await Promise.all([
+          database.getBrands(),
+          database.getGrinders(),
+          database.getMachineModels(),
+        ]);
+
+        // Combine seed data with database data
+        setAllBrands([...brandsSeed, ...dbBrands]);
+        setAllGrinders([...grindersSeed, ...dbGrinders]);
+        setAllModels(dbModels);
+      } catch (error) {
+        console.error('Error loading database data:', error);
+      }
+    };
+
+    loadDatabaseData();
+  }, []);
+
   const [isLoading, setIsLoading] = useState(false);
   const [editingMachineId, setEditingMachineId] = useState<string | null>(null);
 
@@ -65,16 +108,23 @@ const NewMachineScreen: React.FC = () => {
   useEffect(() => {
     // If editing an existing machine, load its data
     if (route.params?.machineId) {
-      const machine = machines.find(m => m.id === route.params!.machineId!);
+      const machine = machines.find(m => m.id === route.params?.machineId);
       if (machine) {
         setEditingMachineId(machine.id);
         setFormData({
           brand: machine.brand,
           model: machine.model,
           nickname: machine.nickname || '',
-          grinder: machine.grinder || 'Integrated grinder',
+          grinder: machine.grinder || '',
           imageUri: machine.imageUri || '',
         });
+        // Find brand ID if possible
+        const brand = brandsSeed.find(
+          (b: { name: string; id: string }) => b.name === machine.brand
+        );
+        if (brand) {
+          setBrandId(brand.id);
+        }
       }
     }
   }, [route.params?.machineId, machines]);
@@ -86,13 +136,39 @@ const NewMachineScreen: React.FC = () => {
       if (!result.cancelled && result.uri) {
         setFormData(prev => ({ ...prev, imageUri: result.uri }));
       }
-    } catch (error) {
-      console.error('Error capturing image:', error);
+    } catch {
+      // Error already logged by showImagePickerOptions
       setErrorModal({
         visible: true,
         message: 'Failed to capture image. Please try again.',
       });
     }
+  };
+
+  // Handlers for creating new items
+  const handleCreateBrand = async (name: string) => {
+    const newItem = createUserBrand(name);
+    await database.createBrand(newItem);
+    // Reload brands to include the new item
+    const dbBrands = await database.getBrands();
+    setAllBrands([...brandsSeed, ...dbBrands]);
+  };
+
+  const handleCreateGrinder = async (name: string) => {
+    const newItem = createUserGrinder(name);
+    await database.createGrinder(newItem);
+    // Reload grinders to include the new item
+    const dbGrinders = await database.getGrinders();
+    setAllGrinders([...grindersSeed, ...dbGrinders]);
+  };
+
+  const handleCreateModel = async (name: string) => {
+    if (!brandId) return;
+    const newItem = createUserMachineModel(brandId, name);
+    await database.createMachineModel(newItem);
+    // Reload models to include the new item
+    const dbModels = await database.getMachineModels();
+    setAllModels(dbModels);
   };
 
   const handleSave = async () => {
@@ -121,7 +197,7 @@ const NewMachineScreen: React.FC = () => {
         await createMachine(machineData);
         setSuccessModal({ visible: true, isUpdate: false });
       }
-    } catch (error) {
+    } catch {
       setErrorModal({ visible: true, message: 'Failed to save machine' });
     } finally {
       setIsLoading(false);
@@ -135,7 +211,7 @@ const NewMachineScreen: React.FC = () => {
     } else {
       navigation.navigate('Shots', {
         screen: 'Machines',
-      } as any);
+      } as never);
     }
   };
 
@@ -176,19 +252,35 @@ const NewMachineScreen: React.FC = () => {
             </View>
           </View>
 
-          <TextField
+          <TypeAheadInput
             label='Brand'
             value={formData.brand}
-            onChangeText={text =>
-              setFormData(prev => ({ ...prev, brand: text }))
-            }
+            options={allBrands}
+            onCreateNewItem={handleCreateBrand}
+            onChangeText={async text => {
+              setFormData(prev => ({ ...prev, brand: text, model: '' }));
+              // Find brand ID from all brands (seed + DB)
+              const brand = allBrands.find(
+                (b: { name: string; id: string }) => b.name === text
+              );
+              setBrandId(brand?.id || '');
+            }}
             placeholder='e.g., Breville, Gaggia, La Marzocco'
             required={true}
           />
 
-          <TextField
+          <TypeAheadInput
             label='Model'
             value={formData.model}
+            options={
+              brandId
+                ? [
+                    ...modelsSeed.filter(m => m.brandId === brandId),
+                    ...allModels.filter(m => m.brandId === brandId),
+                  ]
+                : []
+            }
+            onCreateNewItem={handleCreateModel}
             onChangeText={text =>
               setFormData(prev => ({ ...prev, model: text }))
             }
@@ -196,13 +288,15 @@ const NewMachineScreen: React.FC = () => {
             required={true}
           />
 
-          <TextField
+          <TypeAheadInput
             label='Grinder'
             value={formData.grinder}
+            options={allGrinders}
+            onCreateNewItem={handleCreateGrinder}
             onChangeText={text =>
               setFormData(prev => ({ ...prev, grinder: text }))
             }
-            placeholder='e.g., Fellow Ode Gen 2, Eureka Mignon Specialita, Comandante C40'
+            placeholder='e.g., Fellow Ode Gen 2, Eureka Mignon Specialita'
             subtitle='Specify the grinder model name if using a separate grinder'
           />
 

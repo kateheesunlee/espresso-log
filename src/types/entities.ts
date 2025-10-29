@@ -10,6 +10,34 @@ export interface User {
   createdAt: string;
 }
 
+export interface Brand {
+  id: string;
+  name: string;
+  aliases: string[];
+  userEntered: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Grinder {
+  id: string;
+  name: string;
+  aliases: string[];
+  userEntered: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MachineModel {
+  id: string;
+  brandId: string;
+  name: string;
+  aliases: string[];
+  userEntered: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Machine {
   id: string;
   userId: string;

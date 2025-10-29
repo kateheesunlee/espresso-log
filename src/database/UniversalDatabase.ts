@@ -1,6 +1,15 @@
-import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { User, Machine, Bean, Shot, STORAGE_KEY } from '@types';
+import {
+  Bean,
+  Brand,
+  Grinder,
+  Machine,
+  MachineModel,
+  Shot,
+  STORAGE_KEY,
+  User,
+} from '@types';
+import { Platform } from 'react-native';
 
 class UniversalDatabase {
   private isWeb = Platform.OS === 'web';
@@ -18,6 +27,9 @@ class UniversalDatabase {
             machines: [],
             beans: [],
             shots: [],
+            brands: [],
+            grinders: [],
+            machineModels: [],
           })
         );
       }
@@ -27,12 +39,19 @@ class UniversalDatabase {
         const storedData = await AsyncStorage.getItem(this.storageKey);
         if (storedData) {
           this.db = JSON.parse(storedData);
+          // Ensure new tables exist for existing users
+          if (!this.db.brands) this.db.brands = [];
+          if (!this.db.grinders) this.db.grinders = [];
+          if (!this.db.machineModels) this.db.machineModels = [];
         } else {
           this.db = {
             users: [],
             machines: [],
             beans: [],
             shots: [],
+            brands: [],
+            grinders: [],
+            machineModels: [],
           };
           // Save initial empty structure
           await AsyncStorage.setItem(this.storageKey, JSON.stringify(this.db));
@@ -45,6 +64,9 @@ class UniversalDatabase {
           machines: [],
           beans: [],
           shots: [],
+          brands: [],
+          grinders: [],
+          machineModels: [],
         };
       }
     }
@@ -55,7 +77,15 @@ class UniversalDatabase {
       const data = localStorage.getItem(this.storageKey);
       return data
         ? JSON.parse(data)
-        : { users: [], machines: [], beans: [], shots: [] };
+        : {
+            users: [],
+            machines: [],
+            beans: [],
+            shots: [],
+            brands: [],
+            grinders: [],
+            machineModels: [],
+          };
     } else {
       return this.db;
     }
@@ -335,6 +365,170 @@ class UniversalDatabase {
       }
       data.beans[beanIndex].dates.push(dateEntry);
       data.beans[beanIndex].updatedAt = new Date().toISOString();
+      await this.setData(data);
+    }
+  }
+
+  // Brand operations
+  async createBrand(
+    brand: Omit<Brand, 'createdAt' | 'updatedAt'>
+  ): Promise<Brand> {
+    const data = this.getData();
+    const now = new Date().toISOString();
+    const newBrand: Brand = {
+      ...brand,
+      createdAt: now,
+      updatedAt: now,
+    };
+    data.brands.push(newBrand);
+    await this.setData(data);
+    return newBrand;
+  }
+
+  async getBrands(): Promise<Brand[]> {
+    const data = this.getData();
+    return data.brands || [];
+  }
+
+  async getBrandById(id: string): Promise<Brand | null> {
+    const data = this.getData();
+    return data.brands?.find((b: Brand) => b.id === id) || null;
+  }
+
+  async findBrandByName(name: string): Promise<Brand | null> {
+    const data = this.getData();
+    const normalizedName = name.toLowerCase().trim();
+    return (
+      data.brands?.find(
+        (b: Brand) =>
+          b.name.toLowerCase() === normalizedName ||
+          b.aliases.some(alias => alias.toLowerCase() === normalizedName)
+      ) || null
+    );
+  }
+
+  async updateBrand(brand: Brand): Promise<void> {
+    const data = this.getData();
+    const index = data.brands?.findIndex((b: Brand) => b.id === brand.id);
+    if (index !== -1 && index !== undefined) {
+      data.brands[index] = {
+        ...brand,
+        updatedAt: new Date().toISOString(),
+      };
+      await this.setData(data);
+    }
+  }
+
+  // Grinder operations
+  async createGrinder(
+    grinder: Omit<Grinder, 'createdAt' | 'updatedAt'>
+  ): Promise<Grinder> {
+    const data = this.getData();
+    const now = new Date().toISOString();
+    const newGrinder: Grinder = {
+      ...grinder,
+      createdAt: now,
+      updatedAt: now,
+    };
+    data.grinders.push(newGrinder);
+    await this.setData(data);
+    return newGrinder;
+  }
+
+  async getGrinders(): Promise<Grinder[]> {
+    const data = this.getData();
+    return data.grinders || [];
+  }
+
+  async getGrinderById(id: string): Promise<Grinder | null> {
+    const data = this.getData();
+    return data.grinders?.find((g: Grinder) => g.id === id) || null;
+  }
+
+  async findGrinderByName(name: string): Promise<Grinder | null> {
+    const data = this.getData();
+    const normalizedName = name.toLowerCase().trim();
+    return (
+      data.grinders?.find(
+        (g: Grinder) =>
+          g.name.toLowerCase() === normalizedName ||
+          g.aliases.some(alias => alias.toLowerCase() === normalizedName)
+      ) || null
+    );
+  }
+
+  async updateGrinder(grinder: Grinder): Promise<void> {
+    const data = this.getData();
+    const index = data.grinders?.findIndex((g: Grinder) => g.id === grinder.id);
+    if (index !== -1 && index !== undefined) {
+      data.grinders[index] = {
+        ...grinder,
+        updatedAt: new Date().toISOString(),
+      };
+      await this.setData(data);
+    }
+  }
+
+  // MachineModel operations
+  async createMachineModel(
+    model: Omit<MachineModel, 'createdAt' | 'updatedAt'>
+  ): Promise<MachineModel> {
+    const data = this.getData();
+    const now = new Date().toISOString();
+    const newModel: MachineModel = {
+      ...model,
+      createdAt: now,
+      updatedAt: now,
+    };
+    data.machineModels.push(newModel);
+    await this.setData(data);
+    return newModel;
+  }
+
+  async getMachineModels(): Promise<MachineModel[]> {
+    const data = this.getData();
+    return data.machineModels || [];
+  }
+
+  async getMachineModelsByBrand(brandId: string): Promise<MachineModel[]> {
+    const data = this.getData();
+    return (
+      data.machineModels?.filter((m: MachineModel) => m.brandId === brandId) ||
+      []
+    );
+  }
+
+  async getMachineModelById(id: string): Promise<MachineModel | null> {
+    const data = this.getData();
+    return data.machineModels?.find((m: MachineModel) => m.id === id) || null;
+  }
+
+  async findMachineModelByName(
+    brandId: string,
+    name: string
+  ): Promise<MachineModel | null> {
+    const data = this.getData();
+    const normalizedName = name.toLowerCase().trim();
+    return (
+      data.machineModels?.find(
+        (m: MachineModel) =>
+          m.brandId === brandId &&
+          (m.name.toLowerCase() === normalizedName ||
+            m.aliases.some(alias => alias.toLowerCase() === normalizedName))
+      ) || null
+    );
+  }
+
+  async updateMachineModel(model: MachineModel): Promise<void> {
+    const data = this.getData();
+    const index = data.machineModels?.findIndex(
+      (m: MachineModel) => m.id === model.id
+    );
+    if (index !== -1 && index !== undefined) {
+      data.machineModels[index] = {
+        ...model,
+        updatedAt: new Date().toISOString(),
+      };
       await this.setData(data);
     }
   }

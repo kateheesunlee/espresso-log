@@ -1,0 +1,162 @@
+[
+  {
+    "id": "ascaso",
+    "name": "Ascaso",
+    "aliases": []
+  },
+  {
+    "id": "bez-era",
+    "name": "BezEra",
+    "aliases": ["Bezerra"]
+  },
+  {
+    "id": "bezzera",
+    "name": "Bezzera",
+    "aliases": []
+  },
+  {
+    "id": "breville",
+    "name": "Breville",
+    "aliases": ["Sage"]
+  },
+  {
+    "id": "cafelat",
+    "name": "Cafelat",
+    "aliases": []
+  },
+  {
+    "id": "cimbali",
+    "name": "Cimbali",
+    "aliases": ["Nuova Simonelli", "NS"]
+  },
+  {
+    "id": "cremina",
+    "name": "Cremina",
+    "aliases": []
+  },
+  {
+    "id": "dalla-corte",
+    "name": "Dalla Corte",
+    "aliases": ["DC"]
+  },
+  {
+    "id": "de-longhi",
+    "name": "De'Longhi",
+    "aliases": ["Delonghi"]
+  },
+  {
+    "id": "ecm",
+    "name": "ECM",
+    "aliases": []
+  },
+  {
+    "id": "elektra",
+    "name": "Elektra",
+    "aliases": []
+  },
+  {
+    "id": "flair",
+    "name": "Flair",
+    "aliases": []
+  },
+  {
+    "id": "gaggia",
+    "name": "Gaggia",
+    "aliases": []
+  },
+  {
+    "id": "iacoponi",
+    "name": "Iacoponi",
+    "aliases": []
+  },
+  {
+    "id": "jura",
+    "name": "Jura",
+    "aliases": []
+  },
+  {
+    "id": "la-marzocco",
+    "name": "La Marzocco",
+    "aliases": ["LM", "LaMarzocco"]
+  },
+  {
+    "id": "la-pavoni",
+    "name": "La Pavoni",
+    "aliases": ["LaPavoni"]
+  },
+  {
+    "id": "lago-m",
+    "name": "LagoM",
+    "aliases": ["Lagom", "Option-O"]
+  },
+  {
+    "id": "lelit",
+    "name": "Lelit",
+    "aliases": ["Lelit MaraX"]
+  },
+  {
+    "id": "marzorocco",
+    "name": "Marzorocco",
+    "aliases": []
+  },
+  {
+    "id": "nuova-simonelli",
+    "name": "Nuova Simonelli",
+    "aliases": ["NS", "NS Oscar"]
+  },
+  {
+    "id": "profitec",
+    "name": "Profitec",
+    "aliases": []
+  },
+  {
+    "id": "quick-mill",
+    "name": "Quick Mill",
+    "aliases": ["QM"]
+  },
+  {
+    "id": "rancilio",
+    "name": "Rancilio",
+    "aliases": []
+  },
+  {
+    "id": "rocket",
+    "name": "Rocket",
+    "aliases": ["Rocket Espresso"]
+  },
+  {
+    "id": "sanremo",
+    "name": "Sanremo",
+    "aliases": []
+  },
+  {
+    "id": "scarlet",
+    "name": "Scarlet",
+    "aliases": []
+  },
+  {
+    "id": "strietman",
+    "name": "Strietman",
+    "aliases": []
+  },
+  {
+    "id": "synesso",
+    "name": "Synesso",
+    "aliases": []
+  },
+  {
+    "id": "turbo",
+    "name": "Turbo",
+    "aliases": []
+  },
+  {
+    "id": "victoria-arduino",
+    "name": "Victoria Arduino",
+    "aliases": ["VA", "VictoriaArduino"]
+  },
+  {
+    "id": "wacaco",
+    "name": "Wacaco",
+    "aliases": []
+  }
+]
