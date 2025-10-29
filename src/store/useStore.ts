@@ -1,21 +1,21 @@
-import { create } from 'zustand';
-import { database } from '../database/UniversalDatabase';
 import {
-  User,
-  Machine,
   Bean,
+  Machine,
   Shot,
   ShotFormData,
   shotFormDataToShot,
+  User,
 } from '@types';
+import { create } from 'zustand';
 import { classifyExtraction } from '../coaching/extraction';
 import { CoachingManager } from '../coaching/service/CoachingManager';
 import {
   EXTRACTION_CONFIG,
   generateInputHash,
-  shouldRegenerateSnapshot,
   getLatestVersion,
+  shouldRegenerateSnapshot,
 } from '../coaching/versions';
+import { database } from '../database/UniversalDatabase';
 
 interface AppState {
   // User
@@ -122,7 +122,6 @@ export const useStore = create<AppState>((set, get) => ({
   },
 
   configureCoaching: (mode: 'rule' | 'ai' | 'hybrid', aiApiKey?: string) => {
-    const { coachingManager } = get();
     const newManager = new CoachingManager({
       mode,
       aiApiKey,
@@ -481,13 +480,9 @@ export const useStore = create<AppState>((set, get) => ({
   },
 
   checkAndUpdateOutdatedSnapshots: async () => {
-    const { shots, coachingManager, allBeans } = get();
+    const { shots, coachingManager } = get();
     const currentExtractionVersion = getLatestVersion('extraction');
     const currentCoachingVersion = coachingManager.getVersion();
-
-    console.log(`Checking snapshots for version updates...`);
-    console.log(`Current extraction version: ${currentExtractionVersion}`);
-    console.log(`Current coaching version: ${currentCoachingVersion}`);
 
     let updatedCount = 0;
 

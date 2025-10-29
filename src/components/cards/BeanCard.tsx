@@ -82,24 +82,24 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean }) => {
         )}
         {/* advanced fields */}
         {advancedFieldsRow1.length > 0 && (
-          <View style={styles.advancedFieldsContainer}>
+          <Text style={styles.advancedFieldsContainer} numberOfLines={1}>
             {advancedFieldsRow1.map((detail, index) => (
               <Text key={index} style={styles.advancedFieldText}>
                 {detail}
                 {index < advancedFieldsRow1.length - 1 ? ' • ' : ''}
               </Text>
             ))}
-          </View>
+          </Text>
         )}
         {advancedFieldsRow2.length > 0 && (
-          <View style={styles.advancedFieldsContainer}>
+          <Text style={styles.advancedFieldsContainer} numberOfLines={1}>
             {advancedFieldsRow2.map((detail, index) => (
               <Text key={index} style={styles.advancedFieldText}>
                 {detail}
                 {index < advancedFieldsRow2.length - 1 ? ' • ' : ''}
               </Text>
             ))}
-          </View>
+          </Text>
         )}
         {/* bean manager */}
         {showBeanManager ? <BeanManager bean={bean} /> : null}
@@ -138,14 +138,12 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingTop: 12,
   },
-  advancedFieldText: {
+  advancedFieldText: {},
+  advancedFieldsContainer: {
     color: colors.textDark,
+    flexDirection: 'row',
     fontSize: 12,
     fontWeight: '400',
-  },
-  advancedFieldsContainer: {
-    flexDirection: 'row',
-    gap: 8,
   },
   aromaTagsText: {
     color: colors.textDark,

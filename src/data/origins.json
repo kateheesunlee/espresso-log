@@ -1,0 +1,352 @@
+[
+  {
+    "id": "ethiopia-yirgacheffe",
+    "name": "Ethiopia - Yirgacheffe",
+    "aliases": ["Yirgacheffe", "Yirgachefe"],
+    "country": "Ethiopia",
+    "region": "Sidamo"
+  },
+  {
+    "id": "ethiopia-sidamo",
+    "name": "Ethiopia - Sidamo",
+    "aliases": ["Sidamo", "Sidama"],
+    "country": "Ethiopia",
+    "region": "Sidamo"
+  },
+  {
+    "id": "ethiopia-harrar",
+    "name": "Ethiopia - Harrar",
+    "aliases": ["Harrar", "Harrer"],
+    "country": "Ethiopia",
+    "region": "Harrar"
+  },
+  {
+    "id": "ethiopia-guji",
+    "name": "Ethiopia - Guji",
+    "aliases": ["Guji"],
+    "country": "Ethiopia",
+    "region": "Guji"
+  },
+  {
+    "id": "kenya-aa",
+    "name": "Kenya - AA",
+    "aliases": ["Kenya AA", "KAA"],
+    "country": "Kenya",
+    "region": null
+  },
+  {
+    "id": "kenya-nyeri",
+    "name": "Kenya - Nyeri",
+    "aliases": ["Nyeri"],
+    "country": "Kenya",
+    "region": "Nyeri"
+  },
+  {
+    "id": "tanzania-kilimanjaro",
+    "name": "Tanzania - Kilimanjaro",
+    "aliases": ["Kilimanjaro", "Tanzania"],
+    "country": "Tanzania",
+    "region": "Kilimanjaro"
+  },
+  {
+    "id": "uganda-bugisu",
+    "name": "Uganda - Bugisu",
+    "aliases": ["Bugisu", "Uganda"],
+    "country": "Uganda",
+    "region": "Bugisu"
+  },
+  {
+    "id": "rwanda",
+    "name": "Rwanda",
+    "aliases": ["Rwanda"],
+    "country": "Rwanda",
+    "region": null
+  },
+  {
+    "id": "colombia-huila",
+    "name": "Colombia - Huila",
+    "aliases": ["Huila", "Colombia Huila"],
+    "country": "Colombia",
+    "region": "Huila"
+  },
+  {
+    "id": "colombia-narino",
+    "name": "Colombia - Narino",
+    "aliases": ["Narino"],
+    "country": "Colombia",
+    "region": "Narino"
+  },
+  {
+    "id": "colombia-antonio-santander",
+    "name": "Colombia - Antioquia",
+    "aliases": ["Antioquia"],
+    "country": "Colombia",
+    "region": "Antioquia"
+  },
+  {
+    "id": "colombia-cauca",
+    "name": "Colombia - Cauca",
+    "aliases": ["Cauca"],
+    "country": "Colombia",
+    "region": "Cauca"
+  },
+  {
+    "id": "brazil-minas-gerais",
+    "name": "Brazil - Minas Gerais",
+    "aliases": ["Minas Gerais", "Brazil MG"],
+    "country": "Brazil",
+    "region": "Minas Gerais"
+  },
+  {
+    "id": "brazil-sao-paulo",
+    "name": "Brazil - Sao Paulo",
+    "aliases": ["Sao Paulo"],
+    "country": "Brazil",
+    "region": "Sao Paulo"
+  },
+  {
+    "id": "brazil-bahia",
+    "name": "Brazil - Bahia",
+    "aliases": ["Bahia"],
+    "country": "Brazil",
+    "region": "Bahia"
+  },
+  {
+    "id": "guatemala-antigua",
+    "name": "Guatemala - Antigua",
+    "aliases": ["Antigua", "Guatemala Antigua"],
+    "country": "Guatemala",
+    "region": "Antigua"
+  },
+  {
+    "id": "guatemala-huehuetenango",
+    "name": "Guatemala - Huehuetenango",
+    "aliases": ["Huehuetenango", "Huehue"],
+    "country": "Guatemala",
+    "region": "Huehuetenango"
+  },
+  {
+    "id": "guatemala-atitlan",
+    "name": "Guatemala - Atitlan",
+    "aliases": ["Atitlan", "Lake Atitlan"],
+    "country": "Guatemala",
+    "region": "Atitlan"
+  },
+  {
+    "id": "costa-rica-tarrazu",
+    "name": "Costa Rica - Tarrazu",
+    "aliases": ["Tarrazu", "Tarrazú"],
+    "country": "Costa Rica",
+    "region": "Tarrazu"
+  },
+  {
+    "id": "costa-rica-west-valley",
+    "name": "Costa Rica - West Valley",
+    "aliases": ["West Valley", "Valle Central"],
+    "country": "Costa Rica",
+    "region": "West Valley"
+  },
+  {
+    "id": "panama-boquete",
+    "name": "Panama - Boquete",
+    "aliases": ["Boquete", "Panama Geisha"],
+    "country": "Panama",
+    "region": "Boquete"
+  },
+  {
+    "id": "panama-volcan",
+    "name": "Panama - Volcan",
+    "aliases": ["Volcan"],
+    "country": "Panama",
+    "region": "Volcan"
+  },
+  {
+    "id": "honduras-copan",
+    "name": "Honduras - Copan",
+    "aliases": ["Copan"],
+    "country": "Honduras",
+    "region": "Copan"
+  },
+  {
+    "id": "el-salvador",
+    "name": "El Salvador",
+    "aliases": ["El Salvador"],
+    "country": "El Salvador",
+    "region": null
+  },
+  {
+    "id": "nicaragua",
+    "name": "Nicaragua",
+    "aliases": ["Nicaragua"],
+    "country": "Nicaragua",
+    "region": null
+  },
+  {
+    "id": "ecuador",
+    "name": "Ecuador",
+    "aliases": ["Ecuador"],
+    "country": "Ecuador",
+    "region": null
+  },
+  {
+    "id": "peru",
+    "name": "Peru",
+    "aliases": ["Peru"],
+    "country": "Peru",
+    "region": null
+  },
+  {
+    "id": "bolivia",
+    "name": "Bolivia",
+    "aliases": ["Bolivia"],
+    "country": "Bolivia",
+    "region": null
+  },
+  {
+    "id": "venezuela",
+    "name": "Venezuela",
+    "aliases": ["Venezuela"],
+    "country": "Venezuela",
+    "region": null
+  },
+  {
+    "id": "indonesia-sumatra",
+    "name": "Indonesia - Sumatra",
+    "aliases": ["Sumatra", "Sumatran"],
+    "country": "Indonesia",
+    "region": "Sumatra"
+  },
+  {
+    "id": "indonesia-java",
+    "name": "Indonesia - Java",
+    "aliases": ["Java", "Javanese"],
+    "country": "Indonesia",
+    "region": "Java"
+  },
+  {
+    "id": "indonesia-sulawesi",
+    "name": "Indonesia - Sulawesi",
+    "aliases": ["Sulawesi", "Celebes", "Toraja"],
+    "country": "Indonesia",
+    "region": "Sulawesi"
+  },
+  {
+    "id": "indonesia-papua",
+    "name": "Indonesia - Papua",
+    "aliases": ["Papua", "New Guinea"],
+    "country": "Indonesia",
+    "region": "Papua"
+  },
+  {
+    "id": "india-mysore",
+    "name": "India - Mysore",
+    "aliases": ["Mysore", "Indian Coffee"],
+    "country": "India",
+    "region": "Karnataka"
+  },
+  {
+    "id": "vietnam-daklak",
+    "name": "Vietnam - Dak Lak",
+    "aliases": ["Dak Lak", "Dak Lak Province"],
+    "country": "Vietnam",
+    "region": "Dak Lak"
+  },
+  {
+    "id": "thailand",
+    "name": "Thailand",
+    "aliases": ["Thailand"],
+    "country": "Thailand",
+    "region": null
+  },
+  {
+    "id": "myanmar",
+    "name": "Myanmar",
+    "aliases": ["Myanmar", "Burma"],
+    "country": "Myanmar",
+    "region": null
+  },
+  {
+    "id": "philippines",
+    "name": "Philippines",
+    "aliases": ["Philippines"],
+    "country": "Philippines",
+    "region": null
+  },
+  {
+    "id": "papua-new-guinea",
+    "name": "Papua New Guinea",
+    "aliases": ["PNG", "Papua New Guinea"],
+    "country": "Papua New Guinea",
+    "region": null
+  },
+  {
+    "id": "hawaii-kona",
+    "name": "Hawaii - Kona",
+    "aliases": ["Kona", "Hawaii Kona"],
+    "country": "United States",
+    "region": "Hawaii"
+  },
+  {
+    "id": "mexico-chiapas",
+    "name": "Mexico - Chiapas",
+    "aliases": ["Chiapas"],
+    "country": "Mexico",
+    "region": "Chiapas"
+  },
+  {
+    "id": "mexico-veracruz",
+    "name": "Mexico - Veracruz",
+    "aliases": ["Veracruz"],
+    "country": "Mexico",
+    "region": "Veracruz"
+  },
+  {
+    "id": "mexico-oaxaca",
+    "name": "Mexico - Oaxaca",
+    "aliases": ["Oaxaca"],
+    "country": "Mexico",
+    "region": "Oaxaca"
+  },
+  {
+    "id": "yemen",
+    "name": "Yemen",
+    "aliases": ["Yemen", "Yemeni"],
+    "country": "Yemen",
+    "region": null
+  },
+  {
+    "id": "jamaica-blue-mountain",
+    "name": "Jamaica - Blue Mountain",
+    "aliases": ["Blue Mountain", "Jamaica Blue Mountain", "JBM"],
+    "country": "Jamaica",
+    "region": "Blue Mountains"
+  },
+  {
+    "id": "dominican-republic",
+    "name": "Dominican Republic",
+    "aliases": ["Dominican Republic", "DR"],
+    "country": "Dominican Republic",
+    "region": null
+  },
+  {
+    "id": "puerto-rico",
+    "name": "Puerto Rico",
+    "aliases": ["Puerto Rico"],
+    "country": "Puerto Rico",
+    "region": null
+  },
+  {
+    "id": "cuba",
+    "name": "Cuba",
+    "aliases": ["Cuba"],
+    "country": "Cuba",
+    "region": null
+  },
+  {
+    "id": "peru-cajamarca",
+    "name": "Peru - Cajamarca",
+    "aliases": ["Cajamarca", "Peru Cajamarca"],
+    "country": "Peru",
+    "region": "Cajamarca"
+  }
+]

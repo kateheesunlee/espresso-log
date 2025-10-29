@@ -38,6 +38,28 @@ export interface MachineModel {
   updatedAt: string;
 }
 
+export interface Producer {
+  id: string;
+  name: string;
+  aliases: string[];
+  country?: string;
+  region?: string;
+  userEntered: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Roaster {
+  id: string;
+  name: string;
+  aliases: string[];
+  country?: string;
+  state?: string;
+  userEntered: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Machine {
   id: string;
   userId: string;

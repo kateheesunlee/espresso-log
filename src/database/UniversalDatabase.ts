@@ -5,6 +5,8 @@ import {
   Grinder,
   Machine,
   MachineModel,
+  Producer,
+  Roaster,
   Shot,
   STORAGE_KEY,
   User,
@@ -30,6 +32,8 @@ class UniversalDatabase {
             brands: [],
             grinders: [],
             machineModels: [],
+            producers: [],
+            roasters: [],
           })
         );
       }
@@ -43,6 +47,8 @@ class UniversalDatabase {
           if (!this.db.brands) this.db.brands = [];
           if (!this.db.grinders) this.db.grinders = [];
           if (!this.db.machineModels) this.db.machineModels = [];
+          if (!this.db.producers) this.db.producers = [];
+          if (!this.db.roasters) this.db.roasters = [];
         } else {
           this.db = {
             users: [],
@@ -52,6 +58,8 @@ class UniversalDatabase {
             brands: [],
             grinders: [],
             machineModels: [],
+            producers: [],
+            roasters: [],
           };
           // Save initial empty structure
           await AsyncStorage.setItem(this.storageKey, JSON.stringify(this.db));
@@ -67,6 +75,8 @@ class UniversalDatabase {
           brands: [],
           grinders: [],
           machineModels: [],
+          producers: [],
+          roasters: [],
         };
       }
     }
@@ -85,6 +95,8 @@ class UniversalDatabase {
             brands: [],
             grinders: [],
             machineModels: [],
+            producers: [],
+            roasters: [],
           };
     } else {
       return this.db;
@@ -527,6 +539,108 @@ class UniversalDatabase {
     if (index !== -1 && index !== undefined) {
       data.machineModels[index] = {
         ...model,
+        updatedAt: new Date().toISOString(),
+      };
+      await this.setData(data);
+    }
+  }
+
+  // Producer operations
+  async getProducers(): Promise<Producer[]> {
+    const data = this.getData();
+    return data.producers || [];
+  }
+
+  async getProducerById(id: string): Promise<Producer | null> {
+    const data = this.getData();
+    return data.producers?.find((p: Producer) => p.id === id) || null;
+  }
+
+  async findProducerByName(name: string): Promise<Producer | null> {
+    const data = this.getData();
+    const normalizedName = name.toLowerCase().trim();
+    return (
+      data.producers?.find(
+        (p: Producer) =>
+          p.name.toLowerCase() === normalizedName ||
+          p.aliases.some(alias => alias.toLowerCase() === normalizedName)
+      ) || null
+    );
+  }
+
+  async createProducer(
+    producer: Omit<Producer, 'createdAt' | 'updatedAt'>
+  ): Promise<Producer> {
+    const data = this.getData();
+    const now = new Date().toISOString();
+    const newProducer: Producer = {
+      ...producer,
+      createdAt: now,
+      updatedAt: now,
+    };
+    data.producers.push(newProducer);
+    await this.setData(data);
+    return newProducer;
+  }
+
+  async updateProducer(producer: Producer): Promise<void> {
+    const data = this.getData();
+    const index = data.producers?.findIndex(
+      (p: Producer) => p.id === producer.id
+    );
+    if (index !== -1 && index !== undefined) {
+      data.producers[index] = {
+        ...producer,
+        updatedAt: new Date().toISOString(),
+      };
+      await this.setData(data);
+    }
+  }
+
+  // Roaster operations
+  async getRoasters(): Promise<Roaster[]> {
+    const data = this.getData();
+    return data.roasters || [];
+  }
+
+  async getRoasterById(id: string): Promise<Roaster | null> {
+    const data = this.getData();
+    return data.roasters?.find((r: Roaster) => r.id === id) || null;
+  }
+
+  async findRoasterByName(name: string): Promise<Roaster | null> {
+    const data = this.getData();
+    const normalizedName = name.toLowerCase().trim();
+    return (
+      data.roasters?.find(
+        (r: Roaster) =>
+          r.name.toLowerCase() === normalizedName ||
+          r.aliases.some(alias => alias.toLowerCase() === normalizedName)
+      ) || null
+    );
+  }
+
+  async createRoaster(
+    roaster: Omit<Roaster, 'createdAt' | 'updatedAt'>
+  ): Promise<Roaster> {
+    const data = this.getData();
+    const now = new Date().toISOString();
+    const newRoaster: Roaster = {
+      ...roaster,
+      createdAt: now,
+      updatedAt: now,
+    };
+    data.roasters.push(newRoaster);
+    await this.setData(data);
+    return newRoaster;
+  }
+
+  async updateRoaster(roaster: Roaster): Promise<void> {
+    const data = this.getData();
+    const index = data.roasters?.findIndex((r: Roaster) => r.id === roaster.id);
+    if (index !== -1 && index !== undefined) {
+      data.roasters[index] = {
+        ...roaster,
         updatedAt: new Date().toISOString(),
       };
       await this.setData(data);

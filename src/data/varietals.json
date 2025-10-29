@@ -1,0 +1,320 @@
+[
+  {
+    "id": "typica",
+    "name": "Typica",
+    "aliases": ["Tipica", "Americano"],
+    "type": "arabica"
+  },
+  {
+    "id": "bourbon",
+    "name": "Bourbon",
+    "aliases": ["Bourbon"],
+    "type": "arabica"
+  },
+  {
+    "id": "caturra",
+    "name": "Caturra",
+    "aliases": ["Caturra"],
+    "type": "arabica"
+  },
+  {
+    "id": "catuai",
+    "name": "Catuai",
+    "aliases": ["Catuai", "Catuai Amarelo", "Catuai Vermelho"],
+    "type": "arabica"
+  },
+  {
+    "id": "mundo-novo",
+    "name": "Mundo Novo",
+    "aliases": ["Mundo Novo"],
+    "type": "arabica"
+  },
+  {
+    "id": "geisha",
+    "name": "Geisha",
+    "aliases": ["Gesha", "Panama Geisha"],
+    "type": "arabica"
+  },
+  {
+    "id": "sl28",
+    "name": "SL28",
+    "aliases": ["SL28"],
+    "type": "arabica"
+  },
+  {
+    "id": "sl34",
+    "name": "SL34",
+    "aliases": ["SL34"],
+    "type": "arabica"
+  },
+  {
+    "id": "ethiopian-heirloom",
+    "name": "Ethiopian Heirloom",
+    "aliases": ["Heirloom", "Ethiopian Landrace", "Local Landrace"],
+    "type": "arabica"
+  },
+  {
+    "id": "sidamo",
+    "name": "Sidamo",
+    "aliases": ["Sidamo"],
+    "type": "arabica"
+  },
+  {
+    "id": "pacas",
+    "name": "Pacas",
+    "aliases": ["Pacas"],
+    "type": "arabica"
+  },
+  {
+    "id": "pacamara",
+    "name": "Pacamara",
+    "aliases": ["Pacamara"],
+    "type": "arabica"
+  },
+  {
+    "id": "maragogipe",
+    "name": "Maragogipe",
+    "aliases": ["Maragogype", "Elephant Bean"],
+    "type": "arabica"
+  },
+  {
+    "id": "mokka",
+    "name": "Mokka",
+    "aliases": ["Mokka", "Moka", "Mocca"],
+    "type": "arabica"
+  },
+  {
+    "id": "coffee-eugenioides",
+    "name": "Coffea Eugenioides",
+    "aliases": ["Eugenioides", "Eugenoides"],
+    "type": "other"
+  },
+  {
+    "id": "catimor",
+    "name": "Catimor",
+    "aliases": ["Catimor"],
+    "type": "arabica"
+  },
+  {
+    "id": "ruiru-11",
+    "name": "Ruiru 11",
+    "aliases": ["Ruiru 11"],
+    "type": "arabica"
+  },
+  {
+    "id": "jember",
+    "name": "Jember",
+    "aliases": ["Jember", "S795"],
+    "type": "arabica"
+  },
+  {
+    "id": "timor",
+    "name": "Timor",
+    "aliases": ["Timor Hybrid", "Tim Tim"],
+    "type": "arabica"
+  },
+  {
+    "id": "sarchimor",
+    "name": "Sarchimor",
+    "aliases": ["Sarchimor", "Villa Sarchi"],
+    "type": "arabica"
+  },
+  {
+    "id": "castillo",
+    "name": "Castillo",
+    "aliases": ["Castillo", "Colombia"],
+    "type": "arabica"
+  },
+  {
+    "id": "tabi",
+    "name": "Tabi",
+    "aliases": ["Tabi"],
+    "type": "arabica"
+  },
+  {
+    "id": "colombia-variety",
+    "name": "Colombia Variety",
+    "aliases": ["Colombia", "Variedad Colombia"],
+    "type": "arabica"
+  },
+  {
+    "id": "java",
+    "name": "Java",
+    "aliases": ["Java", "Jember"],
+    "type": "arabica"
+  },
+  {
+    "id": "sulawesi-toraja",
+    "name": "Sulawesi/Toraja",
+    "aliases": ["Toraja"],
+    "type": "arabica"
+  },
+  {
+    "id": "gayo",
+    "name": "Gayo",
+    "aliases": ["Gayo", "Sumatran"],
+    "type": "arabica"
+  },
+  {
+    "id": "kent",
+    "name": "Kent",
+    "aliases": ["Kent"],
+    "type": "arabica"
+  },
+  {
+    "id": "s288",
+    "name": "S288",
+    "aliases": ["S288"],
+    "type": "arabica"
+  },
+  {
+    "id": "yellow-caturra",
+    "name": "Yellow Caturra",
+    "aliases": ["Yellow Caturra", "Amarillo"],
+    "type": "arabica"
+  },
+  {
+    "id": "red-bourbon",
+    "name": "Red Bourbon",
+    "aliases": ["Red Bourbon", "Bourbon Rouge"],
+    "type": "arabica"
+  },
+  {
+    "id": "yellow-bourbon",
+    "name": "Yellow Bourbon",
+    "aliases": ["Yellow Bourbon", "Bourbon Amarelo"],
+    "type": "arabica"
+  },
+  {
+    "id": "pink-bourbon",
+    "name": "Pink Bourbon",
+    "aliases": ["Pink Bourbon", "Bourbon Rosado"],
+    "type": "arabica"
+  },
+  {
+    "id": "orange-bourbon",
+    "name": "Orange Bourbon",
+    "aliases": ["Orange Bourbon"],
+    "type": "arabica"
+  },
+  {
+    "id": "barbuk-surinam",
+    "name": "Barbuk Surinam",
+    "aliases": ["Barbuk Surinam"],
+    "type": "arabica"
+  },
+  {
+    "id": "landi-rosat",
+    "name": "Landi Rosat",
+    "aliases": ["Landi Rosat"],
+    "type": "arabica"
+  },
+  {
+    "id": "pache-commun",
+    "name": "Pache Commun",
+    "aliases": ["Pache"],
+    "type": "arabica"
+  },
+  {
+    "id": "pache-colis",
+    "name": "Pache Colis",
+    "aliases": ["Pache Colis"],
+    "type": "arabica"
+  },
+  {
+    "id": "villa-sarchi",
+    "name": "Villa Sarchi",
+    "aliases": ["Villa Sarchi", "Villa Lobos"],
+    "type": "arabica"
+  },
+  {
+    "id": "yellow-catuai",
+    "name": "Yellow Catuai",
+    "aliases": ["Yellow Catuai", "Catuai Amarelo"],
+    "type": "arabica"
+  },
+  {
+    "id": "red-catuai",
+    "name": "Red Catuai",
+    "aliases": ["Red Catuai", "Catuai Vermelho"],
+    "type": "arabica"
+  },
+  {
+    "id": "mibirizi",
+    "name": "Mibirizi",
+    "aliases": ["Mibirizi"],
+    "type": "arabica"
+  },
+  {
+    "id": "nakali",
+    "name": "Nakali",
+    "aliases": ["Nakali"],
+    "type": "arabica"
+  },
+  {
+    "id": "wush-wush",
+    "name": "Wush Wush",
+    "aliases": ["Wush Wush"],
+    "type": "arabica"
+  },
+  {
+    "id": "harar-longberry",
+    "name": "Harar Longberry",
+    "aliases": ["Longberry", "Harar"],
+    "type": "arabica"
+  },
+  {
+    "id": "big-lot",
+    "name": "Big Lot",
+    "aliases": ["Big Lot"],
+    "type": "arabica"
+  },
+  {
+    "id": "blue-mountain-tall",
+    "name": "Blue Mountain Tall",
+    "aliases": ["Blue Mountain"],
+    "type": "arabica"
+  },
+  {
+    "id": "san-ramon",
+    "name": "San Ramon",
+    "aliases": ["San Ramon"],
+    "type": "arabica"
+  },
+  {
+    "id": "costa-rica-95",
+    "name": "Costa Rica 95",
+    "aliases": ["CR95"],
+    "type": "arabica"
+  },
+  {
+    "id": "kapeng-barako",
+    "name": "Kapeng Barako",
+    "aliases": ["Barako"],
+    "type": "liberica"
+  },
+  {
+    "id": "excelsa",
+    "name": "Excelsa",
+    "aliases": ["Excelsa"],
+    "type": "liberica"
+  },
+  {
+    "id": "liberica",
+    "name": "Liberica",
+    "aliases": ["Liberica"],
+    "type": "liberica"
+  },
+  {
+    "id": "coffee-robusta",
+    "name": "Coffea Canephora (Robusta)",
+    "aliases": ["Robusta", "Canephora"],
+    "type": "robusta"
+  },
+  {
+    "id": "java-robusta",
+    "name": "Java Robusta",
+    "aliases": ["Java Robusta"],
+    "type": "robusta"
+  }
+]

@@ -1,0 +1,268 @@
+[
+  {
+    "id": "heza-rwanda",
+    "name": "Heza, Rwanda",
+    "aliases": ["Heza"],
+    "country": "Rwanda",
+    "region": "Nyamasheke"
+  },
+  {
+    "id": "pachamama-peru",
+    "name": "Pachamama, Peru",
+    "aliases": ["Pachamama"],
+    "country": "Peru",
+    "region": "Chanchamayo"
+  },
+  {
+    "id": "san-ignacio-guatemala",
+    "name": "Finca San Ignacio, Guatemala",
+    "aliases": ["San Ignacio"],
+    "country": "Guatemala",
+    "region": "Antigua"
+  },
+  {
+    "id": "el-injerto-guatemala",
+    "name": "El Injerto, Guatemala",
+    "aliases": ["El Injerto"],
+    "country": "Guatemala",
+    "region": "Huehuetenango"
+  },
+  {
+    "id": "finca-victoria-costa-rica",
+    "name": "Finca Victoria, Costa Rica",
+    "aliases": ["Finca Victoria"],
+    "country": "Costa Rica",
+    "region": "Tarrazu"
+  },
+  {
+    "id": "don-eli-panama",
+    "name": "Don Eli, Panama",
+    "aliases": ["Don Eli"],
+    "country": "Panama",
+    "region": "Boquete"
+  },
+  {
+    "id": "finca-la-esmeralda-panama",
+    "name": "Hacienda La Esmeralda, Panama",
+    "aliases": ["La Esmeralda", "Esmeralda"],
+    "country": "Panama",
+    "region": "Boquete"
+  },
+  {
+    "id": "la-mohalana-colombia",
+    "name": "La Mohalana, Colombia",
+    "aliases": ["La Mohalana", "Mohalana"],
+    "country": "Colombia",
+    "region": "Huila"
+  },
+  {
+    "id": "santa-maria-colombia",
+    "name": "Finca Santa Maria, Colombia",
+    "aliases": ["Santa Maria"],
+    "country": "Colombia",
+    "region": "Huila"
+  },
+  {
+    "id": "cerro-azul-brazil",
+    "name": "Cerro Azul, Brazil",
+    "aliases": ["Cerro Azul"],
+    "country": "Brazil",
+    "region": "Minas Gerais"
+  },
+  {
+    "id": "daterra-brazil",
+    "name": "Daterra, Brazil",
+    "aliases": ["Daterra"],
+    "country": "Brazil",
+    "region": "Minas Gerais"
+  },
+  {
+    "id": "sul-de-minas-brazil",
+    "name": "Sul de Minas, Brazil",
+    "aliases": ["Sul de Minas"],
+    "country": "Brazil",
+    "region": "Minas Gerais"
+  },
+  {
+    "id": "bletchley-coffee-kenya",
+    "name": "Bletchley Coffee Estate, Kenya",
+    "aliases": ["Bletchley"],
+    "country": "Kenya",
+    "region": "Nyeri"
+  },
+  {
+    "id": "gatomboyo-kenya",
+    "name": "Gatomboyo, Kenya",
+    "aliases": ["Gatomboyo"],
+    "country": "Kenya",
+    "region": null
+  },
+  {
+    "id": "buku-abel-ethiopia",
+    "name": "Buku Abel, Ethiopia",
+    "aliases": ["Buku Abel"],
+    "country": "Ethiopia",
+    "region": "Guji"
+  },
+  {
+    "id": "tessamator-ethiopia",
+    "name": "Tessamator, Ethiopia",
+    "aliases": ["Tessamator"],
+    "country": "Ethiopia",
+    "region": "Yirgacheffe"
+  },
+  {
+    "id": "hunkute-ethiopia",
+    "name": "Hunkute, Ethiopia",
+    "aliases": ["Hunkute"],
+    "country": "Ethiopia",
+    "region": "Yirgacheffe"
+  },
+  {
+    "id": "worka-sakaro-ethiopia",
+    "name": "Worka Sakaro, Ethiopia",
+    "aliases": ["Worka Sakaro", "Worka"],
+    "country": "Ethiopia",
+    "region": "Yirgacheffe"
+  },
+  {
+    "id": "chelangat-bukusu-kenya",
+    "name": "Chelangat Bukusu, Kenya",
+    "aliases": ["Chelangat", "Bukusu"],
+    "country": "Kenya",
+    "region": "Nyeri"
+  },
+  {
+    "id": "kaffa-honey-farm-mexico",
+    "name": "Kaffa Honey Farm, Mexico",
+    "aliases": ["Kaffa Honey"],
+    "country": "Mexico",
+    "region": "Chiapas"
+  },
+  {
+    "id": "san-antonio-honduras",
+    "name": "San Antonio, Honduras",
+    "aliases": ["San Antonio"],
+    "country": "Honduras",
+    "region": "Copan"
+  },
+  {
+    "id": "el-majahual-guatemala",
+    "name": "El Majahual, Guatemala",
+    "aliases": ["El Majahual", "Majahual"],
+    "country": "Guatemala",
+    "region": "Huehuetenango"
+  },
+  {
+    "id": "el-paraiso-guatemala",
+    "name": "El Paraiso, Guatemala",
+    "aliases": ["El Paraiso"],
+    "country": "Guatemala",
+    "region": "Huehuetenango"
+  },
+  {
+    "id": "finca-pulcal-nicaragua",
+    "name": "Finca Pulcal, Nicaragua",
+    "aliases": ["Pulcal"],
+    "country": "Nicaragua",
+    "region": null
+  },
+  {
+    "id": "ngmba-uganda",
+    "name": "Ngmba, Uganda",
+    "aliases": ["Ngmba"],
+    "country": "Uganda",
+    "region": "Bugisu"
+  },
+  {
+    "id": "volcanica-estate-costa-rica",
+    "name": "Volcanica Estate, Costa Rica",
+    "aliases": ["Volcanica"],
+    "country": "Costa Rica",
+    "region": "West Valley"
+  },
+  {
+    "id": "finca-alas-descafeinado-mexico",
+    "name": "Finca Alas Descafeinado, Mexico",
+    "aliases": ["Finca Alas"],
+    "country": "Mexico",
+    "region": "Veracruz"
+  },
+  {
+    "id": "una-fe-honduras",
+    "name": "Una Fe, Honduras",
+    "aliases": ["Una Fe"],
+    "country": "Honduras",
+    "region": "Copan"
+  },
+  {
+    "id": "pacamara-el-salvador",
+    "name": "Pacamara, El Salvador",
+    "aliases": ["Pacamara"],
+    "country": "El Salvador",
+    "region": null
+  },
+  {
+    "id": "sulawesi-toraja-indonesia",
+    "name": "Sulawesi Toraja, Indonesia",
+    "aliases": ["Toraja", "Sulawesi Toraja"],
+    "country": "Indonesia",
+    "region": "Sulawesi"
+  },
+  {
+    "id": "gayo-aceh-indonesia",
+    "name": "Gayo Aceh, Indonesia",
+    "aliases": ["Gayo", "Aceh"],
+    "country": "Indonesia",
+    "region": "Sumatra"
+  },
+  {
+    "id": "manggarai-indonesia",
+    "name": "Manggarai, Indonesia",
+    "aliases": ["Manggarai", "Flores"],
+    "country": "Indonesia",
+    "region": "Flores"
+  },
+  {
+    "id": "papua-wamena-indonesia",
+    "name": "Papua Wamena, Indonesia",
+    "aliases": ["Wamena", "Papua"],
+    "country": "Indonesia",
+    "region": "Papua"
+  },
+  {
+    "id": "doichang-estate-thailand",
+    "name": "Doi Chaang Estate, Thailand",
+    "aliases": ["Doi Chaang"],
+    "country": "Thailand",
+    "region": null
+  },
+  {
+    "id": "kona-paradise-hawaii",
+    "name": "Kona Paradise Farm, Hawaii",
+    "aliases": ["Kona Paradise"],
+    "country": "United States",
+    "region": "Hawaii"
+  },
+  {
+    "id": "blue-mountain-estate-jamaica",
+    "name": "Blue Mountain Estate, Jamaica",
+    "aliases": ["Blue Mountain Estate"],
+    "country": "Jamaica",
+    "region": "Blue Mountains"
+  },
+  {
+    "id": "altura-coop-mexico",
+    "name": "Altura Coop, Mexico",
+    "aliases": ["Altura Coop", "Altura"],
+    "country": "Mexico",
+    "region": "Chiapas"
+  },
+  {
+    "id": "luwak-estate-indonesia",
+    "name": "Luwak Estate, Indonesia",
+    "aliases": ["Luwak"],
+    "country": "Indonesia",
+    "region": "Java"
+  }
+]

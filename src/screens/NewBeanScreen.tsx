@@ -1,17 +1,13 @@
-import { Ionicons } from '@expo/vector-icons';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Animated,
   KeyboardAvoidingView,
-  LayoutAnimation,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  UIManager,
   View,
 } from 'react-native';
 
@@ -29,28 +25,19 @@ import { colors } from '../themes/colors';
 import { showImagePickerOptions } from '../utils/imageUtils';
 
 import Avatar from '../components/Avatar';
+import AdvancedInformation from '../components/BeanManager/AdvancedInformation';
 import BeanFreshnessForm from '../components/BeanManager/BeanFreshnessForm';
 import { DEFAULT_EXPIRATION_PERIOD_WEEKS } from '../components/BeanManager/constants';
-import {
-  FormField,
-  RangeNumberField,
-  SingleSelectChipsField,
-  TagChipsField,
-  TextField,
-} from '../components/inputs';
+import { FormField, TagChipsField, TextField } from '../components/inputs';
+import TypeAheadInput from '../components/inputs/forms/TypeAheadInput';
 import RoastingSlider from '../components/inputs/sliders/RoastingSlider';
+import CreateRoasterModal from '../components/modals/CreateRoasterModal';
 import ErrorModal from '../components/modals/ErrorModal';
 import SuccessModal from '../components/modals/SuccessModal';
 import SvgIcon from '../components/SvgIcon';
-
-const processPlaceholders: Record<Process, string> = {
-  Washed: 'e.g., Double-washed, Long fermentation, Kenya-style',
-  Natural: 'e.g., Drying on raised beds, Anaerobic Natural, 72h fermentation',
-  Honey: 'e.g., Yellow, Red, or Black honey process',
-  Anaerobic: 'e.g., Carbonic maceration, Lactic, Thermal shock',
-  'Wet-hulled': 'e.g., Giling Basah (Sumatra wet-hulled)',
-  Other: 'e.g., Yeast fermentation, Koji, Experimental process',
-};
+import roastersSeed from '../data/roasters.json';
+import { database } from '../database/UniversalDatabase';
+import { createUserRoaster } from '../utils/seedDataHelpers';
 
 type NewBeanScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -83,21 +70,10 @@ interface BeanFormData {
   isFavorite: boolean;
 }
 
-// Enable LayoutAnimation for Android
-if (
-  Platform.OS === 'android' &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
-
 const NewBeanScreen: React.FC = () => {
   const navigation = useNavigation<NewBeanScreenNavigationProp>();
   const route = useRoute<NewBeanScreenRouteProp>();
   const { createBean, updateBean, beans } = useStore();
-
-  const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false);
-  const rotateValue = useRef(new Animated.Value(0)).current;
 
   const [formData, setFormData] = useState<BeanFormData>({
     name: '',
@@ -139,22 +115,27 @@ const NewBeanScreen: React.FC = () => {
     message: string;
   }>({ visible: false, message: '' });
 
-  const toggleAdvancedSection = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setIsAdvancedExpanded(!isAdvancedExpanded);
+  // Roasters data - combined seed + database
+  const [allRoasters, setAllRoasters] = useState<
+    Array<{ id: string; name: string; aliases: string[] }>
+  >([]);
+  const [isRoasterModalVisible, setIsRoasterModalVisible] = useState(false);
+  const [pendingRoasterName, setPendingRoasterName] = useState('');
 
-    // Animate chevron rotation
-    Animated.timing(rotateValue, {
-      toValue: isAdvancedExpanded ? 0 : 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
+  // Load roasters from database
+  useEffect(() => {
+    const loadRoasters = async () => {
+      try {
+        const dbRoasters = await database.getRoasters();
+        // Combine seed data with database data
+        setAllRoasters([...roastersSeed, ...dbRoasters]);
+      } catch (error) {
+        console.error('Error loading roasters:', error);
+      }
+    };
 
-  const rotateInterpolation = rotateValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
-  });
+    loadRoasters();
+  }, []);
 
   useEffect(() => {
     // If editing an existing bean, load its data
@@ -224,6 +205,34 @@ const NewBeanScreen: React.FC = () => {
         message: 'Failed to capture image. Please try again.',
       });
     }
+  };
+
+  const handleCreateRoaster = async (data: {
+    name: string;
+    aliases: string[];
+    country: string;
+    state: string;
+  }) => {
+    const nameToUse = data.name.trim() || pendingRoasterName;
+    const newRoaster = createUserRoaster(nameToUse);
+
+    // Add optional fields if provided
+    if (data.aliases.length > 0) {
+      newRoaster.aliases = data.aliases;
+    }
+    if (data.country) {
+      newRoaster.country = data.country;
+    }
+    if (data.state) {
+      newRoaster.state = data.state;
+    }
+
+    await database.createRoaster(newRoaster);
+    // Reload roasters
+    const dbRoasters = await database.getRoasters();
+    setAllRoasters([...roastersSeed, ...dbRoasters]);
+    // Set the newly created roaster in the form
+    setFormData(prev => ({ ...prev, roaster: newRoaster.name }));
   };
 
   const handleSave = async () => {
@@ -297,11 +306,6 @@ const NewBeanScreen: React.FC = () => {
     }
   };
 
-  const processDetailPlaceholder = useMemo(
-    () => processPlaceholders[formData.process as Process],
-    [formData.process]
-  );
-
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -339,12 +343,18 @@ const NewBeanScreen: React.FC = () => {
             </View>
           </View>
 
-          <TextField
+          <TypeAheadInput
             label='Roaster'
             value={formData.roaster}
             onChangeText={text =>
               setFormData(prev => ({ ...prev, roaster: text }))
             }
+            options={allRoasters}
+            onCreateNewItem={async (name: string) => {
+              // Store the name and open modal to collect additional info
+              setPendingRoasterName(name);
+              setIsRoasterModalVisible(true);
+            }}
             placeholder='e.g., Blue Bottle, Stumptown, Onyx, etc.'
             required={true}
           />
@@ -376,104 +386,18 @@ const NewBeanScreen: React.FC = () => {
             allowCustom={true}
           />
 
-          <View>
-            <TouchableOpacity
-              style={styles.advancedHeader}
-              onPress={toggleAdvancedSection}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.sectionTitle}>Advanced Information</Text>
-              <Animated.View
-                style={{
-                  ...styles.chevronContainer,
-                  transform: [{ rotate: rotateInterpolation }],
-                }}
-              >
-                <Ionicons
-                  name='chevron-down'
-                  size={24}
-                  color={colors.textDark}
-                />
-              </Animated.View>
-            </TouchableOpacity>
-
-            {isAdvancedExpanded && (
-              <View>
-                {/* advanced fields start */}
-                <TextField
-                  label='Origin (Country / Region)'
-                  value={formData.origin}
-                  onChangeText={text =>
-                    setFormData(prev => ({ ...prev, origin: text }))
-                  }
-                  placeholder='e.g., Ethiopia, Colombia, Brazil'
-                />
-
-                <TextField
-                  label='Producer / Farm'
-                  value={formData.producer}
-                  onChangeText={text =>
-                    setFormData(prev => ({ ...prev, producer: text }))
-                  }
-                  placeholder='e.g., Hacienda La Esmeralda, Finca El Injerto, etc.'
-                />
-
-                <TextField
-                  label='Varietal(s)'
-                  value={formData.varietal}
-                  onChangeText={text =>
-                    setFormData(prev => ({ ...prev, varietal: text }))
-                  }
-                  placeholder='e.g., Geisha, Caturra, Bourbon, Blend, etc.'
-                />
-                <RangeNumberField
-                  label='Altitude (masl)'
-                  unit='m'
-                  minValue={formData.altitudeMin}
-                  maxValue={formData.altitudeMax}
-                  onMinValueChange={text =>
-                    setFormData(prev => ({ ...prev, altitudeMin: text }))
-                  }
-                  onMaxValueChange={text =>
-                    setFormData(prev => ({ ...prev, altitudeMax: text }))
-                  }
-                  step={100}
-                  placeholder='1500'
-                />
-
-                <SingleSelectChipsField
-                  label='Process'
-                  value={formData.process}
-                  onChange={process =>
-                    setFormData(prev => ({
-                      ...prev,
-                      process: process as Process,
-                    }))
-                  }
-                  suggestions={[
-                    Process.Washed,
-                    Process.Natural,
-                    Process.Honey,
-                    Process.Anaerobic,
-                    Process['Wet-hulled'],
-                    Process.Other,
-                  ]}
-                  allowCustom={false}
-                />
-
-                {formData.process && (
-                  <TextField
-                    label='Process detail (Optional)'
-                    value={formData.processDetail}
-                    onChangeText={text =>
-                      setFormData(prev => ({ ...prev, processDetail: text }))
-                    }
-                    placeholder={processDetailPlaceholder || ''}
-                  />
-                )}
-              </View>
-            )}
-          </View>
+          <AdvancedInformation
+            formData={{
+              origin: formData.origin,
+              producer: formData.producer,
+              varietal: formData.varietal,
+              altitudeMin: formData.altitudeMin,
+              altitudeMax: formData.altitudeMax,
+              process: formData.process,
+              processDetail: formData.processDetail,
+            }}
+            setFormData={setFormData}
+          />
 
           <Text style={styles.sectionTitle}>Bean Freshness</Text>
           <BeanFreshnessForm
@@ -531,21 +455,25 @@ const NewBeanScreen: React.FC = () => {
         message={errorModal.message}
         onButtonPress={() => setErrorModal({ visible: false, message: '' })}
       />
+
+      <CreateRoasterModal
+        visible={isRoasterModalVisible}
+        pendingName={pendingRoasterName}
+        onRequestClose={() => {
+          setIsRoasterModalVisible(false);
+          setPendingRoasterName('');
+        }}
+        onSave={async data => {
+          await handleCreateRoaster(data);
+          setIsRoasterModalVisible(false);
+          setPendingRoasterName('');
+        }}
+      />
     </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  advancedHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  chevronContainer: {
-    marginBottom: 16,
-    marginTop: 24,
-  },
   disabledButton: {
     backgroundColor: colors.disabled,
   },

@@ -1,0 +1,233 @@
+[
+  {
+    "id": "stumptown",
+    "name": "Stumptown Coffee Roasters",
+    "aliases": ["Stumptown"],
+    "country": "United States",
+    "state": "Oregon"
+  },
+  {
+    "id": "blue-bottle",
+    "name": "Blue Bottle Coffee",
+    "aliases": ["Blue Bottle", "BB"],
+    "country": "United States",
+    "state": "California"
+  },
+  {
+    "id": "intelligentsia",
+    "name": "Intelligentsia Coffee",
+    "aliases": ["Intelligentsia"],
+    "country": "United States",
+    "state": "Illinois"
+  },
+  {
+    "id": "counter-culture",
+    "name": "Counter Culture Coffee",
+    "aliases": ["Counter Culture", "CCC"],
+    "country": "United States",
+    "state": "North Carolina"
+  },
+  {
+    "id": "verve",
+    "name": "Verve Coffee Roasters",
+    "aliases": ["Verve"],
+    "country": "United States",
+    "state": "California"
+  },
+  {
+    "id": "onyx",
+    "name": "Onyx Coffee Lab",
+    "aliases": ["Onyx"],
+    "country": "United States",
+    "state": "Arkansas"
+  },
+  {
+    "id": "heart",
+    "name": "Heart Roasters",
+    "aliases": ["Heart"],
+    "country": "United States",
+    "state": "Oregon"
+  },
+  {
+    "id": "george-howell",
+    "name": "George Howell Coffee",
+    "aliases": ["George Howell", "GH"],
+    "country": "United States",
+    "state": "Massachusetts"
+  },
+  {
+    "id": "la-colombe",
+    "name": "La Colombe Coffee Roasters",
+    "aliases": ["La Colombe", "LaColombe"],
+    "country": "United States",
+    "state": "Pennsylvania"
+  },
+  {
+    "id": "verismo",
+    "name": "Verismo Roasters",
+    "aliases": ["Verismo"],
+    "country": "United States",
+    "state": "Washington"
+  },
+  {
+    "id": "sightglass",
+    "name": "Sightglass Coffee",
+    "aliases": ["Sightglass"],
+    "country": "United States",
+    "state": "California"
+  },
+  {
+    "id": "ceremony",
+    "name": "Ceremony Coffee Roasters",
+    "aliases": ["Ceremony"],
+    "country": "United States",
+    "state": "Maryland"
+  },
+  {
+    "id": "sweet-bloom",
+    "name": "Sweet Bloom Coffee Roasters",
+    "aliases": ["Sweet Bloom", "SweetBloom"],
+    "country": "United States",
+    "state": "Colorado"
+  },
+  {
+    "id": "particle",
+    "name": "Particle Coffee",
+    "aliases": ["Particle"],
+    "country": "United States",
+    "state": "Michigan"
+  },
+  {
+    "id": "sey",
+    "name": "Sey Coffee",
+    "aliases": ["Sey"],
+    "country": "United States",
+    "state": "New York"
+  },
+  {
+    "id": "black-white",
+    "name": "Black & White Roasters",
+    "aliases": ["Black & White", "B&W"],
+    "country": "United States",
+    "state": "North Carolina"
+  },
+  {
+    "id": "manhattan-express",
+    "name": "Manhattan Coffee Roasters",
+    "aliases": ["Manhattan"],
+    "country": "United States",
+    "state": "New York"
+  },
+  {
+    "id": "dark-matter",
+    "name": "Dark Matter Coffee",
+    "aliases": ["Dark Matter"],
+    "country": "United States",
+    "state": "Illinois"
+  },
+  {
+    "id": "three-waves",
+    "name": "Three Waves Coffee",
+    "aliases": ["3Waves", "ThreeWaves"],
+    "country": "United States",
+    "state": "Wisconsin"
+  },
+  {
+    "id": "square-mile",
+    "name": "Square Mile Coffee Roasters",
+    "aliases": ["Square Mile", "SQM"],
+    "country": "United Kingdom",
+    "state": null
+  },
+  {
+    "id": "peregrine",
+    "name": "Peregrine Coffee",
+    "aliases": ["Peregrine"],
+    "country": "United Kingdom",
+    "state": null
+  },
+  {
+    "id": "origin",
+    "name": "Origin Coffee",
+    "aliases": ["Origin"],
+    "country": "United Kingdom",
+    "state": null
+  },
+  {
+    "id": "workshop",
+    "name": "Workshop Coffee",
+    "aliases": ["Workshop"],
+    "country": "United Kingdom",
+    "state": null
+  },
+  {
+    "id": "carpenter-gift",
+    "name": "Carpenter & Co Coffee Roasters",
+    "aliases": ["Carpenter & Co"],
+    "country": "United Kingdom",
+    "state": null
+  },
+  {
+    "id": "monogram",
+    "name": "Monogram Coffee",
+    "aliases": ["Monogram"],
+    "country": "Canada",
+    "state": "Alberta"
+  },
+  {
+    "id": "phil-sebastian",
+    "name": "Phil & Sebastian Coffee Roasters",
+    "aliases": ["Phil & Sebastian", "P&S"],
+    "country": "Canada",
+    "state": "Alberta"
+  },
+  {
+    "id": "detour",
+    "name": "Detour Coffee Roasters",
+    "aliases": ["Detour"],
+    "country": "Canada",
+    "state": "Ontario"
+  },
+  {
+    "id": "pilot",
+    "name": "Pilot Coffee Roasters",
+    "aliases": ["Pilot"],
+    "country": "Canada",
+    "state": "Ontario"
+  },
+  {
+    "id": "coffee-collective",
+    "name": "The Coffee Collective",
+    "aliases": ["Coffee Collective", "TCC"],
+    "country": "Denmark",
+    "state": null
+  },
+  {
+    "id": "la-cabane",
+    "name": "La Cabra",
+    "aliases": ["La Cabra"],
+    "country": "Denmark",
+    "state": null
+  },
+  {
+    "id": "tim-wendelboe",
+    "name": "Tim Wendelboe",
+    "aliases": ["TW", "Wendelboe"],
+    "country": "Norway",
+    "state": null
+  },
+  {
+    "id": "da-mattheri",
+    "name": "Da Matteo",
+    "aliases": ["DaMatteo"],
+    "country": "Sweden",
+    "state": null
+  },
+  {
+    "id": "supreme-roastworks",
+    "name": "Supreme Roastworks",
+    "aliases": ["Supreme"],
+    "country": "Norway",
+    "state": null
+  }
+]

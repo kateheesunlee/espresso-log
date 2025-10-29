@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import Fuse from 'fuse.js';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -45,6 +46,7 @@ const TypeAheadInput: React.FC<TypeAheadInputProps> = ({
   const [filteredOptions, setFilteredOptions] = useState<SearchableItem[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const searchRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const inputRef = useRef<TextInput>(null);
 
   // Sync searchText with external value changes (for editing existing items)
   useEffect(() => {
@@ -186,46 +188,95 @@ const TypeAheadInput: React.FC<TypeAheadInputProps> = ({
     );
   };
 
+  // Determine if we should show create option
+  const shouldShowCreate = (): boolean => {
+    if (!searchText.trim() || !onCreateNewItem) return false;
+
+    // Check if there's an exact match
+    const exactMatch =
+      filteredOptions.some(
+        opt =>
+          opt.name.toLowerCase() === searchText.toLowerCase() ||
+          opt.aliases?.some(
+            alias => alias.toLowerCase() === searchText.toLowerCase()
+          )
+      ) ||
+      options.some(
+        opt =>
+          opt.name.toLowerCase() === searchText.toLowerCase() ||
+          opt.aliases?.some(
+            alias => alias.toLowerCase() === searchText.toLowerCase()
+          )
+      );
+
+    return !exactMatch;
+  };
+
+  const handleClear = () => {
+    setSearchText('');
+    onChangeText('');
+    if (required) {
+      // Focus the input after clearing
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    } else {
+      setShowDropdown(false);
+    }
+  };
+
   return (
     <FormField label={label} required={required} subtitle={subtitle}>
       <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          value={searchText}
-          onChangeText={text => {
-            setSearchText(text);
-            if (text.trim()) {
+        <View style={styles.inputWrapper}>
+          <TextInput
+            ref={inputRef}
+            style={styles.input}
+            value={searchText}
+            onChangeText={text => {
+              setSearchText(text);
+              if (text.trim()) {
+                setShowDropdown(true);
+              }
+            }}
+            onFocus={() => {
+              // Always show dropdown when focused
+              if (searchText.trim()) {
+                // Run search when focusing with existing text
+                const fuse = new Fuse(options, {
+                  keys: ['name', 'aliases'],
+                  threshold: 0.3,
+                  includeScore: true,
+                });
+                const results = fuse.search(searchText);
+                const matches = results.map(result => result.item);
+                setFilteredOptions(matches);
+              } else {
+                // Show all options when focused with no text
+                setFilteredOptions(options);
+              }
               setShowDropdown(true);
-            }
-          }}
-          onFocus={() => {
-            // Always show dropdown when focused
-            if (searchText.trim()) {
-              // Run search when focusing with existing text
-              const fuse = new Fuse(options, {
-                keys: ['name', 'aliases'],
-                threshold: 0.3,
-                includeScore: true,
-              });
-              const results = fuse.search(searchText);
-              const matches = results.map(result => result.item);
-              setFilteredOptions(matches);
-            } else {
-              // Show all options when focused with no text
-              setFilteredOptions(options);
-            }
-            setShowDropdown(true);
-          }}
-          onBlur={() => {
-            // Delay hiding dropdown to allow item selection
-            setTimeout(() => setShowDropdown(false), 200);
-          }}
-          onKeyPress={handleKeyPress}
-          placeholder={placeholder}
-          autoCapitalize='none'
-        />
+            }}
+            onBlur={() => {
+              // Delay hiding dropdown to allow item selection
+              setTimeout(() => setShowDropdown(false), 200);
+            }}
+            onKeyPress={handleKeyPress}
+            placeholder={placeholder}
+            autoCapitalize='none'
+          />
+          {searchText && (
+            <TouchableOpacity
+              style={styles.clearButton}
+              onPress={handleClear}
+              activeOpacity={0.5}
+            >
+              <Ionicons name='close' size={16} color={colors.textLight} />
+            </TouchableOpacity>
+          )}
+        </View>
 
-        {showDropdown && filteredOptions.length > 0 && (
+        {showDropdown && (filteredOptions.length > 0 || shouldShowCreate()) && (
           <View style={styles.dropdown}>
             <ScrollView
               style={styles.dropdownList}
@@ -246,6 +297,17 @@ const TypeAheadInput: React.FC<TypeAheadInputProps> = ({
 };
 
 const styles = StyleSheet.create({
+  clearButton: {
+    backgroundColor: colors.bgLight,
+    borderColor: colors.borderLight,
+    borderRadius: 12,
+    borderWidth: 1,
+    padding: 2,
+    position: 'absolute',
+    right: 8,
+    top: '50%',
+    transform: [{ translateY: -10 }],
+  },
   container: {
     position: 'relative',
   },
@@ -302,6 +364,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     fontSize: 16,
     padding: 12,
+    paddingRight: 40, // Make room for clear button
+  },
+  inputWrapper: {
+    position: 'relative',
   },
 });
 

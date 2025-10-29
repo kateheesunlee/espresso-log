@@ -1,4 +1,4 @@
-import { Brand, Grinder, MachineModel } from '@types';
+import { Brand, Grinder, MachineModel, Producer, Roaster } from '@types';
 
 /**
  * Convert a name to a kebab-case ID
@@ -132,6 +132,40 @@ export const createUserMachineModel = (
   return {
     id: `user-model-${nameToId(name)}-${Date.now()}`,
     brandId,
+    name,
+    aliases: [],
+    userEntered: true,
+    createdAt: now,
+    updatedAt: now,
+  };
+};
+
+/**
+ * Create a new user-entered producer
+ * @param name - The producer name
+ * @returns A new Producer object
+ */
+export const createUserProducer = (name: string): Producer => {
+  const now = new Date().toISOString();
+  return {
+    id: `user-producer-${nameToId(name)}-${Date.now()}`,
+    name,
+    aliases: [],
+    userEntered: true,
+    createdAt: now,
+    updatedAt: now,
+  };
+};
+
+/**
+ * Create a new user-entered roaster
+ * @param name - The roaster name
+ * @returns A new Roaster object
+ */
+export const createUserRoaster = (name: string): Roaster => {
+  const now = new Date().toISOString();
+  return {
+    id: `user-roaster-${nameToId(name)}-${Date.now()}`,
     name,
     aliases: [],
     userEntered: true,
