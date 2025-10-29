@@ -8,10 +8,10 @@ import BeanFilledIcon from './icons/BeanFilledIcon';
 import BeanIcon from './icons/BeanIcon';
 import CameraIcon from './icons/CameraIcon';
 import CloseIcon from './icons/CloseIcon';
-import CoffeeIcon from './icons/CoffeeIcon';
 import CoffeeFilledIcon from './icons/CoffeeFilledIcon';
-import CoffeemakerIcon from './icons/CoffeemakerIcon';
+import CoffeeIcon from './icons/CoffeeIcon';
 import CoffeemakerFilledIcon from './icons/CoffeemakerFilledIcon';
+import CoffeemakerIcon from './icons/CoffeemakerIcon';
 import CopyIcon from './icons/CopyIcon';
 import DeleteIcon from './icons/DeleteIcon';
 import DialIcon from './icons/DialIcon';
@@ -23,6 +23,7 @@ import HeartBrokenIcon from './icons/HeartBrokenIcon';
 import HeartFilledIcon from './icons/HeartFilledIcon';
 import HeartIcon from './icons/HeartIcon';
 import MagicHatIcon from './icons/MagicHatIcon';
+import MoonStarsIcon from './icons/MoonStarsIcon';
 import NoteFilledIcon from './icons/NoteFilledIcon';
 import OpenBagIcon from './icons/OpenBagIcon';
 import PlusIcon from './icons/PlusIcon';
@@ -81,6 +82,7 @@ const ICONS = {
   warning: WarningIcon,
   temp: TempIcon,
   close: CloseIcon,
+  moon_stars: MoonStarsIcon,
 } as const;
 
 export type IconName = keyof typeof ICONS;

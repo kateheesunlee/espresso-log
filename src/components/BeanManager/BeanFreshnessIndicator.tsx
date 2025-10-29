@@ -44,7 +44,7 @@ const BeanFreshnessIndicator: React.FC<BeanFreshnessIndicatorProps> = ({
       case 'best-days-gone':
         return {
           label: 'Best days gone',
-          icon: 'heart_broken_2_filled',
+          icon: 'moon_stars',
         };
       default:
         return {
