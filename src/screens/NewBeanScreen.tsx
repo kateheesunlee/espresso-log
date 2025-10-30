@@ -127,8 +127,11 @@ const NewBeanScreen: React.FC = () => {
     const loadRoasters = async () => {
       try {
         const dbRoasters = await database.getRoasters();
-        // Combine seed data with database data
-        setAllRoasters([...roastersSeed, ...dbRoasters]);
+        // Combine seed data with database data and sort by name (locale-aware, case-insensitive)
+        const combined = [...roastersSeed, ...dbRoasters].sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+        );
+        setAllRoasters(combined);
       } catch (error) {
         console.error('Error loading roasters:', error);
       }
@@ -228,9 +231,12 @@ const NewBeanScreen: React.FC = () => {
     }
 
     await database.createRoaster(newRoaster);
-    // Reload roasters
+    // Reload roasters and keep sorted order
     const dbRoasters = await database.getRoasters();
-    setAllRoasters([...roastersSeed, ...dbRoasters]);
+    const combined = [...roastersSeed, ...dbRoasters].sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+    );
+    setAllRoasters(combined);
     // Set the newly created roaster in the form
     setFormData(prev => ({ ...prev, roaster: newRoaster.name }));
   };

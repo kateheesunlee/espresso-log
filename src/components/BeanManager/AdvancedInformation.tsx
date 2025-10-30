@@ -66,10 +66,6 @@ const AdvancedInformation: React.FC<AdvancedInformationProps> = ({
   );
   const [isExpanded, setIsExpanded] = useState<boolean>(hasAdvancedData);
 
-  useEffect(() => {
-    setIsExpanded(hasAdvancedData);
-  }, [hasAdvancedData]);
-
   // Data loading
   const [allOrigins, setAllOrigins] = useState<
     Array<{ id: string; name: string; aliases: string[] }>
@@ -92,9 +88,19 @@ const AdvancedInformation: React.FC<AdvancedInformationProps> = ({
           // Origins and varietals don't have database tables
         ]);
 
-        setAllOrigins(originsSeed);
-        setAllProducers([...producersSeed, ...dbProducers]);
-        setAllVarietals(varietalsSeed);
+        // Sort all datasets by name, locale-aware and case-insensitive
+        const compareByName = (a: { name: string }, b: { name: string }) =>
+          a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+
+        const sortedOrigins = [...originsSeed].sort(compareByName);
+        const sortedProducers = [...producersSeed, ...dbProducers].sort(
+          compareByName
+        );
+        const sortedVarietals = [...varietalsSeed].sort(compareByName);
+
+        setAllOrigins(sortedOrigins);
+        setAllProducers(sortedProducers);
+        setAllVarietals(sortedVarietals);
       } catch (error) {
         console.error('Error loading data:', error);
       }
@@ -124,9 +130,12 @@ const AdvancedInformation: React.FC<AdvancedInformationProps> = ({
     }
 
     await database.createProducer(newProducer);
-    // Reload producers
+    // Reload producers and keep sorted order
     const dbProducers = await database.getProducers();
-    setAllProducers([...producersSeed, ...dbProducers]);
+    const sortedProducers = [...producersSeed, ...dbProducers].sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+    );
+    setAllProducers(sortedProducers);
     // Set the newly created producer in the form
     setFormData((prev: any) => ({ ...prev, producer: newProducer.name }));
   };

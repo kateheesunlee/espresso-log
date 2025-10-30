@@ -1,8 +1,113 @@
 [
   {
+    "id": "starbucks",
+    "name": "Starbucks",
+    "aliases": ["Starbucks", "SBUX"],
+    "country": "United States",
+    "state": "Washington"
+  },
+  {
+    "id": "peets",
+    "name": "Peet's Coffee",
+    "aliases": ["Peet's", "Peets"],
+    "country": "United States",
+    "state": "California"
+  },
+  {
+    "id": "victrola",
+    "name": "Victrola Coffee Roasters",
+    "aliases": ["Victrola"],
+    "country": "United States",
+    "state": "Washington"
+  },
+  {
+    "id": "caffe-vita",
+    "name": "Caffè Vita",
+    "aliases": ["Caffe Vita", "Vita"],
+    "country": "United States",
+    "state": "Washington"
+  },
+  {
+    "id": "fonte",
+    "name": "Fonte Coffee Roaster",
+    "aliases": ["Fonte"],
+    "country": "United States",
+    "state": "Washington"
+  },
+  {
+    "id": "camano-island",
+    "name": "Camano Island Coffee Roasters",
+    "aliases": ["Camano Island"],
+    "country": "United States",
+    "state": "Washington"
+  },
+  {
+    "id": "conduit",
+    "name": "Conduit Coffee",
+    "aliases": ["Conduit"],
+    "country": "United States",
+    "state": "Washington"
+  },
+  {
+    "id": "monorail",
+    "name": "Monorail Espresso",
+    "aliases": ["Monorail"],
+    "country": "United States",
+    "state": "Washington"
+  },
+  {
+    "id": "vivace",
+    "name": "Caffè Vivace",
+    "aliases": ["Vivace", "Caffe Vivace"],
+    "country": "United States",
+    "state": "Washington"
+  },
+  {
+    "id": "storyville",
+    "name": "Storyville Coffee",
+    "aliases": ["Storyville"],
+    "country": "United States",
+    "state": "Washington"
+  },
+  {
     "id": "stumptown",
     "name": "Stumptown Coffee Roasters",
     "aliases": ["Stumptown"],
+    "country": "United States",
+    "state": "Oregon"
+  },
+  {
+    "id": "coava",
+    "name": "Coava Coffee Roasters",
+    "aliases": ["Coava"],
+    "country": "United States",
+    "state": "Oregon"
+  },
+  {
+    "id": "upper-left",
+    "name": "Upper Left Roasters",
+    "aliases": ["Upper Left", "ULR"],
+    "country": "United States",
+    "state": "Oregon"
+  },
+  {
+    "id": "water-avenue",
+    "name": "Water Avenue Coffee",
+    "aliases": ["Water Avenue"],
+    "country": "United States",
+    "state": "Oregon"
+  },
+  {
+    "id": "extracto",
+    "name": "Extracto Coffee Roasters",
+    "aliases": ["Extracto"],
+    "country": "United States",
+    "state": "Oregon"
+  },
+  {
+    "id": "nossa-familia",
+    "name": "Nossa Família Coffee",
+    "aliases": ["Nossa Familia", "Nossa"],
     "country": "United States",
     "state": "Oregon"
   },
