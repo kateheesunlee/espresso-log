@@ -1,21 +1,20 @@
+import * as Haptics from 'expo-haptics';
 import React, { useCallback, useRef, useState } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
   Animated,
   Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import * as Haptics from 'expo-haptics';
 import { colors } from '../../themes/colors';
-import { formatDateTime } from '../../utils/formatDate';
 
-import SvgIcon, { IconName } from '../SvgIcon';
 import Avatar from '../Avatar';
 import ConfirmationModal from '../modals/ConfirmationModal';
 import ErrorModal from '../modals/ErrorModal';
+import SvgIcon, { IconName } from '../SvgIcon';
 
 export interface CardData {
   id: string;
@@ -37,13 +36,11 @@ export interface BaseCardProps {
   title: string | React.ReactNode;
   subtitle?: string | React.ReactNode;
   subtitle2?: string | React.ReactNode;
-  details?: string[];
   additionalContent?: React.ReactNode;
   actionConfigs?: ActionConfig[]; // other than onPress and onDelete
   onDelete?: () => void | Promise<void>;
   onPress?: () => void;
   showDeleteGesture?: boolean;
-  showDate?: boolean;
 }
 
 const OPEN = -80;
@@ -56,13 +53,11 @@ const BaseCard: React.FC<BaseCardProps> = ({
   title,
   subtitle,
   subtitle2,
-  details = [],
   additionalContent,
   actionConfigs,
   onDelete,
   onPress,
   showDeleteGesture = true,
-  showDate: showCreatedDate = false,
 }) => {
   const translateX = useRef(new Animated.Value(CLOSED));
   const [showDeleteButton, setShowDeleteButton] = useState(false);
@@ -128,6 +123,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
         await onDelete();
       }
     } catch (error) {
+      console.error('Failed to delete item:', error);
       setErrorModal({
         visible: true,
         message: 'Failed to delete item',
@@ -152,40 +148,42 @@ const BaseCard: React.FC<BaseCardProps> = ({
           />
         </View>
       )}
-      <View style={styles.infoContainer}>
-        <Text style={styles.title}>{title}</Text>
-        {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
-        {subtitle2 && <Text style={styles.subtitle2}>{subtitle2}</Text>}
-        {details.length > 0 && (
-          <View style={styles.detailsContainer}>
-            {details.map((detail, index) => (
-              <Text key={index} style={styles.detail}>
-                {detail}
-              </Text>
-            ))}
+      <View style={styles.contentContainer}>
+        {/* Title row with action buttons */}
+        <View style={styles.titleRow}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{title}</Text>
           </View>
-        )}
-        {showCreatedDate && data.createdAt && (
-          <Text style={styles.date}>{formatDateTime(data.createdAt)}</Text>
-        )}
-      </View>
-      {actionConfigs && actionConfigs.length > 0 && (
-        <View style={styles.actionsContainer}>
-          {actionConfigs.map((action, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.actionButton}
-              onPress={action.onPress}
-            >
-              <SvgIcon
-                name={action.icon}
-                size={20}
-                useContentColor={action.useContentColor}
-              />
-            </TouchableOpacity>
-          ))}
+          {actionConfigs && actionConfigs.length > 0 && (
+            <View style={styles.actionsContainer}>
+              {actionConfigs.map((action, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.actionButton}
+                  onPress={action.onPress}
+                >
+                  <SvgIcon
+                    name={action.icon}
+                    size={20}
+                    useContentColor={action.useContentColor}
+                  />
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </View>
-      )}
+        {/* Subtitle rows */}
+        {subtitle ? (
+          <View>
+            <Text style={styles.subtitle}>{subtitle}</Text>
+          </View>
+        ) : null}
+        {subtitle2 ? (
+          <View>
+            <Text style={styles.subtitle2}>{subtitle2}</Text>
+          </View>
+        ) : null}
+      </View>
     </View>
   );
 
@@ -269,7 +267,8 @@ const BaseCard: React.FC<BaseCardProps> = ({
 const styles = StyleSheet.create({
   actionButton: {
     marginLeft: 4,
-    padding: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   actionsContainer: {
     alignItems: 'center',
@@ -294,9 +293,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flexDirection: 'row',
   },
-  date: {
-    color: colors.textLight,
-    fontSize: 12,
+  contentContainer: {
+    flex: 1,
   },
   deleteButton: {
     alignItems: 'center',
@@ -320,19 +318,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 4,
   },
-  detail: {
-    color: colors.textMedium,
-    fontSize: 12,
-    marginBottom: 4,
-  },
-  detailsContainer: {
-    marginBottom: 0,
-  },
   imageContainer: {
     marginRight: 16,
-  },
-  infoContainer: {
-    flex: 1,
   },
   subtitle: {
     color: colors.primary,
@@ -353,7 +340,15 @@ const styles = StyleSheet.create({
     color: colors.textDark,
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 8,
+  },
+  titleContainer: {
+    flex: 1,
+  },
+  titleRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 4,
   },
 });
 

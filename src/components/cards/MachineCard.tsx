@@ -1,10 +1,10 @@
-import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import React from 'react';
 
 import { Machine } from '@types';
-import { useStore } from '../../store/useStore';
 import { RootStackParamList } from '../../navigation/AppNavigator';
+import { useStore } from '../../store/useStore';
 
 import BaseCard from './BaseCard';
 
@@ -41,7 +41,6 @@ const MachineCard: React.FC<MachineCardProps> = ({ machine }) => {
       onDelete={handleDelete}
       onPress={handlePress}
       showDeleteGesture={true}
-      showDate={false}
     />
   );
 };

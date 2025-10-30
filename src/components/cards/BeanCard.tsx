@@ -72,36 +72,40 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean }) => {
 
   const additionalContent = () => {
     return (
-      <View style={styles.additionalContent}>
+      <View style={styles.additionalContentContainer}>
         {/* aroma tags */}
-        {bean.aromaTags && bean.aromaTags.length > 0 && (
-          <Text style={styles.aromaTagsText}>
-            {bean.aromaTags
-              .map(tag => tag.charAt(0).toUpperCase() + tag.slice(1))
-              .join(', ')}
-          </Text>
-        )}
+        <View id='aroma-tags'>
+          {bean.aromaTags && bean.aromaTags.length > 0 && (
+            <Text numberOfLines={1} style={styles.aromaTagsText}>
+              {bean.aromaTags
+                .map(tag => tag.charAt(0).toUpperCase() + tag.slice(1))
+                .join(', ')}
+            </Text>
+          )}
+        </View>
         {/* advanced fields */}
-        {advancedFieldsRow1.length > 0 && (
-          <Text style={styles.advancedFieldsContainer} numberOfLines={1}>
-            {advancedFieldsRow1.map((detail, index) => (
-              <Text key={index} style={styles.advancedFieldText}>
-                {detail}
-                {index < advancedFieldsRow1.length - 1 ? ' • ' : ''}
-              </Text>
-            ))}
-          </Text>
-        )}
-        {advancedFieldsRow2.length > 0 && (
-          <Text style={styles.advancedFieldsContainer} numberOfLines={1}>
-            {advancedFieldsRow2.map((detail, index) => (
-              <Text key={index} style={styles.advancedFieldText}>
-                {detail}
-                {index < advancedFieldsRow2.length - 1 ? ' • ' : ''}
-              </Text>
-            ))}
-          </Text>
-        )}
+        <View id='advanced-fields' style={styles.advancedFieldsContainer}>
+          {advancedFieldsRow1.length > 0 && (
+            <Text numberOfLines={1} style={styles.advancedFieldsText}>
+              {advancedFieldsRow1.map((detail, index) => (
+                <Text key={index}>
+                  {detail}
+                  {index < advancedFieldsRow1.length - 1 ? ' • ' : ''}
+                </Text>
+              ))}
+            </Text>
+          )}
+          {advancedFieldsRow2.length > 0 && (
+            <Text numberOfLines={1} style={styles.advancedFieldsText}>
+              {advancedFieldsRow2.map((detail, index) => (
+                <Text key={index}>
+                  {detail}
+                  {index < advancedFieldsRow2.length - 1 ? ' • ' : ''}
+                </Text>
+              ))}
+            </Text>
+          )}
+        </View>
         {/* bean manager */}
         {showBeanManager ? <BeanManager bean={bean} /> : null}
       </View>
@@ -124,7 +128,6 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean }) => {
       ]}
       onPress={handlePress}
       showDeleteGesture={true}
-      showDate={false}
       additionalContent={additionalContent()}
     />
   );
@@ -133,16 +136,17 @@ const BeanCard: React.FC<BeanCardProps> = ({ bean }) => {
 export default BeanCard;
 
 const styles = StyleSheet.create({
-  additionalContent: {
+  additionalContentContainer: {
     alignItems: 'flex-start',
     flexDirection: 'column',
     gap: 8,
     paddingTop: 12,
   },
-  advancedFieldText: {},
   advancedFieldsContainer: {
+    gap: 4,
+  },
+  advancedFieldsText: {
     color: colors.textDark,
-    flexDirection: 'row',
     fontSize: 12,
     fontWeight: '400',
   },
@@ -150,6 +154,5 @@ const styles = StyleSheet.create({
     color: colors.textDark,
     fontSize: 14,
     fontWeight: '500',
-    marginBottom: 4,
   },
 });

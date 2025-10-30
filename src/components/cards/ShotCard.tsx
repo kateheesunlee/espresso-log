@@ -199,12 +199,19 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
     );
   };
 
-  const subtitle2 =
-    machine?.nickname ||
-    `${machine?.brand} ${machine?.model}${
-      machine?.grinder ? ` + ${machine?.grinder}` : ''
-    }` ||
-    `Unknown Machine${machine?.deleted ? ' (deleted)' : ''}`;
+  const getMachineDisplayName = () => {
+    if (!machine) {
+      return 'Unknown Machine';
+    }
+    const name =
+      machine.nickname ||
+      `${machine.brand} ${machine.model}${
+        machine.grinder ? ` + ${machine.grinder}` : ''
+      }`;
+    return machine.deleted ? `${name} (deleted)` : name;
+  };
+
+  const subtitle2 = getMachineDisplayName();
 
   const showCoachingButton =
     bean &&
@@ -226,7 +233,6 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
         title={formatDateTime(shot.createdAt)}
         subtitle={renderSubtitle()}
         subtitle2={subtitle2}
-        details={[]}
         additionalContent={additionalContent()}
         fallbackIcon='coffee'
         onDelete={handleDelete}

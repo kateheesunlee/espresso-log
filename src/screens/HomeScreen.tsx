@@ -46,6 +46,32 @@ const HomeScreen: React.FC = () => {
     loadShots();
   }, [loadShots]);
 
+  // Validate selected IDs are still valid (bean/machine not deleted)
+  const validSelectedBeanId = useMemo(() => {
+    if (!selectedBeanId) return '';
+    const beanExists = beans.find(bean => bean.id === selectedBeanId);
+    return beanExists ? selectedBeanId : '';
+  }, [beans, selectedBeanId]);
+
+  const validSelectedMachineId = useMemo(() => {
+    if (!selectedMachineId) return '';
+    const machineExists = machines.find(
+      machine => machine.id === selectedMachineId
+    );
+    return machineExists ? selectedMachineId : '';
+  }, [machines, selectedMachineId]);
+
+  // Update state if current selection is invalid
+  const needsBeanUpdate = validSelectedBeanId !== selectedBeanId;
+  const needsMachineUpdate = validSelectedMachineId !== selectedMachineId;
+
+  if (needsBeanUpdate) {
+    setSelectedBeanId(validSelectedBeanId);
+  }
+  if (needsMachineUpdate) {
+    setSelectedMachineId(validSelectedMachineId);
+  }
+
   const handleBeanChange = (beanId: string) => {
     setSelectedBeanId(beanId);
   };
@@ -56,9 +82,10 @@ const HomeScreen: React.FC = () => {
 
   // Filter shots based on selected filters
   const filteredShots = shots.filter(shot => {
-    const beanMatch = !selectedBeanId || shot.beanId === selectedBeanId;
+    const beanMatch =
+      !validSelectedBeanId || shot.beanId === validSelectedBeanId;
     const machineMatch =
-      !selectedMachineId || shot.machineId === selectedMachineId;
+      !validSelectedMachineId || shot.machineId === validSelectedMachineId;
     return beanMatch && machineMatch;
   });
 
