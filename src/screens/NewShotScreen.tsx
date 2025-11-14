@@ -1,9 +1,4 @@
-import {
-  RouteProp,
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import * as Haptics from 'expo-haptics';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -81,13 +76,6 @@ const NewShotScreen: React.FC = () => {
   );
 
   const [isLoading, setIsLoading] = useState(false);
-  const [pendingBeanSelection, setPendingBeanSelection] = useState<
-    string | null
-  >(null);
-  const [pendingMachineSelection, setPendingMachineSelection] = useState<
-    string | null
-  >(null);
-
   const [successModal, setSuccessModal] = useState<{
     visible: boolean;
     isUpdate: boolean;
@@ -124,12 +112,22 @@ const NewShotScreen: React.FC = () => {
   ]);
 
   const loadShotData = useCallback(
-    async (shotId: string) => {
+    async (
+      shotId: string,
+      beanIdOverride?: string,
+      machineIdOverride?: string
+    ) => {
       try {
         const shot = shots.find(s => s.id === shotId);
         if (shot) {
           // Don't set editingShotId - we want to create a new shot, not edit the existing one
           const shotFormData = shotToShotFormData(shot);
+          if (beanIdOverride) {
+            shotFormData.beanId = beanIdOverride;
+          }
+          if (machineIdOverride) {
+            shotFormData.machineId = machineIdOverride;
+          }
           setFormData(shotFormData);
         }
       } catch (error) {
@@ -139,142 +137,50 @@ const NewShotScreen: React.FC = () => {
     [shots]
   );
 
-  const setLatestBeanAndMachine = useCallback(() => {
-    // Set the latest bean (most recently created)
-    if (beans.length > 0) {
-      const latestBean = beans.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )[0];
-      setFormData(prev => ({ ...prev, beanId: latestBean.id }));
-    }
-
-    // Set the latest machine (most recently created)
-    if (machines.length > 0) {
-      const latestMachine = machines.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )[0];
-      setFormData(prev => ({ ...prev, machineId: latestMachine.id }));
-    }
-  }, [beans, machines]);
-
-  const setSelectedFilters = useCallback(() => {
-    // Set the selected bean from filters
-    if (route.params?.selectedBeanId) {
-      setFormData(prev => ({
-        ...prev,
-        beanId: route.params?.selectedBeanId || '',
-      }));
-    } else if (beans.length > 0) {
-      // Fallback to latest bean if no filter selected
-      const latestBean = beans.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )[0];
-      setFormData(prev => ({ ...prev, beanId: latestBean.id }));
-    }
-
-    // Set the selected machine from filters
-    if (route.params?.selectedMachineId) {
-      setFormData(prev => ({
-        ...prev,
-        machineId: route.params?.selectedMachineId || '',
-      }));
-    } else if (machines.length > 0) {
-      // Fallback to latest machine if no filter selected
-      const latestMachine = machines.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      )[0];
-      setFormData(prev => ({ ...prev, machineId: latestMachine.id }));
-    }
-  }, [
-    beans,
-    machines,
-    route.params?.selectedBeanId,
-    route.params?.selectedMachineId,
-  ]);
-
   useEffect(() => {
-    // If duplicating from another shot, load its data
-    if (route.params?.duplicateFrom && shots.length > 0) {
-      loadShotData(route.params.duplicateFrom);
-    } else {
-      // For new shots, use selected filters or set the latest bean and machine
-      if (route.params?.selectedBeanId || route.params?.selectedMachineId) {
-        setSelectedFilters();
-      } else {
-        setLatestBeanAndMachine();
+    // set the form data with the selected bean/machine ids if they are provided from the route params
+    const { duplicateFrom, selectedBeanId, selectedMachineId } =
+      route.params || {};
+
+    if (!duplicateFrom) {
+      // if we are not duplicating a shot, set the form data with the selected bean/machine ids from the route params
+
+      let beanId = selectedBeanId || '';
+      let machineId = selectedMachineId || '';
+
+      if (!selectedBeanId && beans.length > 0) {
+        // Check if we have a newly created bean (most recent one)
+        const latestBean = [...beans].sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )[0];
+
+        beanId = latestBean.id;
       }
+
+      if (!selectedMachineId && machines.length > 0) {
+        // Check if we have a newly created machine (most recent one)
+        const latestMachine = [...machines].sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )[0];
+
+        machineId = latestMachine.id;
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        beanId,
+        machineId,
+      }));
+      return;
     }
-  }, [
-    route.params?.duplicateFrom,
-    route.params?.selectedBeanId,
-    route.params?.selectedMachineId,
-    shots,
-    beans,
-    machines,
-    loadShotData,
-    setSelectedFilters,
-    setLatestBeanAndMachine,
-  ]);
 
-  // Handle returning from bean/machine creation
-  useFocusEffect(
-    React.useCallback(() => {
-      // If we have pending selections, set them when we return
-      if (pendingBeanSelection) {
-        setFormData(prev => ({ ...prev, beanId: pendingBeanSelection }));
-        setPendingBeanSelection(null);
-      }
-      if (pendingMachineSelection) {
-        setFormData(prev => ({
-          ...prev,
-          machineId: pendingMachineSelection,
-        }));
-        setPendingMachineSelection(null);
-      }
-    }, [pendingBeanSelection, pendingMachineSelection])
-  );
-
-  // Auto-select newly created beans/machines when returning from creation
-  useFocusEffect(
-    useCallback(() => {
-      // Check if we have a newly created bean (most recent one)
-      if (beans.length > 0) {
-        const latestBean = beans.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )[0];
-
-        // If we don't have a bean selected, or if the latest bean is newer than our current selection
-        if (
-          !formData.beanId ||
-          (latestBean && !beans.find(bean => bean.id === formData.beanId))
-        ) {
-          setFormData(prev => ({ ...prev, beanId: latestBean.id }));
-        }
-      }
-
-      // Check if we have a newly created machine (most recent one)
-      if (machines.length > 0) {
-        const latestMachine = machines.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )[0];
-
-        // If we don't have a machine selected, or if the latest machine is newer than our current selection
-        if (
-          !formData.machineId ||
-          (latestMachine &&
-            !machines.find(machine => machine.id === formData.machineId))
-        ) {
-          setFormData(prev => ({ ...prev, machineId: latestMachine.id }));
-        }
-      }
-    }, [beans, formData.beanId, formData.machineId, machines]) // Removed formData.beanId and formData.machineId from dependencies
-  );
+    if (duplicateFrom && shots.length > 0) {
+      loadShotData(duplicateFrom, selectedBeanId, selectedMachineId);
+      return;
+    }
+  }, [route.params, shots, loadShotData, beans, machines]);
 
   const handleCreateBean = () => {
     // Navigate to NewBean screen - auto-selection will handle the rest

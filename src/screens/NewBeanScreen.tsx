@@ -104,7 +104,9 @@ const NewBeanScreen: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [editingBeanId, setEditingBeanId] = useState<string | null>(null);
-
+  const [lastCreatedBeanId, setLastCreatedBeanId] = useState<string | null>(
+    null
+  );
   const [successModal, setSuccessModal] = useState<{
     visible: boolean;
     isUpdate: boolean;
@@ -293,6 +295,7 @@ const NewBeanScreen: React.FC = () => {
         await createBean(beanData);
         setSuccessModal({ visible: true, isUpdate: false });
       }
+      setLastCreatedBeanId(beanData.id);
     } catch (error) {
       console.error(error);
       setErrorModal({ visible: true, message: 'Failed to save bean' });
@@ -304,11 +307,14 @@ const NewBeanScreen: React.FC = () => {
   const handleSuccessModalClose = () => {
     setSuccessModal({ visible: false, isUpdate: false });
     if (route.params?.returnTo === 'NewShot') {
-      navigation.goBack();
+      navigation.popTo('NewShot', {
+        selectedBeanId: lastCreatedBeanId || editingBeanId || undefined,
+      });
     } else {
       navigation.navigate('Shots', {
         screen: 'Beans',
-      } as any);
+        params: {},
+      });
     }
   };
 

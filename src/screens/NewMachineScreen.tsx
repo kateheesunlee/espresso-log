@@ -94,6 +94,9 @@ const NewMachineScreen: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [editingMachineId, setEditingMachineId] = useState<string | null>(null);
+  const [lastCreatedMachineId, setLastCreatedMachineId] = useState<
+    string | null
+  >(null);
 
   const [successModal, setSuccessModal] = useState<{
     visible: boolean;
@@ -197,6 +200,7 @@ const NewMachineScreen: React.FC = () => {
         await createMachine(machineData);
         setSuccessModal({ visible: true, isUpdate: false });
       }
+      setLastCreatedMachineId(machineData.id);
     } catch {
       setErrorModal({ visible: true, message: 'Failed to save machine' });
     } finally {
@@ -207,11 +211,15 @@ const NewMachineScreen: React.FC = () => {
   const handleSuccessModalClose = () => {
     setSuccessModal({ visible: false, isUpdate: false });
     if (route.params?.returnTo === 'NewShot') {
-      navigation.goBack();
+      navigation.popTo('NewShot', {
+        selectedMachineId:
+          lastCreatedMachineId || editingMachineId || undefined,
+      });
     } else {
       navigation.navigate('Shots', {
         screen: 'Machines',
-      } as never);
+        params: {},
+      });
     }
   };
 

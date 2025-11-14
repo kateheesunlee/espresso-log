@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { Shot } from '@types';
@@ -89,12 +89,12 @@ const HomeScreen: React.FC = () => {
     return beanMatch && machineMatch;
   });
 
-  const handleNewShot = () => {
+  const handleNewShot = useCallback(() => {
     navigation.navigate('NewShot', {
       selectedBeanId: selectedBeanId || undefined,
       selectedMachineId: selectedMachineId || undefined,
     });
-  };
+  }, [selectedBeanId, selectedMachineId, navigation]);
 
   const renderShot = ({ item }: { item: Shot }) => <ShotCard shot={item} />;
 

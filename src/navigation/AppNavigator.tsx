@@ -1,7 +1,10 @@
 /* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  NavigatorScreenParams,
+} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import SvgIcon from '../components/SvgIcon';
@@ -15,7 +18,7 @@ import ShotDetailScreen from '../screens/ShotDetailScreen';
 import { colors } from '../themes/colors';
 
 export type RootStackParamList = {
-  Shots: undefined;
+  Shots: NavigatorScreenParams<MainTabParamList> | undefined;
   ShotDetail: { shotId: string };
   NewShot: {
     duplicateFrom?: string;
@@ -23,7 +26,10 @@ export type RootStackParamList = {
     selectedMachineId?: string;
   };
   NewBean: { beanId?: string; returnTo?: string };
-  NewMachine: { machineId?: string; returnTo?: string };
+  NewMachine: {
+    machineId?: string;
+    returnTo?: string;
+  };
 };
 
 export type MainTabParamList = {

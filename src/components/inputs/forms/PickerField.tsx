@@ -1,17 +1,17 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
   FlatList,
   StyleSheet,
+  Text,
   TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '../../../themes/colors';
-import FormField, { FormFieldProps } from '../FormField';
 import BaseModal from '../../modals/BaseModal';
+import FormField, { FormFieldProps } from '../FormField';
 
 interface PickerOption {
   id: string;
@@ -199,12 +199,18 @@ const PickerField: React.FC<PickerFieldProps> = ({
 };
 
 const styles = StyleSheet.create({
+  clearButton: {
+    marginLeft: 6,
+    padding: 2,
+  },
+  clearButtonDisabled: {
+    opacity: 0.3,
+  },
   // Compact styles (for filters)
-  compactRowContainer: {
+  compactInputContainer: {
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
+    flex: 1,
   },
   compactLabel: {
     color: colors.textDark,
@@ -212,11 +218,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginRight: 12,
     minWidth: 60,
-  },
-  compactInputContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    flex: 1,
   },
   compactPickerButton: {
     alignItems: 'center',
@@ -236,15 +237,40 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
   },
-  clearButton: {
-    marginLeft: 6,
-    padding: 2,
+  compactRowContainer: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
   },
-  clearButtonDisabled: {
-    opacity: 0.3,
+  emptyContainer: {
+    alignItems: 'center',
+    padding: 32,
   },
-  required: {
-    color: colors.error,
+  emptyText: {
+    color: colors.textMedium,
+    fontSize: 16,
+  },
+  modalContent: {
+    maxHeight: '80%',
+    minHeight: 400,
+    width: '100%',
+  },
+  optionItem: {
+    alignItems: 'center',
+    borderBottomColor: colors.divider,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 16,
+  },
+  optionText: {
+    color: colors.textDark,
+    flex: 1,
+    fontSize: 16,
+  },
+  optionsList: {
+    flex: 1,
   },
   pickerButton: {
     alignItems: 'center',
@@ -265,11 +291,10 @@ const styles = StyleSheet.create({
   placeholderText: {
     color: colors.textLight,
   },
-  modalContent: {
-    maxHeight: '80%',
-    minHeight: 400,
-    width: '100%',
+  required: {
+    color: colors.error,
   },
+
   searchContainer: {
     alignItems: 'center',
     backgroundColor: colors.bgLight,
@@ -286,36 +311,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     padding: 12,
   },
-  optionsList: {
-    flex: 1,
-  },
-  optionItem: {
-    alignItems: 'center',
-    borderBottomColor: colors.divider,
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 16,
-  },
+
   selectedOption: {
     backgroundColor: colors.hover,
   },
-  optionText: {
-    color: colors.textDark,
-    flex: 1,
-    fontSize: 16,
-  },
+
   selectedOptionText: {
     color: colors.primary,
     fontWeight: '600',
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    padding: 32,
-  },
-  emptyText: {
-    color: colors.textMedium,
-    fontSize: 16,
   },
 });
 
