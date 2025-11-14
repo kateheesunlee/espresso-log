@@ -236,6 +236,7 @@ export interface ShotFormData {
   tastingTags: TastingTag[];
   notes: string;
   isFavorite: boolean;
+  imageUris?: string[]; // Optional array of up to 3 shot photos (base64 data URIs)
 }
 
 /** Complete shot entity with parsed numeric values and snapshots */
@@ -269,6 +270,7 @@ export interface Shot
   body: number;
   aftertaste: number;
   overallScore: number; // Auto-calculated score based on tasting notes (0-10)
+  imageUris?: string[]; // Optional array of up to 3 shot photos (base64 data URIs)
   // Analysis snapshots
   extractionSnapshot?: ExtractionSnapshot;
   coachingSnapshot?: CoachingSnapshot;
@@ -309,6 +311,7 @@ export const shotFormDataToShot = (
   tastingTags: formData.tastingTags,
   notes: formData.notes,
   isFavorite: formData.isFavorite,
+  imageUris: formData.imageUris,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
 });
@@ -335,6 +338,7 @@ export const shotToShotFormData = (shot: Shot): ShotFormData => ({
   tastingTags: shot.tastingTags,
   notes: shot.notes,
   isFavorite: shot.isFavorite,
+  imageUris: shot.imageUris,
 });
 
 // ============================================================================

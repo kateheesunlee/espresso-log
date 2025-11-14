@@ -19,6 +19,7 @@ import { formatDateLong } from '../utils/formatDate';
 import { FormField } from '../components/inputs';
 import ConfirmationModal from '../components/modals/ConfirmationModal';
 import ErrorModal from '../components/modals/ErrorModal';
+import PhotoGallery from '../components/PhotoGallery';
 import RoastingIndicator from '../components/RoastingIndicator';
 import SvgIcon from '../components/SvgIcon';
 import TastingNotes from '../components/TastingNotes';
@@ -170,6 +171,16 @@ ${shot.notes ? `Notes: ${shot.notes}` : ''}`;
             />
           )}
         </View>
+
+        {/* Photo Gallery - Display shot photos or fallback to bean photo */}
+        {(shot.imageUris?.length || bean?.imageUri) && (
+          <View style={styles.photoSection}>
+            <PhotoGallery
+              imageUris={shot.imageUris}
+              fallbackImageUri={bean?.imageUri}
+            />
+          </View>
+        )}
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Extraction Parameters</Text>
@@ -424,6 +435,11 @@ const styles = StyleSheet.create({
     color: colors.textDark,
     fontSize: 16,
     lineHeight: 24,
+  },
+  photoSection: {
+    backgroundColor: colors.white,
+    marginTop: 8,
+    padding: 20,
   },
   ratingSection: {
     marginTop: 8,

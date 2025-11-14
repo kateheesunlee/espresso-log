@@ -29,6 +29,7 @@ import {
   WaterTempField,
 } from '../components/inputs';
 import PickerField from '../components/inputs/forms/PickerField';
+import PhotoPickerField from '../components/inputs/forms/PhotoPickerField';
 import { inputStyles } from '../components/inputs/styles';
 import ErrorModal from '../components/modals/ErrorModal';
 import SuccessModal from '../components/modals/SuccessModal';
@@ -64,6 +65,7 @@ const initialFormData: Partial<ShotFormData> = {
   tastingTags: [],
   notes: '',
   isFavorite: false,
+  imageUris: [],
 };
 
 const NewShotScreen: React.FC = () => {
@@ -201,7 +203,7 @@ const NewShotScreen: React.FC = () => {
 
   const handleInputChange = (
     field: keyof ShotFormData,
-    value: string | boolean | number | TastingTag[]
+    value: string | boolean | number | TastingTag[] | string[]
   ) => {
     setFormData(prev => {
       const newData = {
@@ -446,6 +448,14 @@ const NewShotScreen: React.FC = () => {
             placeholder='Additional tasting notes...'
             multiline={true}
             numberOfLines={4}
+          />
+
+          <Text style={styles.sectionTitle}>Shot Photos</Text>
+          <PhotoPickerField
+            label='Shot Photos'
+            imageUris={formData.imageUris}
+            onPhotosChange={uris => handleInputChange('imageUris', uris)}
+            maxPhotos={3}
           />
 
           <View style={inputStyles.inputGroup}>

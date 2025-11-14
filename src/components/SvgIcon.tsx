@@ -22,6 +22,7 @@ import HeartBrokenFilledIcon from './icons/HeartBrokenFilledIcon';
 import HeartBrokenIcon from './icons/HeartBrokenIcon';
 import HeartFilledIcon from './icons/HeartFilledIcon';
 import HeartIcon from './icons/HeartIcon';
+import ImageIcon from './icons/ImageIcon';
 import MagicHatIcon from './icons/MagicHatIcon';
 import MoonStarsIcon from './icons/MoonStarsIcon';
 import NoteFilledIcon from './icons/NoteFilledIcon';
@@ -62,6 +63,7 @@ const ICONS = {
   heart_broken_2_filled: HeartBroken2FilledIcon,
   heart_broken_filled: HeartBrokenFilledIcon,
   heart_filled: HeartFilledIcon,
+  image: ImageIcon,
   note_filled: NoteFilledIcon,
   open_bag: OpenBagIcon,
   plus: PlusIcon,

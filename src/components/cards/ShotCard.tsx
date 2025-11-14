@@ -9,9 +9,9 @@ import { RootStackParamList } from '../../navigation/AppNavigator';
 import { useStore } from '../../store/useStore';
 import { colors } from '../../themes/colors';
 
-import { formatTastingSummary } from 'src/utils/formatTastingSummary';
 import { formatBeanName } from '../../utils/formatBeanName';
-import { formatDateTime } from '../../utils/formatDate';
+import { formatShotTime } from '../../utils/formatDate';
+import Avatar from '../Avatar';
 import RoastingIndicator from '../RoastingIndicator';
 import SvgIcon from '../SvgIcon';
 import CoachingModal from '../modals/CoachingModal';
@@ -116,6 +116,30 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
   const additionalContent = () => {
     return (
       <View style={styles.additionalContent}>
+        {/* Bean and Machine Info with Avatar */}
+        <View style={styles.beanMachineInfo}>
+          <Avatar
+            imageUri={getAvatarImageUri()}
+            fallbackIcon='coffee'
+            size={60}
+          />
+          <View style={styles.beanMachineDetails}>
+            <View>
+              <Text style={styles.infoValue}>
+                {formatBeanName(bean)}{' '}
+                <RoastingIndicator
+                  roastLevel={bean?.roastLevel ?? 'Medium'}
+                  size='sm'
+                  compact
+                />
+              </Text>
+            </View>
+            <View>
+              <Text style={styles.infoValue}>{getMachineDisplayName()}</Text>
+            </View>
+          </View>
+        </View>
+
         <View style={styles.shotMetrics}>
           <View style={styles.metric}>
             <SvgIcon name='dial' size={20} color={colors.textSecondary} />
@@ -168,34 +192,7 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
             </View>
           )}
         </View>
-
-        {/* Tasting Summary */}
-        <View style={styles.summaryContainer}>
-          <Text style={styles.tastingSummaryText}>
-            {formatTastingSummary({
-              acidity: shot.acidity,
-              bitterness: shot.bitterness,
-              body: shot.body,
-              aftertaste: shot.aftertaste,
-            })}
-          </Text>
-        </View>
       </View>
-    );
-  };
-
-  const subtitle = formatBeanName(bean);
-
-  const renderSubtitle = () => {
-    return (
-      <Text>
-        {subtitle}{' '}
-        <RoastingIndicator
-          roastLevel={bean?.roastLevel ?? 'Medium'}
-          size='sm'
-          compact
-        />
-      </Text>
     );
   };
 
@@ -211,8 +208,6 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
     return machine.deleted ? `${name} (deleted)` : name;
   };
 
-  const subtitle2 = getMachineDisplayName();
-
   const showCoachingButton =
     bean &&
     (shot.acidity !== undefined ||
@@ -225,14 +220,27 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
     onPress: handleCoaching,
   };
 
+  // Get image URI for avatar: first shot photo or bean photo
+  const getAvatarImageUri = (): string | undefined => {
+    if (shot.imageUris && shot.imageUris.length > 0) {
+      return shot.imageUris[0];
+    }
+    return bean?.imageUri;
+  };
+
+  // Create shot data with computed imageUri for avatar display
+  const shotDataWithImage = {
+    ...shot,
+    imageUri: getAvatarImageUri(),
+  };
+
   return (
     <>
       <BaseCard
         showAvatar={false}
-        data={shot as any}
-        title={formatDateTime(shot.createdAt)}
-        subtitle={renderSubtitle()}
-        subtitle2={subtitle2}
+        data={shotDataWithImage as any}
+        title={formatShotTime(shot.createdAt)}
+        subtitle=''
         additionalContent={additionalContent()}
         fallbackIcon='coffee'
         onDelete={handleDelete}
@@ -275,12 +283,21 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
 const styles = StyleSheet.create({
   additionalContent: {
     alignItems: 'flex-start',
-    borderTopColor: colors.divider,
-    borderTopWidth: 1,
     flexDirection: 'column',
     gap: 12,
-    marginTop: 12,
-    paddingTop: 20,
+    width: '100%',
+  },
+  beanMachineDetails: {
+    flex: 1,
+    gap: 4,
+  },
+  beanMachineInfo: {
+    alignItems: 'center',
+    borderBottomColor: colors.divider,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    paddingVertical: 12,
     width: '100%',
   },
   extractionClass: {
@@ -290,6 +307,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     paddingHorizontal: 8,
     paddingVertical: 4,
+  },
+  infoValue: {
+    color: colors.textDark,
+    fontSize: 14,
+    fontWeight: '500',
   },
   metric: {
     alignItems: 'center',
@@ -334,12 +356,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    paddingHorizontal: 4,
     width: '100%',
-  },
-  tastingSummaryText: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    fontWeight: '600',
   },
 });
 
