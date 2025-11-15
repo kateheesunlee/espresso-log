@@ -17,30 +17,34 @@ A React Native app for logging espresso shots with detailed extraction parameter
 
 ## Screenshots
 
-*Screenshots will be added after App Store submission*
+_Screenshots will be added after App Store submission_
 
 ## Installation
 
 ### Development Setup
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/kateheesunlee/espresso-log.git
    cd espresso-log
    ```
 
 2. Install dependencies:
+
    ```bash
    cd EspressoLog
    npm install
    ```
 
 3. Start the development server:
+
    ```bash
    npm start
    ```
 
 4. Run on iOS:
+
    ```bash
    npm run ios
    ```
@@ -49,6 +53,33 @@ A React Native app for logging espresso shots with detailed extraction parameter
    ```bash
    npm run android
    ```
+
+## Build & Publish (EAS)
+
+### Prerequisites
+
+- Install the Expo CLI and log in: `npm install -g eas-cli` then `eas login`
+- Make sure your Expo account has access to the Apple Developer and Google Play credentials you plan to use.
+- Increment the app version in `app.config.ts` (and any native store metadata) before building.
+
+### Build
+
+1. Configure the project if this is your first build:
+   ```bash
+   eas build:configure
+   ```
+2. Trigger a build:
+   - iOS: `eas build --platform ios`
+   - Android: `eas build --platform android`
+3. Monitor build progress from the Expo dashboard or the CLI output. Download the binaries once complete.
+
+### Submit
+
+1. Ensure you have the latest binary from the previous step.
+2. Submit to the stores using Expo submit:
+   - App Store Connect: `eas submit --platform ios`
+   - Google Play Console: `eas submit --platform android`
+3. Complete the remaining store metadata/review steps directly in App Store Connect or Google Play Console.
 
 ## Tech Stack
 
@@ -61,20 +92,7 @@ A React Native app for logging espresso shots with detailed extraction parameter
 
 ## App Store
 
-Available on the App Store: *Coming Soon*
-
-## Version History
-
-### v1.0.0
-- Initial release
-- Core espresso logging functionality
-- Bean and machine management
-- Photo capture and storage
-- Local data persistence
-
-## Contributing
-
-This is a personal project, but feel free to submit issues or suggestions.
+Available on the App Store: https://apps.apple.com/us/app/espresso-log/id6753608360
 
 ## License
 
