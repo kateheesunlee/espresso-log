@@ -15,6 +15,7 @@ import SvgIcon from '../components/SvgIcon';
 import ShotCard from '../components/cards/ShotCard';
 import PickerField from '../components/inputs/forms/PickerField';
 import { formatBeanName } from '../utils/formatBeanName';
+import { getMachineName } from '../utils/getMachineName';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -106,11 +107,7 @@ const HomeScreen: React.FC = () => {
 
   const machineOptions = machines.map(machine => ({
     id: machine.id,
-    name:
-      machine.nickname ||
-      `${machine.brand} ${machine.model}${
-        machine.grinder ? ` + ${machine.grinder}` : ''
-      }`,
+    name: getMachineName(machine, { useNickname: true, showDeleted: false }),
   }));
 
   // Check if we should show filters

@@ -15,11 +15,13 @@ import NewBeanScreen from '../screens/NewBeanScreen';
 import NewMachineScreen from '../screens/NewMachineScreen';
 import NewShotScreen from '../screens/NewShotScreen';
 import ShotDetailScreen from '../screens/ShotDetailScreen';
+import ShotSharePreviewScreen from '../screens/ShotSharePreviewScreen';
 import { colors } from '../themes/colors';
 
 export type RootStackParamList = {
   Shots: NavigatorScreenParams<MainTabParamList> | undefined;
   ShotDetail: { shotId: string };
+  ShotSharePreview: { shotId: string; beanId: string; machineId?: string };
   NewShot: {
     duplicateFrom?: string;
     selectedBeanId?: string;
@@ -124,6 +126,11 @@ export default function AppNavigator() {
           name='ShotDetail'
           component={ShotDetailScreen}
           options={{ title: 'Shot Details' }}
+        />
+        <Stack.Screen
+          name='ShotSharePreview'
+          component={ShotSharePreviewScreen}
+          options={{ title: 'Preview' }}
         />
         <Stack.Screen
           name='NewShot'

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ViewStyle, Text, TextStyle } from 'react-native';
+import { Text, View, ViewStyle } from 'react-native';
 
 import { RoastLevel } from '@types';
 import { colors } from '../themes/colors';

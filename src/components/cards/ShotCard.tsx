@@ -11,6 +11,7 @@ import { colors } from '../../themes/colors';
 
 import { formatBeanName } from '../../utils/formatBeanName';
 import { formatShotTime } from '../../utils/formatDate';
+import { getMachineName } from '../../utils/getMachineName';
 import Avatar from '../Avatar';
 import RoastingIndicator from '../RoastingIndicator';
 import SvgIcon from '../SvgIcon';
@@ -135,7 +136,12 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
               </Text>
             </View>
             <View>
-              <Text style={styles.infoValue}>{getMachineDisplayName()}</Text>
+              <Text style={styles.infoValue}>
+                {getMachineName(machine, {
+                  showDeleted: true,
+                  useNickname: true,
+                })}
+              </Text>
             </View>
           </View>
         </View>
@@ -194,18 +200,6 @@ const ShotCard: React.FC<ShotCardProps> = ({ shot }) => {
         </View>
       </View>
     );
-  };
-
-  const getMachineDisplayName = () => {
-    if (!machine) {
-      return 'Unknown Machine';
-    }
-    const name =
-      machine.nickname ||
-      `${machine.brand} ${machine.model}${
-        machine.grinder ? ` + ${machine.grinder}` : ''
-      }`;
-    return machine.deleted ? `${name} (deleted)` : name;
   };
 
   const showCoachingButton =

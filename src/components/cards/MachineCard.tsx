@@ -6,6 +6,7 @@ import { Machine } from '@types';
 import { RootStackParamList } from '../../navigation/AppNavigator';
 import { useStore } from '../../store/useStore';
 
+import { getMachineName } from '../../utils/getMachineName';
 import BaseCard from './BaseCard';
 
 export interface MachineCardProps {
@@ -18,10 +19,12 @@ const MachineCard: React.FC<MachineCardProps> = ({ machine }) => {
   const { deleteMachine } = useStore();
   const navigation = useNavigation<MachineCardNavigationProp>();
 
+  // Use getMachineName to get the full display name
   const title = machine.nickname || machine.brand;
-  const subtitle = `${machine.model}${
-    machine.grinder ? ` + ${machine.grinder}` : ''
-  }`;
+  const subtitle = getMachineName(machine, {
+    showDeleted: false,
+    useNickname: false,
+  });
 
   const handlePress = () => {
     (navigation as any).navigate('NewMachine', { machineId: machine.id });

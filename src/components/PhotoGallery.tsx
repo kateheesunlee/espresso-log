@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../themes/colors';
 import SvgIcon from './SvgIcon';
 
@@ -12,12 +13,9 @@ interface PhotoGalleryProps {
   editable?: boolean;
 }
 
-const GALLERY_HEIGHT = 250;
-
 const PhotoGallery: React.FC<PhotoGalleryProps> = ({
   imageUris,
   fallbackImageUri,
-  height = GALLERY_HEIGHT,
   onRemovePhoto,
   editable = false,
 }) => {
@@ -50,7 +48,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
   const isFallback = shouldShowFallback;
 
   return (
-    <View style={[styles.container, { height }]}>
+    <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
           source={{ uri: currentImageUri }}
@@ -64,7 +62,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
             style={[styles.navigationButton, styles.previousButton]}
             onPress={handlePrevious}
           >
-            <Text style={styles.navigationText}>‹</Text>
+            <Ionicons name='chevron-back' size={24} color={colors.white} />
           </TouchableOpacity>
         )}
 
@@ -74,7 +72,7 @@ const PhotoGallery: React.FC<PhotoGalleryProps> = ({
             style={[styles.navigationButton, styles.nextButton]}
             onPress={handleNext}
           >
-            <Text style={styles.navigationText}>›</Text>
+            <Ionicons name='chevron-forward' size={24} color={colors.white} />
           </TouchableOpacity>
         )}
 
@@ -122,9 +120,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   container: {
+    aspectRatio: 1,
     backgroundColor: colors.hover,
     borderRadius: 12,
     overflow: 'hidden',
+    position: 'relative',
     width: '100%',
   },
   dot: {
@@ -166,33 +166,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     borderRadius: 8,
-    height: 40,
+    height: 30,
     justifyContent: 'center',
     position: 'absolute',
     top: '50%',
-    width: 40,
+    width: 30,
     zIndex: 10,
-  },
-  navigationText: {
-    color: colors.white,
-    fontSize: 32,
-    fontWeight: 'bold',
   },
   nextButton: {
     right: 12,
   },
   pageText: {
-    color: colors.textMedium,
+    color: colors.textDark,
     fontSize: 12,
+    fontWeight: '600',
     marginLeft: 8,
   },
   pagination: {
     alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    bottom: 0,
     flexDirection: 'row',
     justifyContent: 'center',
+    left: 0,
     paddingBottom: 12,
     paddingHorizontal: 12,
     paddingTop: 12,
+    position: 'absolute',
+    right: 0,
   },
   previousButton: {
     left: 12,

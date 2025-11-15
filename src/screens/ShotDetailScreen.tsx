@@ -3,7 +3,6 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useMemo, useState } from 'react';
 import {
   ScrollView,
-  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -92,39 +91,13 @@ const ShotDetailScreen: React.FC = () => {
     setDeleteConfirmation(false);
   };
 
-  const handleShare = async () => {
+  const handleShareShotImage = () => {
     if (!shot) return;
-
-    const bean = beans.find(b => b.id === shot.beanId);
-    const machine = machines.find(m => m.id === shot.machineId);
-
-    const shareText = `Espresso Shot Details:
-Bean: ${bean?.name || 'Unknown'}
-Machine: ${
-      machine?.nickname || `${machine?.brand} ${machine?.model}` || 'Unknown'
-    }
-Grind: ${shot.grindSetting}
-Dose: ${shot.dose_g}g
-Yield: ${shot.yield_g}g
-Ratio: ${shot.ratio ? `1:${shot.ratio.toFixed(1)}` : 'N/A'}
-Time: ${shot.shotTime_s ? `${shot.shotTime_s}s` : 'N/A'}
-Temperature: ${shot.waterTemp_C ? `${shot.waterTemp_C}°C` : 'N/A'}
-Overall Score: ${
-      shot.overallScore !== undefined && shot.overallScore !== null
-        ? `${shot.overallScore}/10`
-        : 'N/A'
-    }
-${shot.notes ? `Notes: ${shot.notes}` : ''}`;
-
-    try {
-      await Share.share({
-        message: shareText,
-        title: 'Espresso Shot Details',
-      });
-    } catch (error) {
-      console.error(error);
-      setErrorModal({ visible: true, message: 'Failed to share shot details' });
-    }
+    navigation.navigate('ShotSharePreview', {
+      shotId: shot.id,
+      beanId: shot.beanId,
+      machineId: shot.machineId,
+    });
   };
 
   if (!shot) {
@@ -160,7 +133,7 @@ ${shot.notes ? `Notes: ${shot.notes}` : ''}`;
               {formatDateLong(shot.createdAt)}
             </Text>
           </View>
-          {shot.isFavorite && (
+          {shot.isFavorite ? (
             <SvgIcon
               name='heart_filled'
               size={24}
@@ -169,18 +142,18 @@ ${shot.notes ? `Notes: ${shot.notes}` : ''}`;
                 shot.isFavorite ? colors.heartLight : colors.primaryLight
               }
             />
-          )}
+          ) : null}
         </View>
 
         {/* Photo Gallery - Display shot photos or fallback to bean photo */}
-        {(shot.imageUris?.length || bean?.imageUri) && (
+        {shot.imageUris?.length || bean?.imageUri ? (
           <View style={styles.photoSection}>
             <PhotoGallery
               imageUris={shot.imageUris}
               fallbackImageUri={bean?.imageUri}
             />
           </View>
-        )}
+        ) : null}
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Extraction Parameters</Text>
@@ -220,11 +193,11 @@ ${shot.notes ? `Notes: ${shot.notes}` : ''}`;
           </View>
         </View>
 
-        {(shot.shotTime_s || shot.waterTemp_C) && (
+        {shot.shotTime_s || shot.waterTemp_C ? (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Advanced Parameters</Text>
             <View style={styles.metricsGrid}>
-              {shot.shotTime_s && (
+              {shot.shotTime_s ? (
                 <View style={styles.metricCard}>
                   <SvgIcon name='timer' size={36} color={colors.textMedium} />
                   <View style={styles.metricTextContainer}>
@@ -234,8 +207,8 @@ ${shot.notes ? `Notes: ${shot.notes}` : ''}`;
                     </Text>
                   </View>
                 </View>
-              )}
-              {shot.waterTemp_C && (
+              ) : null}
+              {shot.waterTemp_C ? (
                 <View style={styles.metricCard}>
                   <SvgIcon name='temp' size={36} color={colors.textMedium} />
                   <View style={styles.metricTextContainer}>
@@ -245,12 +218,12 @@ ${shot.notes ? `Notes: ${shot.notes}` : ''}`;
                     </Text>
                   </View>
                 </View>
-              )}
+              ) : null}
             </View>
           </View>
-        )}
+        ) : null}
 
-        {shot.overallScore !== undefined && shot.overallScore !== null && (
+        {shot.overallScore !== undefined && shot.overallScore !== null ? (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tasting Notes</Text>
             <View style={styles.ratingSection}>
@@ -274,9 +247,9 @@ ${shot.notes ? `Notes: ${shot.notes}` : ''}`;
               </FormField>
             </View>
           </View>
-        )}
+        ) : null}
 
-        {shot.tastingTags && shot.tastingTags.length > 0 && (
+        {shot.tastingTags && shot.tastingTags.length > 0 ? (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Tasting Tags</Text>
             <View style={styles.tagsContainer}>
@@ -289,14 +262,14 @@ ${shot.notes ? `Notes: ${shot.notes}` : ''}`;
                 ))}
             </View>
           </View>
-        )}
+        ) : null}
 
-        {shot.notes && (
+        {shot.notes ? (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Notes</Text>
             <Text style={styles.notesText}>{shot.notes}</Text>
           </View>
-        )}
+        ) : null}
 
         <View style={styles.actions}>
           <TouchableOpacity
@@ -317,7 +290,10 @@ ${shot.notes ? `Notes: ${shot.notes}` : ''}`;
             <Text style={styles.actionButtonText}>One More</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionButton} onPress={handleShare}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={handleShareShotImage}
+          >
             <SvgIcon name='share' size={24} />
             <Text style={styles.actionButtonText}>Share</Text>
           </TouchableOpacity>
@@ -490,6 +466,8 @@ const styles = StyleSheet.create({
   shotTitleContainer: {
     alignItems: 'center',
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 4,
   },
   tagChip: {
     backgroundColor: colors.white,
