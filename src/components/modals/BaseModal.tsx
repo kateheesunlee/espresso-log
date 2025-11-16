@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
   Platform,
-  ViewStyle,
+  StyleSheet,
+  Text,
   TextStyle,
-  ScrollView,
-  Keyboard,
+  TouchableOpacity,
+  View,
+  ViewStyle,
 } from 'react-native';
 
 import { colors } from '../../themes/colors';
@@ -149,40 +147,33 @@ const MODAL_PADDING = 20;
 const BORDER_RADIUS = 12;
 
 const styles = StyleSheet.create({
-  overlay: {
+  button: {
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 8,
     flex: 1,
     justifyContent: 'center',
-    padding: 16,
-    // Ensure modal is above other content on web
-    ...Platform.select({
-      web: {
-        zIndex: 9999,
-      },
-    }),
+    minHeight: 44,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
-  modalContainer: {
-    backgroundColor: colors.white,
-    borderRadius: BORDER_RADIUS,
-    elevation: 8,
-    maxHeight: '85%',
-    maxWidth: 400,
-    padding: MODAL_PADDING,
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    width: '100%',
+  buttonContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    minHeight: 44,
+    paddingTop: MODAL_PADDING,
   },
-  // Allows content to grow and push footer while staying inside container
   contentContainer: {
     flexShrink: 1,
     gap: MODAL_PADDING / 2,
     overflow: 'hidden',
+  },
+  destructiveButton: {
+    backgroundColor: colors.error,
+  },
+  destructiveButtonText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: '600',
   },
   headerContainer: {
     alignItems: 'center',
@@ -208,57 +199,63 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
   },
-  title: {
-    color: colors.textDark,
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
   message: {
     color: colors.textMedium,
     fontSize: 14,
     lineHeight: 22,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    gap: 12,
-    minHeight: 44,
-    paddingTop: MODAL_PADDING,
+  modalContainer: {
+    backgroundColor: colors.white,
+    borderRadius: BORDER_RADIUS,
+    elevation: 8,
+    maxHeight: '85%',
+    maxWidth: 400,
+    padding: MODAL_PADDING,
+    shadowColor: colors.black,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    width: '100%',
   },
-  button: {
+  overlay: {
     alignItems: 'center',
-    borderRadius: 8,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     flex: 1,
     justifyContent: 'center',
-    minHeight: 44,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    padding: 16,
+    // Ensure modal is above other content on web
+    ...Platform.select({
+      web: {
+        zIndex: 9999,
+      },
+    }),
   },
   primaryButton: {
     backgroundColor: colors.primary,
-  },
-  secondaryButton: {
-    backgroundColor: colors.bgLight,
-    borderColor: colors.borderLight,
-    borderWidth: 1,
-  },
-  destructiveButton: {
-    backgroundColor: colors.error,
   },
   primaryButtonText: {
     color: colors.white,
     fontSize: 16,
     fontWeight: '600',
   },
+  secondaryButton: {
+    backgroundColor: colors.bgLight,
+    borderColor: colors.borderLight,
+    borderWidth: 1,
+  },
   secondaryButtonText: {
     color: colors.textDark,
     fontSize: 16,
     fontWeight: '600',
   },
-  destructiveButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: '600',
+  title: {
+    color: colors.textDark,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

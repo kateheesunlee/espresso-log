@@ -1,20 +1,20 @@
-import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
+import React, { useCallback, useEffect } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { useStore } from '../store/useStore';
 import { Bean } from '@types';
 import {
   MainTabParamList,
   RootStackParamList,
 } from '../navigation/AppNavigator';
+import { useStore } from '../store/useStore';
 import { colors } from '../themes/colors';
 
-import SvgIcon from '../components/SvgIcon';
 import BeanCard from '../components/cards/BeanCard';
-import ScrollableListView from '../components/ScrollableListView';
 import EmptyEntity from '../components/EmptyEntity';
+import ScrollableListView from '../components/ScrollableListView';
+import SvgIcon from '../components/SvgIcon';
 
 type BeansScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -22,6 +22,13 @@ const BeansScreen: React.FC = () => {
   const { beans, isLoading, loadBeans } = useStore();
   const navigation = useNavigation<BeansScreenNavigationProp>();
   const route = useRoute<RouteProp<MainTabParamList, 'Beans'>>();
+
+  const handleAddBean = useCallback(() => {
+    navigation.navigate({
+      name: 'NewBean',
+      params: {},
+    });
+  }, [navigation]);
 
   useEffect(() => {
     loadBeans();
@@ -32,11 +39,7 @@ const BeansScreen: React.FC = () => {
     if (route.params?.openModal) {
       handleAddBean();
     }
-  }, [route.params?.openModal]);
-
-  const handleAddBean = () => {
-    (navigation as any).navigate('NewBean');
-  };
+  }, [route.params?.openModal, handleAddBean]);
 
   const renderBean = ({ item }: { item: Bean }) => <BeanCard bean={item} />;
 
