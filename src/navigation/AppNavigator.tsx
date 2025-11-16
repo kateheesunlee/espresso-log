@@ -8,6 +8,7 @@ import {
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import SvgIcon from '../components/SvgIcon';
+import { ThemeToggle } from '../components/ThemeToggle';
 import BeansScreen from '../screens/BeansScreen';
 import HomeScreen from '../screens/HomeScreen';
 import MachinesScreen from '../screens/MachinesScreen';
@@ -16,7 +17,7 @@ import NewMachineScreen from '../screens/NewMachineScreen';
 import NewShotScreen from '../screens/NewShotScreen';
 import ShotDetailScreen from '../screens/ShotDetailScreen';
 import ShotSharePreviewScreen from '../screens/ShotSharePreviewScreen';
-import { colors } from '../themes/colors';
+import { useColors } from '../themes/colors';
 
 export type RootStackParamList = {
   Shots: NavigatorScreenParams<MainTabParamList> | undefined;
@@ -60,6 +61,8 @@ const getTabBarIcon = (routeName: string, focused: boolean) => {
 };
 
 function ShotsTabs() {
+  const colors = useColors();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -71,6 +74,10 @@ function ShotsTabs() {
         ),
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.primary,
+        tabBarStyle: {
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
+        },
         headerStyle: {
           backgroundColor: colors.primary,
         },
@@ -78,6 +85,7 @@ function ShotsTabs() {
         headerTitleStyle: {
           fontWeight: 'bold',
         },
+        headerRight: () => <ThemeToggle />,
       })}
     >
       <Tab.Screen
@@ -100,6 +108,8 @@ function ShotsTabs() {
 }
 
 export default function AppNavigator() {
+  const colors = useColors();
+
   return (
     <NavigationContainer>
       <Stack.Navigator

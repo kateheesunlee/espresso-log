@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { colors } from '../../themes/colors';
+import { useColors } from '../../themes/colors';
 
 import Avatar from '../Avatar';
 import ConfirmationModal from '../modals/ConfirmationModal';
@@ -59,6 +59,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
   onPress,
   showDeleteGesture = true,
 }) => {
+  const colors = useColors();
   const translateX = useRef(new Animated.Value(CLOSED));
   const [showDeleteButton, setShowDeleteButton] = useState(false);
 
@@ -136,6 +137,94 @@ const BaseCard: React.FC<BaseCardProps> = ({
   const cancelDelete = () => {
     setDeleteConfirmation(false);
   };
+
+  const styles = React.useMemo(() => StyleSheet.create({
+    actionButton: {
+      marginLeft: 4,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+    },
+    actionsContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
+    },
+    card: {
+      backgroundColor: colors.white,
+      borderRadius: 12,
+      elevation: 5,
+      shadowColor: colors.black,
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 3.84,
+    },
+    cardContent: {
+      padding: 16,
+    },
+    cardLayout: {
+      alignItems: 'flex-start',
+      flexDirection: 'row',
+    },
+    contentContainer: {
+      flex: 1,
+    },
+    deleteButton: {
+      alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+    },
+    deleteButtonContainer: {
+      alignItems: 'center',
+      backgroundColor: colors.error,
+      borderRadius: 12,
+      bottom: 0,
+      justifyContent: 'center',
+      position: 'absolute',
+      right: 0,
+      top: 0,
+      width: 80,
+    },
+    deleteButtonText: {
+      color: colors.white,
+      fontSize: 12,
+      fontWeight: '600',
+      marginTop: 4,
+    },
+    imageContainer: {
+      marginRight: 16,
+    },
+    subtitle: {
+      color: colors.primary,
+      fontSize: 14,
+      fontWeight: '500',
+      marginBottom: 6,
+    },
+    subtitle2: {
+      color: colors.textMedium,
+      fontSize: 14,
+      marginBottom: 6,
+    },
+    swipeContainer: {
+      marginBottom: 12,
+      position: 'relative',
+    },
+    title: {
+      color: colors.textDark,
+      fontSize: 18,
+      fontWeight: '600',
+    },
+    titleContainer: {
+      flex: 1,
+    },
+    titleRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 4,
+    },
+  }), [colors]);
 
   const cardContent = (
     <View style={styles.cardLayout}>
@@ -263,93 +352,5 @@ const BaseCard: React.FC<BaseCardProps> = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  actionButton: {
-    marginLeft: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  actionsContainer: {
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  card: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    elevation: 5,
-    shadowColor: colors.black,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-  },
-  cardContent: {
-    padding: 16,
-  },
-  cardLayout: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-  },
-  contentContainer: {
-    flex: 1,
-  },
-  deleteButton: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-  },
-  deleteButtonContainer: {
-    alignItems: 'center',
-    backgroundColor: colors.error,
-    borderRadius: 12,
-    bottom: 0,
-    justifyContent: 'center',
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    width: 80,
-  },
-  deleteButtonText: {
-    color: colors.white,
-    fontSize: 12,
-    fontWeight: '600',
-    marginTop: 4,
-  },
-  imageContainer: {
-    marginRight: 16,
-  },
-  subtitle: {
-    color: colors.primary,
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 6,
-  },
-  subtitle2: {
-    color: colors.textMedium,
-    fontSize: 14,
-    marginBottom: 6,
-  },
-  swipeContainer: {
-    marginBottom: 12,
-    position: 'relative',
-  },
-  title: {
-    color: colors.textDark,
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  titleContainer: {
-    flex: 1,
-  },
-  titleRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-});
 
 export default BaseCard;

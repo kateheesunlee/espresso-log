@@ -1,61 +1,83 @@
 import colorPalette from './colorPalette.json';
+import { useTheme } from './ThemeContext';
 
-// Export colors from the palette with TypeScript types
-export const colors = {
-  primary: colorPalette.primary,
-  primaryLight: colorPalette.primaryLight,
-  primaryLighter: colorPalette.primaryLighter,
-  star: colorPalette.star,
-  starLight: colorPalette.starLight,
-  heart: colorPalette.heart,
-  heartLight: colorPalette.heartLight,
-  error: colorPalette.error,
-  warning: colorPalette.warning,
-  positive: colorPalette.positive,
-  success: colorPalette.success,
-  gray: colorPalette.gray,
-  textDark: colorPalette.textDark,
-  textMedium: colorPalette.textMedium,
-  textLight: colorPalette.textLight,
-  bgLight: colorPalette.bgLight,
-  borderLight: colorPalette.borderLight,
+// Type for theme mode
+type ThemeMode = 'light' | 'dark';
 
-  // Roasting colors
-  roastingLight: colorPalette.roastingLight,
-  roastingLight_Light: colorPalette.roastingLight_Light,
-  roastingMediumLight: colorPalette.roastingMediumLight,
-  roastingMediumLight_Light: colorPalette.roastingMediumLight_Light,
-  roastingMedium: colorPalette.roastingMedium,
-  roastingMedium_Light: colorPalette.roastingMedium_Light,
-  roastingMediumDark: colorPalette.roastingMediumDark,
-  roastingMediumDark_Light: colorPalette.roastingMediumDark_Light,
-  roastingDark: colorPalette.roastingDark,
-  roastingDark_Light: colorPalette.roastingDark_Light,
+// Helper function to get color palette for a specific theme
+const getPalette = (theme: ThemeMode) => {
+  return colorPalette[theme];
+};
 
-  // Additional commonly used colors
-  white: '#ffffff',
-  black: '#000000',
-  transparent: 'transparent',
+// Function to get colors for a specific theme
+export const getColors = (theme: ThemeMode = 'light') => {
+  const palette = getPalette(theme);
 
-  // Semantic color mappings for common UI patterns
-  background: colorPalette.bgLight,
-  surface: '#ffffff',
-  text: colorPalette.textDark,
-  textSecondary: colorPalette.textMedium,
-  textTertiary: colorPalette.textLight,
-  border: colorPalette.borderLight,
-  divider: '#f0f0f0',
-  disabled: '#ccc',
-  disabledText: colorPalette.textLight,
+  return {
+    primary: palette.primary,
+    primaryLight: palette.primaryLight,
+    primaryLighter: palette.primaryLighter,
+    star: palette.star,
+    starLight: palette.starLight,
+    heart: palette.heart,
+    heartLight: palette.heartLight,
+    error: palette.error,
+    warning: palette.warning,
+    positive: palette.positive,
+    success: palette.success,
+    gray: palette.gray,
+    textDark: palette.textDark,
+    textMedium: palette.textMedium,
+    textLight: palette.textLight,
+    bgLight: palette.bgLight,
+    borderLight: palette.borderLight,
 
-  // Status colors
-  successBackground: '#d5f4e6',
-  errorBackground: '#ffeaea',
-  warningBackground: '#fff8dc',
+    // Roasting colors
+    roastingLight: palette.roastingLight,
+    roastingLight_Light: palette.roastingLight_Light,
+    roastingMediumLight: palette.roastingMediumLight,
+    roastingMediumLight_Light: palette.roastingMediumLight_Light,
+    roastingMedium: palette.roastingMedium,
+    roastingMedium_Light: palette.roastingMedium_Light,
+    roastingMediumDark: palette.roastingMediumDark,
+    roastingMediumDark_Light: palette.roastingMediumDark_Light,
+    roastingDark: palette.roastingDark,
+    roastingDark_Light: palette.roastingDark_Light,
 
-  // Interactive states
-  pressed: '#f0f0f0',
-  hover: '#f8f8f8',
-} as const;
+    // Additional commonly used colors
+    white: theme === 'dark' ? '#1a1a1a' : '#ffffff',
+    black: theme === 'dark' ? '#ffffff' : '#000000',
+    transparent: 'transparent',
 
-export type ColorKey = keyof typeof colors;
+    // Semantic color mappings for common UI patterns
+    background: palette.bgLight,
+    surface: theme === 'dark' ? '#2a2a2a' : '#ffffff',
+    text: palette.textDark,
+    textSecondary: palette.textMedium,
+    textTertiary: palette.textLight,
+    border: palette.borderLight,
+    divider: theme === 'dark' ? '#2a2a2a' : '#f0f0f0',
+    disabled: theme === 'dark' ? '#444444' : '#ccc',
+    disabledText: palette.textLight,
+
+    // Status colors
+    successBackground: theme === 'dark' ? '#1a3a2a' : '#d5f4e6',
+    errorBackground: theme === 'dark' ? '#3a1a1a' : '#ffeaea',
+    warningBackground: theme === 'dark' ? '#3a2a1a' : '#fff8dc',
+
+    // Interactive states
+    pressed: theme === 'dark' ? '#3a3a3a' : '#f0f0f0',
+    hover: theme === 'dark' ? '#2f2f2f' : '#f8f8f8',
+  } as const;
+};
+
+// Export default light theme colors for backward compatibility
+export const colors = getColors('light');
+
+export type ColorKey = keyof ReturnType<typeof getColors>;
+
+// Hook to use colors with current theme
+export const useColors = () => {
+  const { theme } = useTheme();
+  return getColors(theme);
+};

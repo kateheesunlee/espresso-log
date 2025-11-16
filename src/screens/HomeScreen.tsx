@@ -6,7 +6,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Shot } from '@types';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { useStore } from '../store/useStore';
-import { colors } from '../themes/colors';
+import { useColors } from '../themes/colors';
 
 import EmptyEntity from '../components/EmptyEntity';
 import EmptyEntityWithPrerequisites from '../components/EmptyEntityWithPrerequisites';
@@ -22,6 +22,7 @@ type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const { shots, beans, machines, isLoading, loadShots } = useStore();
+  const colors = useColors();
 
   // Compute default filters from last shot
   const defaultFilters = useMemo(() => {
@@ -96,6 +97,51 @@ const HomeScreen: React.FC = () => {
       selectedMachineId: selectedMachineId || undefined,
     });
   }, [selectedBeanId, selectedMachineId, navigation]);
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      backgroundColor: colors.bgLight,
+      flex: 1,
+    },
+    filtersContainer: {
+      backgroundColor: colors.white,
+      borderBottomColor: colors.borderLight,
+      borderBottomWidth: 1,
+      paddingHorizontal: 16,
+      paddingTop: 16,
+    },
+    header: {
+      alignItems: 'center',
+      backgroundColor: colors.white,
+      borderBottomColor: colors.borderLight,
+      borderBottomWidth: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      padding: 16,
+    },
+    headerTitle: {
+      color: colors.textDark,
+      fontSize: 24,
+      fontWeight: 'bold',
+    },
+    loadingContainer: {
+      alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+    },
+    loadingText: {
+      color: colors.textMedium,
+      fontSize: 16,
+    },
+    newShotButton: {
+      alignItems: 'center',
+      backgroundColor: colors.primary,
+      borderRadius: 15,
+      height: 30,
+      justifyContent: 'center',
+      width: 30,
+    },
+  }), [colors]);
 
   const renderShot = ({ item }: { item: Shot }) => <ShotCard shot={item} />;
 
@@ -189,50 +235,5 @@ const HomeScreen: React.FC = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.bgLight,
-    flex: 1,
-  },
-  filtersContainer: {
-    backgroundColor: colors.white,
-    borderBottomColor: colors.borderLight,
-    borderBottomWidth: 1,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  },
-  header: {
-    alignItems: 'center',
-    backgroundColor: colors.white,
-    borderBottomColor: colors.borderLight,
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 16,
-  },
-  headerTitle: {
-    color: colors.textDark,
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  loadingContainer: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-  },
-  loadingText: {
-    color: colors.textMedium,
-    fontSize: 16,
-  },
-  newShotButton: {
-    alignItems: 'center',
-    backgroundColor: colors.primary,
-    borderRadius: 15,
-    height: 30,
-    justifyContent: 'center',
-    width: 30,
-  },
-});
 
 export default HomeScreen;

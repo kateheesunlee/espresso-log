@@ -4,10 +4,13 @@ import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AppNavigator from './src/navigation/AppNavigator';
 import { useStore } from './src/store/useStore';
-import { colors } from './src/themes/colors';
+import { ThemeProvider, useTheme } from './src/themes/ThemeContext';
+import { useColors } from './src/themes/colors';
 
-export default function App() {
+function AppContent() {
   const { initializeApp, isLoading } = useStore();
+  const { theme } = useTheme();
+  const colors = useColors();
 
   useEffect(() => {
     initializeApp();
@@ -15,7 +18,7 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
         <ActivityIndicator size='large' color={colors.primary} />
       </View>
     );
@@ -27,16 +30,23 @@ export default function App() {
         style={{ flex: 1, overflow: 'scroll', backgroundColor: colors.bgLight }}
       >
         <AppNavigator />
-        <StatusBar style='light' backgroundColor={colors.primary} />
+        <StatusBar style={theme === 'dark' ? 'light' : 'dark'} backgroundColor={colors.primary} />
       </View>
     </GestureHandlerRootView>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
 
 const styles = StyleSheet.create({
   loadingContainer: {
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
     flex: 1,
     justifyContent: 'center',
   },
